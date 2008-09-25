@@ -1,0 +1,92 @@
+/*
+ * Copyright 2007 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.sf.gilead.core.beanlib.clone;
+
+import net.sf.beanlib.hibernate.HibernateBeanReplicator;
+import net.sf.beanlib.hibernate3.Hibernate3BeanTransformer;
+import net.sf.beanlib.hibernate3.Hibernate3BlobReplicator;
+import net.sf.beanlib.hibernate3.Hibernate3CollectionReplicator;
+import net.sf.beanlib.hibernate3.Hibernate3MapReplicator;
+import net.sf.beanlib.provider.collector.PrivateSetterMethodCollector;
+import net.sf.beanlib.provider.finder.PrivateReaderMethodFinder;
+import net.sf.beanlib.spi.BeanTransformerSpi;
+import net.sf.beanlib.spi.CustomBeanTransformerSpi;
+import net.sf.gilead.core.IPersistenceUtil;
+import net.sf.gilead.core.beanlib.IClassMapper;
+import net.sf.gilead.core.beanlib.TimestampCustomTransformer;
+import net.sf.gilead.core.store.IProxyStore;
+
+/**
+ * Hibernate Bean Replicator override to inject the class mapper used for clone 
+ * to a different class.
+ * @author bruno.marchesson
+ */
+public class CloneBeanReplicator extends HibernateBeanReplicator
+{
+	public CloneBeanReplicator(IClassMapper classMapper, 
+							   IPersistenceUtil persistenceUtil,
+							   IProxyStore proxyStore)
+	{
+		super(newBeanTransformer(classMapper, persistenceUtil, proxyStore));
+	}
+	
+	private static Hibernate3BeanTransformer newBeanTransformer(IClassMapper classMapper,
+																IPersistenceUtil persistenceUtil,
+																IProxyStore proxyStore) 
+    {
+        Hibernate3BeanTransformer transformer = Hibernate3BeanTransformer.newBeanTransformer();
+        
+        transformer.initCollectionReplicatable(
+                Hibernate3CollectionReplicator.getFactory());
+
+        transformer.initMapReplicatable(
+                Hibernate3MapReplicator.getFactory());
+        transformer.initBlobReplicatable(
+                Hibernate3BlobReplicator.getFactory());
+        
+
+        // Custom bean replicatable
+        transformer.initBeanReplicatable(
+                	CloneClassBeanReplicator.factory);
+        
+        // Set the associated class mapper
+        ((CloneClassBeanReplicator)transformer.getBeanReplicatable()).setClassMapper(classMapper);
+        ((CloneClassBeanReplicator)transformer.getBeanReplicatable()).setPersistenceUtil(persistenceUtil);
+
+        
+    //  Timestamp handling
+    //
+		transformer.initCustomTransformer(new CustomBeanTransformerSpi.Factory()
+		{
+			public CustomBeanTransformerSpi newCustomBeanTransformer(final BeanTransformerSpi beanTransformer)
+			{
+				return new TimestampCustomTransformer(beanTransformer);
+			}
+		});
+		
+	//	Lazy properties handling
+	//
+		transformer.initDetailedBeanPopulatable(new CloneBeanPopulatable(persistenceUtil, proxyStore));
+    	
+	//	Protected and private setter collection
+	//
+    	transformer.initSetterMethodCollector(PrivateSetterMethodCollector.inst);
+    	transformer.initReaderMethodFinder(PrivateReaderMethodFinder.inst);
+    	
+        return transformer;
+    }
+}

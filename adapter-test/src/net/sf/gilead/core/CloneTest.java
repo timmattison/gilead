@@ -1,0 +1,1107 @@
+/**
+ * 
+ */
+package net.sf.gilead.core;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import junit.framework.TestCase;
+import net.sf.gilead.core.wrapper.WrappingClass;
+import net.sf.gilead.core.wrapper.WrappingClass.ErrorCode;
+import net.sf.gilead.test.DAOFactory;
+import net.sf.gilead.test.HibernateContext;
+import net.sf.gilead.test.dao.IMessageDAO;
+import net.sf.gilead.test.dao.IUserDAO;
+import net.sf.gilead.test.domain.Configuration;
+import net.sf.gilead.test.domain.IMessage;
+import net.sf.gilead.test.domain.IUser;
+import net.sf.gilead.test.domain.Style;
+
+import org.hibernate.Hibernate;
+import org.hibernate.LockMode;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+
+/**
+ * Test case clone and merge server operations
+ * @author bruno.marchesson
+ *
+ */
+public abstract class CloneTest extends TestCase
+{	
+	//----
+	// Attributes
+	//----
+	/**
+	 * Hibernate lazy manager
+	 */
+	protected HibernateBeanManager _beanManager;
+	
+	/**
+	 * Clone user class
+	 */
+	protected Class _cloneUserClass = null;
+	
+	/**
+	 * Clone employee class
+	 */
+	protected Class _cloneEmployeeClass = null;
+	
+	/**
+	 * Domain message class
+	 */
+	protected Class _cloneMessageClass = null;
+	
+	/**
+	 * Domain user class
+	 */
+	protected Class _domainUserClass = null;
+	
+	/**
+	 * Domain employee class
+	 */
+	protected Class _domainEmployeeClass = null;
+	
+	/**
+	 * Domain message class
+	 */
+	protected Class _domainMessageClass = null;
+	
+	
+	//-------------------------------------------------------------------------
+	//
+	// Test initialisation
+	//
+	//-------------------------------------------------------------------------
+	/**
+	 * Test init
+	 */
+	@Override
+	protected void setUp() throws Exception
+	{
+		super.setUp();
+		
+	//	Init db if needed
+	//
+		if (TestHelper.isInitialized() == false)
+		{
+			TestHelper.initializeDB();
+		}
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	// Test methods
+	//
+	//---------------------------------------------------------------------------
+	/**
+	 * Test clone of a loaded user and associated messages
+	 */
+	public void testCloneAndMergeUserAndMessages()
+	{
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Load user
+	//
+		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
+		assertNotNull(user);
+		assertNotNull(user.getMessageList());
+		assertFalse(user.getMessageList().isEmpty());
+		
+	//	Clone user
+	//
+		IUser cloneUser = (IUser) _beanManager.clone(user);
+		
+	//	Test cloned user
+	//
+		assertNotNull(cloneUser);
+		assertEquals(_cloneUserClass, cloneUser.getClass());
+		
+		// Test cloned message classes
+		assertNotNull(cloneUser.getMessageList());
+		assertEquals(cloneUser.getMessageList().size(), user.getMessageList().size());
+
+		for (Object message : cloneUser.getMessageList())
+		{
+			assertEquals(_cloneMessageClass, message.getClass());
+		}
+		
+	//	Merge user
+	//
+		IUser mergeUser = (IUser) _beanManager.merge(cloneUser);
+		
+	//	Test merged user
+	//
+		assertNotNull(mergeUser);
+		assertEquals(_domainUserClass, 
+					 _beanManager.getPersistenceUtil().getUnenhancedClass(mergeUser.getClass()));
+		
+		// Test merged messages classes
+		assertNotNull(mergeUser.getMessageList());
+		assertEquals(mergeUser.getMessageList().size(), user.getMessageList().size());
+
+		for (Object message : mergeUser.getMessageList())
+		{
+			assertEquals(_domainMessageClass, 
+						 _beanManager.getPersistenceUtil().getUnenhancedClass(message.getClass()));
+		}
+	}
+	
+	/**
+	 * Test clone of a loaded employee (subclass of user) and associated messages
+	 */
+	public void testCloneAndMergeMessageAuthorSubclass()
+	{
+	//	Get UserDAO and message DAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
+		assertNotNull(messageDAO);
+		
+	//	Load employee
+	//
+		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.EMPLOYEE_LOGIN);
+		assertNotNull(user);
+		assertEquals(_domainEmployeeClass, user.getClass());
+		assertNotNull(user.getMessageList());
+		assertFalse(user.getMessageList().isEmpty());
+		
+	//	Load the employee message
+	//
+		IMessage message = user.getMessageList().iterator().next();
+		message = messageDAO.loadDetailedMessage(message.getId());
+		
+		assertNotNull(message);
+		assertNotNull(message.getAuthor());
+		assertEquals(_domainEmployeeClass, message.getAuthor().getClass());
+		
+	//	Clone message
+	//
+		IMessage cloneMessage = (IMessage) _beanManager.clone(message);
+		
+	//	Test cloned user
+	//
+		assertNotNull(cloneMessage);
+		assertEquals(_cloneMessageClass, cloneMessage.getClass());
+		
+		// Test cloned message author
+		assertNotNull(cloneMessage.getAuthor());
+		assertEquals(_cloneEmployeeClass, cloneMessage.getAuthor().getClass());
+		
+	//	Merge message
+	//
+		IMessage mergeMessage = (IMessage) _beanManager.merge(cloneMessage);
+		
+	//	Test merged message
+	//
+		assertNotNull(mergeMessage);
+		assertEquals(_domainMessageClass, 
+					 _beanManager.getPersistenceUtil().getUnenhancedClass(mergeMessage.getClass()));
+		
+		// Test merged messages author
+		assertNotNull(mergeMessage.getAuthor());
+		assertEquals(_domainEmployeeClass, 
+				     _beanManager.getPersistenceUtil().getUnenhancedClass(
+				    		 			mergeMessage.getAuthor().getClass()));
+	}
+	
+	/**
+	 * Test clone of a loaded (proxy) user
+	 */
+	public void testCloneAndMergeLoadedProxy()
+	{
+	//	Get UserDAO
+	//
+		SessionFactory sessionFactory = HibernateContext.getSessionFactory();;
+		assertNotNull(sessionFactory);
+		
+	//	Load user
+	//
+		IUser user = (IUser) sessionFactory.openSession().load(_domainUserClass, 1);
+		user.getFirstName();
+		assertNotNull(user);
+		
+	//	Clone user
+	//
+		IUser cloneUser = (IUser) _beanManager.clone(user);
+		
+	//	Test cloned user
+	//
+		assertNotNull(cloneUser);
+		assertEquals(_cloneUserClass, cloneUser.getClass());
+				
+	//	Merge user
+	//
+		IUser mergeUser = (IUser) _beanManager.merge(cloneUser);
+		
+	//	Test merged user
+	//
+		assertNotNull(mergeUser);
+		assertEquals(_domainUserClass, mergeUser.getClass());		
+	}
+	
+	/**
+	 * Test clone of a proxy
+	 */
+	public void testCloneProxy()
+	{
+	//	Get UserDAO
+	//
+		SessionFactory sessionFactory = HibernateContext.getSessionFactory();;
+		assertNotNull(sessionFactory);
+		
+	//	Load user
+	//
+		IUser user = (IUser) sessionFactory.openSession().load(_domainUserClass, 1);
+		assertNotNull(user);
+		
+	//	Clone user
+	//
+		IUser cloneUser = (IUser) _beanManager.clone(user);
+		
+	//	Test cloned user
+	//
+		assertNull(cloneUser);
+	}
+	
+	/**
+	 * Test clone and merge of a loaded message and associated user
+	 */
+	public void testCloneAndMergeMessageAndUser()
+	{
+	//	Get UserDAO
+	//
+		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
+		assertNotNull(messageDAO);
+		
+	//	Load message and user
+	//
+		IMessage message = messageDAO.loadDetailedMessage(1);
+		assertNotNull(message);
+		assertNotNull(message.getAuthor());
+		assertFalse(Hibernate.isInitialized(message.getAuthor().getMessageList()));
+		
+	//	Clone message
+	//
+		IMessage cloneMessage = (IMessage) _beanManager.clone(message);
+		
+	//	Test cloned message
+	//
+		assertNotNull(cloneMessage);
+		assertEquals(_cloneMessageClass, cloneMessage.getClass());
+		
+		// Test cloned user class
+		assertNotNull(cloneMessage.getAuthor());
+		assertNull(cloneMessage.getAuthor().getMessageList());
+				
+	//	Merge message
+	//
+		IMessage mergeMessage = (IMessage) _beanManager.merge(cloneMessage);
+		
+	//	Test merged message
+	//
+		assertNotNull(mergeMessage);
+		assertEquals(_domainMessageClass, mergeMessage.getClass());
+		
+		// Test cloned user class
+		assertNotNull(mergeMessage.getAuthor());
+		assertNotNull(mergeMessage.getAuthor().getMessageList());
+		assertFalse(Hibernate.isInitialized(mergeMessage.getAuthor().getMessageList()));
+	}
+	
+	/**
+	 * Test clone and merge of a partially loaded message
+	 */
+	public void testCloneAndMergePartiallyLoadedMessage()
+	{
+	//	Get UserDAO
+	//
+		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
+		assertNotNull(messageDAO);
+		
+	//	Load message and user
+	//
+		IMessage message = messageDAO.loadLastMessage();
+		assertNotNull(message);
+		assertFalse(Hibernate.isInitialized(message.getAuthor()));
+		
+	//	Clone message
+	//
+		IMessage cloneMessage = (IMessage) _beanManager.clone(message);
+		
+	//	Test cloned message
+	//
+		assertNotNull(cloneMessage);
+		assertEquals(_cloneMessageClass, cloneMessage.getClass());
+		
+		// Test cloned user class
+		assertNull(cloneMessage.getAuthor());
+		assertEquals(0, cloneMessage.countKeywords());
+				
+	//	Merge message
+	//
+		IMessage mergeMessage = (IMessage) _beanManager.merge(cloneMessage);
+		
+	//	Test merged message
+	//
+		assertNotNull(mergeMessage);
+		assertEquals(_domainMessageClass, mergeMessage.getClass());
+		
+		// Test cloned user class
+		assertNotNull(mergeMessage.getAuthor());
+		assertFalse(Hibernate.isInitialized(mergeMessage.getAuthor()));
+		
+	//	Compute keywords (reattachement checking)
+	//
+		Session session = HibernateContext.getSessionFactory().openSession();
+		session.lock(mergeMessage, LockMode.UPGRADE);
+		TestHelper.computeKeywords(mergeMessage);
+		session.close();
+		messageDAO.saveMessage(mergeMessage);
+	}
+	
+	/**
+	 * Test clone and merge of a complete message (with associated map)
+	 */
+	public void testCloneAndMergeDetailedMessage()
+	{
+	//	Get UserDAO
+	//
+		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
+		assertNotNull(messageDAO);
+		
+	//	Load message and user
+	//
+		IMessage message = messageDAO.loadDetailedMessage(messageDAO.loadLastMessage().getId());
+		assertNotNull(message);
+		assertTrue(Hibernate.isInitialized(message.getAuthor()));
+		assertTrue(message.countKeywords() > 0);
+		
+	//	Clone message
+	//
+		IMessage cloneMessage = (IMessage) _beanManager.clone(message);
+		
+	//	Test cloned message
+	//
+		assertNotNull(cloneMessage);
+		assertEquals(_cloneMessageClass, cloneMessage.getClass());
+		
+		// Test cloned associations
+		assertNotNull(cloneMessage.getAuthor());
+		assertEquals(message.countKeywords(), cloneMessage.countKeywords());
+				
+	//	Merge message
+	//
+		IMessage mergeMessage = (IMessage) _beanManager.merge(cloneMessage);
+		
+	//	Test merged message
+	//
+		assertNotNull(mergeMessage);
+		assertEquals(_domainMessageClass, mergeMessage.getClass());
+		
+		// Test merged associations
+		assertNotNull(mergeMessage.getAuthor());
+		assertTrue(Hibernate.isInitialized(mergeMessage.getAuthor()));
+		
+		assertEquals(message.countKeywords(), mergeMessage.countKeywords());
+		
+	//	Test save merged message
+	//
+		messageDAO.saveMessage(mergeMessage);
+	}
+	
+	/**
+	 * Test clone of a loaded user list
+	 */
+	public void testCloneUserList()
+	{
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Load user
+	//
+		List<IUser> userList = userDAO.loadAll();
+		assertNotNull(userList);
+		assertFalse(userList.isEmpty());
+		
+	//	Clone user
+	//
+		List cloneUserList = (List) _beanManager.clone(userList);
+		
+	//	Test cloned user
+	//
+		assertNotNull(cloneUserList);
+		assertEquals(cloneUserList.size(), userList.size());
+		
+		for (Object user : cloneUserList)
+		{
+			assertTrue(_cloneUserClass.equals(user.getClass()) ||
+					   _cloneEmployeeClass.equals(user.getClass()));
+		}
+	}
+	
+	/**
+	 * Test modification of the last posted message
+	 */
+	public void testModifyLastMessage()
+	{
+	//	Get MessageDAO
+	//
+		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
+		assertNotNull(messageDAO);
+		
+	//	Load last message
+	//
+		IMessage message = messageDAO.loadDetailedMessage(1);
+		assertNotNull(message);
+		assertEquals(_domainMessageClass, message.getClass());
+		
+		// author verification
+		assertNotNull(message.getAuthor());
+		assertTrue(_domainUserClass.isAssignableFrom(message.getAuthor().getClass()));
+		
+	//	Clone message
+	//
+		IMessage cloneMessage = (IMessage) _beanManager.clone(message);
+		
+	//	Test cloned message
+	//
+		assertNotNull(cloneMessage);
+		assertEquals(_cloneMessageClass, cloneMessage.getClass());
+		assertEquals(message.getMessage(), cloneMessage.getMessage());
+		
+		assertNotNull(cloneMessage.getAuthor());
+		assertEquals(_cloneUserClass, cloneMessage.getAuthor().getClass());
+		
+	//	Modify clone message
+	//
+		cloneMessage.setMessage("Modified on " + new Date().toString());
+		
+	//	Merge message
+	//
+		IMessage mergeMessage = (IMessage) _beanManager.merge(cloneMessage);
+		
+	//	Clone verification
+	//
+		assertNotNull(mergeMessage);
+		assertEquals(_domainMessageClass, mergeMessage.getClass());
+		
+		assertNotNull(mergeMessage.getAuthor());
+		assertTrue(_domainUserClass.isAssignableFrom(message.getAuthor().getClass()));
+		
+	//	Save message
+	//
+		messageDAO.saveMessage(mergeMessage);
+	}
+	
+	/**
+	 * Test modification of the last posted message
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	public void testCreateMessage() throws InstantiationException, IllegalAccessException
+	{
+	//	Get User and Message DAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
+		assertNotNull(messageDAO);
+		
+	//	Load user
+	//
+		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
+		assertNotNull(user);
+		assertEquals(_domainUserClass, user.getClass());
+		
+		assertNotNull(user.getMessageList());
+		assertFalse(user.getMessageList().isEmpty());
+		
+	//	Clone user
+	//
+		IUser cloneUser = (IUser) _beanManager.clone(user);
+		
+	//	Clone verification
+	//
+		assertNotNull(cloneUser);
+		assertEquals(_cloneUserClass, cloneUser.getClass());
+
+		assertNotNull(cloneUser.getMessageList());
+		assertFalse(cloneUser.getMessageList().isEmpty());
+		for (Object subMessage : cloneUser.getMessageList())
+		{
+			assertEquals(_cloneMessageClass, subMessage.getClass());
+		}
+		
+	//	Create new message
+	//
+		IMessage message = createNewCloneMessage(cloneUser);
+		
+	//	Merge message
+	//
+		IMessage mergeMessage = (IMessage) _beanManager.merge(message);
+		
+	//	Clone verification
+	//
+		assertNotNull(mergeMessage);
+		assertEquals(_domainMessageClass, mergeMessage.getClass());
+		assertEquals(message.getMessage(), mergeMessage.getMessage());
+		
+		assertNotNull(mergeMessage.getAuthor());
+		assertEquals(_domainUserClass, mergeMessage.getAuthor().getClass());
+		
+		// message verification
+		for (Object subMessage : mergeMessage.getAuthor().getMessageList())
+		{
+			assertEquals(_domainMessageClass, subMessage.getClass());
+		}
+		
+	//	Save message
+	//
+		messageDAO.saveMessage(mergeMessage);
+	}
+	
+	
+	/**
+	 * Test map cloning
+	 */
+	public void testCloneAndMergeMap()
+	{
+	//	Get User DAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Create a map with all users and message
+	//
+		Map<IUser, Set<IMessage>> userMap = new HashMap<IUser, Set<IMessage>>();
+		List<IUser> userList = userDAO.loadAll();
+		for (IUser user : userList)
+		{
+			IUser completeUser = userDAO.searchUserAndMessagesByLogin(user.getLogin());
+			userMap.put(user, completeUser.getMessageList());
+		}
+		
+	//	Clone map
+	//
+		Map<IUser, Set<IMessage>> cloneMap = (Map<IUser, Set<IMessage>>) _beanManager.clone(userMap);
+		assertNotNull(cloneMap);
+		assertEquals(cloneMap.size(), userMap.size());
+		
+	//	Clone verification
+	//
+		for (Entry<IUser, Set<IMessage>> entry : cloneMap.entrySet())
+		{
+		//	User checking
+		//
+			IUser cloneUser = entry.getKey();
+			assertNotNull(cloneUser);
+			assertTrue(_cloneUserClass.equals(cloneUser.getClass()) ||
+					   _cloneEmployeeClass.equals(cloneUser.getClass()));
+			
+		//	Message checking
+		//
+			for (IMessage message : entry.getValue())
+			{
+				assertNotNull(message);
+				assertEquals(_cloneMessageClass, message.getClass());
+			}
+		}
+		
+	//	Merge map
+	//
+		Map<IUser, Set<IMessage>> mergeMap = (Map<IUser, Set<IMessage>>) _beanManager.merge(cloneMap);
+		assertNotNull(mergeMap);
+		assertEquals(mergeMap.size(), cloneMap.size());
+		
+	//	Merge verification
+	//
+		for (Entry<IUser, Set<IMessage>> entry : mergeMap.entrySet())
+		{
+		//	User checking
+		//
+			IUser mergeUser = entry.getKey();
+			assertNotNull(mergeUser);
+			assertTrue(_domainUserClass.equals(mergeUser.getClass()) ||
+					   _domainEmployeeClass.equals(mergeUser.getClass()));
+			
+		//	Message checking
+		//
+			for (IMessage message : entry.getValue())
+			{
+				assertNotNull(message);
+				assertEquals(_domainMessageClass, message.getClass());
+			}
+		}
+	}
+	
+	/**
+	 * Test clone and merge operations on wrapper object
+	 * (ie a non persistent class containing persistent classes)
+	 */
+	public void testCloneAndMergeWrapperObject()
+	{
+	//	Create wrapping object
+	//
+		WrappingClass wrapper = new WrappingClass();
+		
+	//	Get Message and User DAO
+	//
+		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
+		assertNotNull(messageDAO);
+		
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Fill wrapper
+	//
+		wrapper.setErrorCode(ErrorCode.error);
+		wrapper.setUser(userDAO.loadUser(1));
+		wrapper.setMessageList(messageDAO.loadAllMessage(0, 10));
+		
+	//	Loading verification
+	//
+		assertNotNull(wrapper.getUser().getMessageList());
+		assertFalse(Hibernate.isInitialized(wrapper.getUser().getMessageList()));
+		
+	//	Clone wrapper
+	//
+		WrappingClass cloneWrapper = (WrappingClass) _beanManager.clone(wrapper);
+		
+	//	Clone verification
+	//
+		assertEquals(wrapper.getErrorCode(), cloneWrapper.getErrorCode());
+		assertNotNull(cloneWrapper.getUser());
+		assertEquals(wrapper.getUser().getId(), cloneWrapper.getUser().getId());
+		assertNull(cloneWrapper.getUser().getMessageList());
+		
+	//	Merge wrapper
+	//
+		WrappingClass mergedWrapper = (WrappingClass) _beanManager.merge(cloneWrapper);
+		
+	//	Merge verification
+	//
+		assertEquals(wrapper.getErrorCode(), mergedWrapper.getErrorCode());
+		assertEquals(wrapper.getUser().getId(), mergedWrapper.getUser().getId());
+		assertNotNull(mergedWrapper.getUser().getMessageList());
+		assertFalse(Hibernate.isInitialized(mergedWrapper.getUser().getMessageList()));
+	}
+	/**
+	 * Test clone and merge operations on wrapper transient object
+	 * (ie a non persistent class containing transient instance)
+	 */
+	public void testCloneAndMergeTransientWrapperObject() throws Exception
+	{
+	//	Create wrapping object
+	//
+		WrappingClass wrapper = new WrappingClass();
+		
+	//	Fill wrapper
+	//
+		wrapper.setErrorCode(ErrorCode.warning);
+		IUser user = (IUser) _domainUserClass.newInstance();
+		wrapper.setUser(user);
+		
+		List<IMessage> messageList = new ArrayList<IMessage>();
+		IMessage message = (IMessage) _domainMessageClass.newInstance();
+		messageList.add(message);
+		wrapper.setMessageList(messageList);
+		
+	//	Loading verification
+	//
+		assertNull(wrapper.getUser().getMessageList());
+		assertEquals(wrapper.getMessageList().size(), 1);
+		
+	//	Clone wrapper
+	//
+		WrappingClass cloneWrapper = (WrappingClass) _beanManager.clone(wrapper);
+		
+	//	Clone verification
+	//
+		assertNotNull(cloneWrapper.getUser());
+		assertEquals(wrapper.getErrorCode(), cloneWrapper.getErrorCode());
+		assertEquals(wrapper.getUser().getId(), cloneWrapper.getUser().getId());
+		assertNull(cloneWrapper.getUser().getMessageList());
+		assertEquals(cloneWrapper.getMessageList().size(), 1);
+		
+	//	Merge wrapper
+	//
+		WrappingClass mergedWrapper = (WrappingClass) _beanManager.merge(cloneWrapper);
+		
+	//	Merge verification
+	//
+		assertEquals(wrapper.getErrorCode(), mergedWrapper.getErrorCode());
+		assertEquals(wrapper.getUser().getId(), mergedWrapper.getUser().getId());
+		assertNull(mergedWrapper.getUser().getMessageList());
+		assertEquals(mergedWrapper.getMessageList().size(), 1);
+	}
+	
+	/**
+	 * Test clone and merge operations on enum transient object
+	 */
+	public void testCloneAndMergeEnumObject() throws Exception
+	{
+	//	Create style object
+	//
+		Style style = new Style();
+		Style.SortDir sortDir = Style.SortDir.ASC;
+		
+	//	Clone style
+	//
+		Style cloneStyle = (Style) _beanManager.clone(style);
+		Style.SortDir cloneSortDir = (Style.SortDir)_beanManager.clone(sortDir);
+		
+	//	Clone verification
+	//
+		assertNotNull(cloneStyle);
+		assertNotNull(cloneSortDir);
+		
+	//	Merge style
+	//
+		Style mergedStyle = (Style) _beanManager.merge(cloneStyle);
+		Style.SortDir mergedSortDir = (Style.SortDir) _beanManager.merge(cloneSortDir);
+		
+	//	Merge verification
+	//
+		assertNotNull(mergedStyle);
+		assertNotNull(mergedSortDir);
+	}
+
+	/**
+	 * Test clone and merge operations on transient object
+	 */
+	public void testCloneAndMergeTransientObject() throws Exception
+	{
+	//	Clone and merge integer
+	//
+		Integer clone = (Integer) _beanManager.clone(new Integer(2));
+		assertEquals(2, clone.intValue());
+		
+		Integer merge = (Integer) _beanManager.merge(clone);
+		assertEquals(2, merge.intValue());
+		
+	//	Clone and merge third party instance
+	//
+		Configuration configuration = new Configuration();
+		configuration.setName("test");
+		configuration.setSpringContextFile("dummy.xml");
+		
+		Configuration cloneConfiguration = (Configuration) _beanManager.clone(configuration);
+		assertNotNull(cloneConfiguration);
+		assertEquals(configuration.getName(), cloneConfiguration.getName());
+		
+		Configuration mergeConfiguration = (Configuration) _beanManager.merge(cloneConfiguration);
+		assertNotNull(mergeConfiguration);
+		assertEquals(configuration.getName(), mergeConfiguration.getName());
+	}
+	
+
+	/**
+	 * Test change property on client side
+	 */
+	public void testCloneAndMergeArrays()
+	{ 
+	//	Clone String array
+	//
+		String[] stringList = {"test1", "test2", "test3"};
+		String[] cloneStringList = (String[])_beanManager.clone(stringList);
+		assertNotNull(cloneStringList);
+		assertEquals(stringList.length, cloneStringList.length);
+		
+	//	Clone users array
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+		List<IUser> userList = userDAO.loadAll();
+		assertNotNull(userList);
+		assertFalse(userList.isEmpty());
+		IUser[] users = (IUser[]) userList.toArray(new IUser[userList.size()]);
+		
+		IUser[] cloneUsers = (IUser[]) _beanManager.clone(users);
+		assertNotNull(cloneUsers);
+		assertEquals(users.length, cloneUsers.length);
+	}
+	
+	
+	/**
+	 * Test changing association between clone and merge
+	 */
+	public void testChangeAssociationAfterClone()
+	{
+	//	Get Message and User DAO
+	//
+		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
+		assertNotNull(messageDAO);
+		
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Load last message
+	//
+		IMessage message = messageDAO.loadDetailedMessage(1);
+		assertNotNull(message);
+		assertEquals(_domainMessageClass, message.getClass());
+		
+		assertNotNull(message.getAuthor());
+		assertEquals(_domainUserClass, message.getAuthor().getClass());
+		
+	//	Load user
+	//
+		IUser user = null;
+		if (message.getAuthor().getLogin().equals(TestHelper.JUNIT_LOGIN))
+		{
+			user = userDAO.loadUser(1);
+		}
+		else
+		{
+			user = userDAO.loadUser(2);
+		}
+		assertNotNull(user);
+		assertEquals(_domainUserClass, user.getClass());
+		assertFalse(user.equals(message.getAuthor()));
+		
+	//	Clone message
+	//
+		IMessage cloneMessage = (IMessage) _beanManager.clone(message);
+		
+	//	Test cloned message
+	//
+		assertNotNull(cloneMessage);
+		assertEquals(_cloneMessageClass, cloneMessage.getClass());
+		assertEquals(message.getMessage(), cloneMessage.getMessage());
+		
+		assertNotNull(cloneMessage.getAuthor());
+	
+	//	Change clone user
+	//
+		IUser cloneUser = (IUser) _beanManager.clone(user);
+		assertNotNull(cloneUser);
+		assertEquals(_cloneUserClass, cloneUser.getClass());
+		
+		changeAuthorForClone(cloneMessage, cloneUser);
+		
+	//	Merge message
+	//
+		IMessage mergeMessage = (IMessage) _beanManager.merge(cloneMessage);
+		
+	//	Clone verification
+	//
+		assertNotNull(mergeMessage);
+		assertEquals(_domainMessageClass, mergeMessage.getClass());
+		assertEquals(message.getMessage(), mergeMessage.getMessage());
+		
+		assertNotNull(mergeMessage.getAuthor());
+		assertEquals(_domainUserClass, mergeMessage.getAuthor().getClass());
+		assertEquals(user.getId(), mergeMessage.getAuthor().getId());
+		
+	//	Save message
+	//
+		messageDAO.saveMessage(mergeMessage);
+	}
+	
+	/**
+	 * Test setting association between clone and merge
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	public void testSetAssociationAfterClone() throws InstantiationException, IllegalAccessException
+	{
+	//	Get Message and User DAO
+	//
+		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
+		assertNotNull(messageDAO);
+		
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Load last message
+	//
+		IMessage message = messageDAO.loadDetailedMessage(1);
+		assertNotNull(message);
+		assertEquals(_domainMessageClass, message.getClass());
+		
+		// set null author
+		changeAuthorForDomain(message, null);
+		assertNull(message.getAuthor());
+		
+	//	Clone message
+	//
+		IMessage cloneMessage = (IMessage) _beanManager.clone(message);
+		
+	//	Test cloned message
+	//
+		assertNotNull(cloneMessage);
+		assertEquals(_cloneMessageClass, cloneMessage.getClass());
+		assertEquals(message.getMessage(), cloneMessage.getMessage());
+		
+		assertNull(cloneMessage.getAuthor());
+	
+	//	Create new user
+	//
+		IUser user = createNewCloneUser();
+		user.setLogin("test");
+		assertNotNull(user);
+		
+		changeAuthorForClone(cloneMessage, user);
+		
+	//	Merge message
+	//
+		IMessage mergeMessage = (IMessage) _beanManager.merge(cloneMessage);
+		
+	//	Merge verification
+	//
+		assertNotNull(mergeMessage);
+		assertEquals(_domainMessageClass, mergeMessage.getClass());
+		assertEquals(message.getMessage(), mergeMessage.getMessage());
+		
+		assertNotNull(mergeMessage.getAuthor());
+		assertEquals(_domainUserClass, mergeMessage.getAuthor().getClass());
+	}
+	
+	/**
+	 * Test change property on client side
+	 */
+	public void testChangePropertyAfterClone()
+	{  
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Load user
+	//
+		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
+		assertNotNull(user);
+		assertNotNull(user.getMessageList());
+		assertFalse(user.getMessageList().isEmpty());
+		
+	//	Clone user
+	//
+		IUser cloneUser = (IUser) _beanManager.clone(user); 
+		 
+		//Change the clone name 
+		String newName = "new name"; 
+		cloneUser.setLogin(newName); 
+		 
+	//	Merge user
+	//
+		IUser mergeUser = (IUser) _beanManager.merge(cloneUser); 
+		 
+		assertEquals("New name after merge", newName, mergeUser.getLogin()); 
+	}
+	
+	/**
+	 * Test change property on client side
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	public void testChangeCollectionAfterClone() throws InstantiationException, IllegalAccessException
+	{  
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Load user
+	//
+		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
+		assertNotNull(user);
+		assertNotNull(user.getMessageList());
+		assertFalse(user.getMessageList().isEmpty());
+		int messageCount = user.getMessageList().size();
+		
+	//	Clone user
+	//
+		IUser cloneUser = (IUser) _beanManager.clone(user); 
+		assertNotNull(cloneUser);
+		assertNotNull(cloneUser.getMessageList());
+		assertFalse(cloneUser.getMessageList().isEmpty());
+		assertEquals(messageCount, cloneUser.getMessageList().size());
+		 
+		
+		// Add a new message
+		cloneUser.addMessage(createNewCloneMessage(cloneUser)); 
+		assertEquals(messageCount +1, cloneUser.getMessageList().size());
+		 
+	//	Merge user
+	//
+		IUser mergeUser = (IUser) _beanManager.merge(cloneUser); 
+		
+		assertNotNull(mergeUser);
+		assertNotNull(mergeUser.getMessageList());
+		assertFalse(mergeUser.getMessageList().isEmpty());
+		assertEquals(messageCount+1, mergeUser.getMessageList().size());
+		
+	//	Save for test
+	//
+		userDAO.saveUser(mergeUser);
+	}
+	
+	//-------------------------------------------------------------------------
+	//
+	// Internal methods
+	//
+	//-------------------------------------------------------------------------
+	/**
+	 * Create a new message
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	protected IMessage createNewCloneMessage(IUser user) throws InstantiationException, IllegalAccessException
+	{
+	//	Create message
+	//
+		IMessage result = (IMessage) _cloneMessageClass.newInstance();
+		result.setDate(new Date());
+		result.setMessage("test message");
+		
+	//	Change author
+	//
+		changeAuthorForClone(result, user);
+			
+		return result;
+	}
+	
+	/**
+	 * Create a new user
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	protected IUser createNewCloneUser() throws InstantiationException, IllegalAccessException
+	{
+	//	Create user
+	//
+		IUser result = (IUser) _cloneUserClass.newInstance();
+			
+		return result;
+	}
+	
+	/**
+	 * Change the author of the message
+	 * @param message
+	 * @param user
+	 */
+	protected abstract void changeAuthorForClone(IMessage message, IUser user);
+	
+	/**
+	 * Change the author of the message
+	 * @param message
+	 * @param user
+	 */
+	protected abstract void changeAuthorForDomain(IMessage message, IUser user);
+}

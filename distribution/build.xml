@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="distribution" name="gilead">
+	
+	<!-- Properties -->
+    <property environment="env"/>
+    <property name="version" value="1.2"/>
+	<property name="project" value="gilead" />
+	<property name="output.dir" value="../../${project}-${version}" />
+	
+	<property name="src.dir" value="src"/>
+	<property name="build.dir" value="classes"/>
+	<property name="jar.dir" value="dist"/>
+	<property name="doc.dir" value="doc"/>
+	
+	<property name="core.dir" value="../adapter-core"/>
+	<property name="core.test.dir" value="../adapter-test"/>
+	<property name="hibernate.dir" value="../hibernate-util"/>
+	<property name="hibernate-jpa.dir" value="../hibernate-jpa-util"/>
+	<property name="adapter4gwt.dir" value="../adapter4gwt"/>
+	<property name="adapter-actionscript.dir" value="../adapter-actionscript"/>
+	<property name="adapter4blazeds.dir" value="../adapter4blazeds"/>
+	
+	<!-- Targets -->
+    <target name="init">
+        <mkdir dir="${output.dir}"/>
+    </target>
+    
+	<target name="clean">
+		<ant antfile="${core.dir}/build.xml" target="clean" 
+   		 	inheritall="false"/>
+		<ant antfile="${hibernate.dir}/build.xml" target="clean" 
+   		 	inheritall="false"/>
+    	<ant antfile="${hibernate-jpa.dir}/build.xml" target="clean" 
+    	   	inheritall="false"/>
+		<ant antfile="${adapter4gwt.dir}/build.xml" target="clean" 
+   		 	inheritall="false"/>
+    	<ant antfile="${adapter-actionscript.dir}/build.xml" target="clean" 
+    	   	inheritall="false"/>
+    	<ant antfile="${adapter4blazeds.dir}/build.xml" target="clean" 
+    	   	inheritall="false"/>
+        <delete dir="${output.dir}"/>
+    </target>
+	
+    <target name="build" depends="init">
+    	<ant antfile="${core.dir}/build.xml" target="jar" 
+   		 	inheritall="false"/>
+		<ant antfile="${hibernate.dir}/build.xml" target="jar" 
+   		 	inheritall="false"/>
+    	<ant antfile="${hibernate-jpa.dir}/build.xml" target="jar" 
+    	   	inheritall="false"/>
+		<ant antfile="${adapter4gwt.dir}/build.xml" target="jar" 
+   		 	inheritall="false"/>
+    	<ant antfile="${adapter-actionscript.dir}/build.xml" target="swc" 
+    	   	inheritall="false"/>
+    	<ant antfile="${adapter4blazeds.dir}/build.xml" target="jar" 
+    	   	inheritall="false"/>
+    </target>
+	
+	<target name="test" depends="init">
+	    <ant antfile="${core.test.dir}/build.xml" target="test" 
+	   		 inheritall="false"/>
+	</target>
+	
+	<target name="distribution" depends="clean, build, test">
+		<!-- copy jar files -->
+		<copy todir="${output.dir}/${jar.dir}">
+			<fileset dir="${core.dir}/${jar.dir}">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${hibernate.dir}/${jar.dir}">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${hibernate-jpa.dir}/${jar.dir}">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${adapter4gwt.dir}/${jar.dir}">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${adapter-actionscript.dir}/${jar.dir}">
+				<include name="*.swc"/>
+			</fileset>
+			<fileset dir="${adapter4blazeds.dir}/${jar.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+		
+		<!-- Copy src & lib for each component -->
+		<copy todir="${output.dir}/adapter-core"
+			  includeemptydirs="false">
+			<fileset dir="${core.dir}">
+				<include name="**/*"/>
+				<exclude name="**/bin/**/*"/>
+				<exclude name="**/${build.dir}/**/*"/>
+				<exclude name="**/${jar.dir}/**/*"/>
+			</fileset>
+		</copy>
+		
+		<copy todir="${output.dir}/hibernate-util"
+			  includeemptydirs="false">
+			<fileset dir="${hibernate.dir}">
+				<include name="**/*"/>
+				<exclude name="**/bin/**/*"/>
+				<exclude name="**/${build.dir}/**/*"/>
+				<exclude name="**/${jar.dir}/**/*"/>
+			</fileset>
+		</copy>
+					
+		<copy todir="${output.dir}/hibernate-jpa-util"
+			  includeemptydirs="false">
+			<fileset dir="${hibernate-jpa.dir}">
+				<include name="**/*"/>
+				<exclude name="**/bin/**/*"/>
+				<exclude name="**/${build.dir}/**/*"/>
+				<exclude name="**/${jar.dir}/**/*"/>
+			</fileset>
+		</copy>
+					
+		<copy todir="${output.dir}/adapter4gwt"
+			  includeemptydirs="false">
+			<fileset dir="${adapter4gwt.dir}">
+				<include name="**/*"/>
+				<exclude name="**/bin/**/*"/>
+				<exclude name="**/${build.dir}/**/*"/>
+				<exclude name="**/${jar.dir}/**/*"/>
+			</fileset>
+		</copy>
+		
+		<copy todir="${output.dir}/adapter-actionscript"
+			  includeemptydirs="false">
+			<fileset dir="${adapter-actionscript.dir}">
+				<include name="**/*"/>
+				<exclude name="**/bin/**/*"/>
+				<exclude name="**/${build.dir}/**/*"/>
+				<exclude name="**/${jar.dir}/**/*"/>
+			</fileset>
+		</copy>
+		
+		<copy todir="${output.dir}/adapter4blazeds"
+			  includeemptydirs="false">
+			<fileset dir="${adapter4blazeds.dir}">
+				<include name="**/*"/>
+				<exclude name="**/bin/**/*"/>
+				<exclude name="**/${build.dir}/**/*"/>
+				<exclude name="**/${jar.dir}/**/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${output.dir}/adapter-test"
+			  includeemptydirs="false">
+			<fileset dir="${core.test.dir}">
+				<include name="**/*"/>
+				<exclude name="**/bin/**/*"/>
+				<exclude name="**/${build.dir}/**/*"/>
+				<exclude name="**/${jar.dir}/**/*"/>
+			</fileset>
+		</copy>
+		
+		<!-- generate unified Javadoc -->
+		<copy todir="${output.dir}/${src.dir}">
+			<fileset dir="${core.dir}/${src.dir}">
+				<include name="**/*.java"/>
+			</fileset>
+			<fileset dir="${hibernate.dir}/${src.dir}">
+				<include name="**/*.java"/>
+			</fileset>
+			<fileset dir="${hibernate-jpa.dir}/${src.dir}">
+				<include name="**/*.java"/>
+			</fileset>
+			<fileset dir="${adapter4gwt.dir}/${src.dir}">
+				<include name="**/*.java"/>
+				<exclude name="**/emul/**/*.java"/>
+			</fileset>
+			<fileset dir="${adapter4blazeds.dir}/${src.dir}">
+				<include name="**/*.java"/>
+				<exclude name="**/emul/**/*.java"/>
+			</fileset>
+		</copy>
+		
+		<javadoc destdir="${output.dir}/${doc.dir}">
+			<fileset dir="${output.dir}/${src.dir}" />
+		</javadoc>
+		
+		<delete dir="${output.dir}/${src.dir}"/>
+	</target>
+</project>
