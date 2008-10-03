@@ -2,7 +2,7 @@ package net.sf.hibernate4gwt.blazeds.adapter;
 
 import java.util.List;
 
-import net.sf.gilead.core.HibernateBeanManager;
+import net.sf.gilead.core.PersistenceBeanManager;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.store.stateful.HttpSessionProxyStore;
 
@@ -34,7 +34,7 @@ public class HibernateAdapter extends JavaAdapter
 	/**
 	 * The Hibernate bean manager
 	 */
-	private HibernateBeanManager _beanManager;
+	private PersistenceBeanManager _beanManager;
 	
 	/**
 	 * Stateless store flag
@@ -74,7 +74,7 @@ public class HibernateAdapter extends JavaAdapter
 					}
 					
 					IPersistenceUtil persistenceUtil = PersistenceUtilManager.createPersistenceUtil(config);
-					_beanManager = new HibernateBeanManager();
+					_beanManager = new PersistenceBeanManager();
 					
 					if (_stateless == false)
 					{
