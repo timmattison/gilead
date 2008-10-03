@@ -1,9 +1,9 @@
-package net.sf.hibernate4gwt.pojo.actionscript
+package net.sf.gilead.pojo.actionscript
 {
 	import mx.collections.ArrayCollection;
 	
     [RemoteClass(alias="net.sf.gilead.pojo.java5.LightEntity")]
-	public class ightEntity
+	public class LightEntity
 	{
 		/**
 		 * The internal proxy informations
@@ -14,7 +14,7 @@ package net.sf.hibernate4gwt.pojo.actionscript
 		/**
 		 * Constructor of Lazy Pojo abstract class.
 		 **/
-		public function LazyPojo()
+		public function LightEntity()
 		{
 			_proxyInformations = new Object();
 		}
