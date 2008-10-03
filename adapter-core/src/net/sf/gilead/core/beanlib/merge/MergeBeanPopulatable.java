@@ -26,7 +26,7 @@ import net.sf.gilead.annotations.AnnotationsHelper;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.beanlib.CloneAndMergeConstants;
 import net.sf.gilead.core.store.IProxyStore;
-import net.sf.gilead.pojo.base.ILazyPojo;
+import net.sf.gilead.pojo.base.ILightEntity;
 import net.sf.gilead.util.IntrospectionHelper;
 
 /**
@@ -223,7 +223,7 @@ public class MergeBeanPopulatable implements DetailedBeanPopulatable
 	{
 		if (proxyInfo != null)
 		{
-			Serializable initialized = proxyInfo.get(ILazyPojo.INITIALISED);
+			Serializable initialized = proxyInfo.get(ILightEntity.INITIALISED);
 			if (initialized != null)
 			{
 				return ((Boolean) initialized).booleanValue(); 

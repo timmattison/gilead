@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<additionalCode suffix="_h4gwt14" implementedInterface="net.sf.gilead.pojo.base.ILazyPojo">
+<additionalCode suffix="_h4gwt14" implementedInterface="net.sf.gilead.pojo.base.ILightEntity">
 	<!--
 		ATTRIBUTES 
 	 -->

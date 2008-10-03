@@ -26,8 +26,8 @@ import net.sf.gilead.annotations.AnnotationsHelper;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.beanlib.IClassMapper;
 import net.sf.gilead.core.store.IProxyStore;
-import net.sf.gilead.exception.NotHibernateObjectException;
-import net.sf.gilead.exception.TransientHibernateObjectException;
+import net.sf.gilead.exception.NotPersistentObjectException;
+import net.sf.gilead.exception.TransientObjectException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -203,11 +203,11 @@ public class MergeClassBeanReplicator extends Hibernate3JavaBeanReplicator
 	        	Serializable id = _persistenceUtil.getId(from, toClass);
 	        	result = (T)_persistenceUtil.load(id, toClass);
         	}
-        	catch(NotHibernateObjectException e)
+        	catch(NotPersistentObjectException e)
         	{
         		_log.warn("Not an hibernate class (" + toClass + ") : annotated values will not be restored.");
         	}
-        	catch(TransientHibernateObjectException e)
+        	catch(TransientObjectException e)
         	{
         		_log.warn("Transient value of class " + toClass + " : annotated values will not be restored.");
         	}

@@ -223,7 +223,7 @@ public class LazyKiller
 	/**
 	 * Clone the abstract POJO with BeanLib
 	 * Every time a lazy property is detected, it is replaced with null.
-	 * It is also marked as "lazy" for ILazyPojo sub-classes
+	 * It is also marked as "lazy" for ILightEntity sub-classes
 	 * @param pojo
 	 * @return
 	 */

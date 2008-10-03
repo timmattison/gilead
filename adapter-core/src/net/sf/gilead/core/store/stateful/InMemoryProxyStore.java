@@ -22,8 +22,8 @@ import java.util.Map;
 
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.store.IProxyStore;
-import net.sf.gilead.exception.NotHibernateObjectException;
-import net.sf.gilead.exception.TransientHibernateObjectException;
+import net.sf.gilead.exception.NotPersistentObjectException;
+import net.sf.gilead.exception.TransientObjectException;
 
 /**
  * In Memory Proxy Information Store.
@@ -92,11 +92,11 @@ public class InMemoryProxyStore implements IProxyStore
 		{
 			return _map.get(computeKey(pojo, property));
 		}
-		catch(TransientHibernateObjectException ex)
+		catch(TransientObjectException ex)
 		{
 			return null;
 		}
-		catch (NotHibernateObjectException e)
+		catch (NotPersistentObjectException e)
 		{
 			return null;
 		}

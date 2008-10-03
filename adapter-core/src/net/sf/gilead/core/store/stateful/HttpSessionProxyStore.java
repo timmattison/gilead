@@ -24,9 +24,9 @@ import javax.servlet.http.HttpSession;
 
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.store.IProxyStore;
-import net.sf.gilead.exception.NotHibernateObjectException;
+import net.sf.gilead.exception.NotPersistentObjectException;
 import net.sf.gilead.exception.ProxyStoreException;
-import net.sf.gilead.exception.TransientHibernateObjectException;
+import net.sf.gilead.exception.TransientObjectException;
 
 /**
  * Proxy store for stateful web application
@@ -122,11 +122,11 @@ public class HttpSessionProxyStore implements IProxyStore
 		{
 			id = UniqueNameGenerator.generateUniqueName(_persistenceUtil, pojo);
 		}
-		catch (TransientHibernateObjectException e)
+		catch (TransientObjectException e)
 		{
 			return null;
 		}
-		catch (NotHibernateObjectException e)
+		catch (NotPersistentObjectException e)
 		{
 			return null;
 		}

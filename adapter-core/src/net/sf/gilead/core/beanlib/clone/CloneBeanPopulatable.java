@@ -25,7 +25,7 @@ import net.sf.gilead.annotations.AnnotationsHelper;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.beanlib.CloneAndMergeConstants;
 import net.sf.gilead.core.store.IProxyStore;
-import net.sf.gilead.pojo.base.ILazyPojo;
+import net.sf.gilead.pojo.base.ILightEntity;
 import net.sf.gilead.util.IntrospectionHelper;
 
 import org.apache.commons.logging.Log;
@@ -164,7 +164,7 @@ public class CloneBeanPopulatable implements DetailedBeanPopulatable
 				
 			//	Add lazy property
 			//
-				proxyInformations.put(ILazyPojo.INITIALISED, false);
+				proxyInformations.put(ILightEntity.INITIALISED, false);
 				
 			//	Store proxy information
 			//

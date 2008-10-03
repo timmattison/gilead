@@ -25,7 +25,6 @@ import javassist.CtField;
 import javassist.CtMethod;
 import javassist.CtNewConstructor;
 import javassist.CtNewMethod;
-import javassist.NotFoundException;
 import net.sf.gilead.exception.ProxyException;
 import net.sf.gilead.proxy.xml.AdditionalCode;
 import net.sf.gilead.proxy.xml.Attribute;
@@ -82,7 +81,7 @@ public class JavassistProxyGenerator implements IServerProxyGenerator
 		//
 			proxyClass.setSuperclass(pool.get(sourceClassName));
 			
-		//	Add ILazyPojo inheritance
+		//	Add ILightEntity inheritance
 		//
 			if (additionalCode.getImplementedInterface() != null)
 			{
@@ -109,7 +108,7 @@ public class JavassistProxyGenerator implements IServerProxyGenerator
 	//
 	//-------------------------------------------------------------------------
 	/**
-	 * Generates ILazyPojo classes and methods
+	 * Generates ILightEntity classes and methods
 	 * @throws CannotCompileException 
 	 */
 	private void generateProxy(CtClass proxyClass, AdditionalCode additionalCode) throws CannotCompileException

@@ -14,53 +14,55 @@
  * limitations under the License.
  */
 
-package net.sf.gilead.pojo.java5;
-
+package net.sf.gilead.pojo.java14;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.gilead.pojo.base.ILazyPojo;
+import net.sf.gilead.pojo.base.ILightEntity;
 
 /**
- * Abstract POJO with minimal proxy informations handling
+ * Abstract POJO for lazy property handling.
+ * This class is Java 1.4 and holds GWT xdoclets
  * @author bruno.marchesson
  *
  */
-public abstract class LazyPojo implements ILazyPojo, Serializable
+public abstract class LightEntity implements ILightEntity, Serializable
 {
 	//-----
 	// Attributes
 	//-----
 	/**
-	 * Map of persistence proxy informations.
+	 * Map of proxy informations
 	 * The key is the property name, the value is a map with
 	 * persistence informations filled by the persistence util
-	 * implementation
+	 * implementation.
+	 * @gwt.typeArgs <java.lang.String, java.util.Map<java.lang.String, java.lang.Byte>>
 	 */
-	protected Map<String, Map<String, byte[]>> _proxyInformations;
+	protected Map _proxyInformations;
 	
 	//----
 	// Properties
 	//----
 	/**
-	 * @return the proxy informations
+	 * @return the persistent collections properties
+	 * @gwt.typeArgs <java.lang.String, java.util.Map<java.lang.String, java.lang.Byte>>
 	 */
-	public Map<String, Map<String, byte[]>> getProxyInformations()
+	public Map getProxyInformations()
 	{
 		return _proxyInformations;
 	}
 
 	/**
-	 * @param informations the proxy Informations to set
+	 * @param properties the persistent collection properties to set
+	 * @gwt.typeArgs properties <java.lang.String, java.util.Map<java.lang.String, java.lang.Byte>>
 	 */
-	@SuppressWarnings("unchecked")
-	public void setProxyInformations(Map informations)
+	public void setProxyInformations(Map properties)
 	{
-		_proxyInformations = informations;
+		_proxyInformations = properties;
 	}
-
+	
 	//-------------------------------------------------------------------------
 	//
 	// Constructor
@@ -69,48 +71,50 @@ public abstract class LazyPojo implements ILazyPojo, Serializable
 	/**
 	 * Constructor
 	 */
-	public LazyPojo()
+	public LightEntity()
 	{
 		super();
-		_proxyInformations = new HashMap<String, Map<String, byte[]>>();
+		_proxyInformations = new HashMap();
 	}
-	
+
 	//-------------------------------------------------------------------------
 	//
 	// Public interface
 	//
 	//-------------------------------------------------------------------------
 	/*
-	 * 
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.pojo.base.ILightEntity#addProxyInformations(java.lang.String, java.lang.Class)
+	 * @gwt.typeArgs proxuInformations <java.lang.String, java.lang.Byte>
 	 */
-	@SuppressWarnings("unchecked")
 	public void addProxyInformation(String property,
-									Map	proxyInfo)
+									Map proxyInformations)
 	{
-		_proxyInformations.put(property, proxyInfo);
+		_proxyInformations.put(property, proxyInformations);
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.sf.gilead.pojo.base.ILazyPojo#removeProxyInformation(java.lang.String)
+	 * @see net.sf.gilead.pojo.base.ILightEntity#removeProxyInformations(java.lang.String)
 	 */
 	public void removeProxyInformation(String property)
 	{
 		_proxyInformations.remove(property);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.pojo.base.ILightEntity#getProxyInformations(java.lang.String)
+	 * @gwt.typeArgs <java.lang.String, java.lang.Byte>
+	 */
+	public Map getProxyInformation(String property)
+	{
+		return (Map) _proxyInformations.get(property);
+	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.sf.gilead.pojo.base.ILazyPojo#getProxyInformation(java.lang.String)
-	 */
-	@SuppressWarnings("unchecked")
-	public Map getProxyInformation(String property)
-	{
-		return _proxyInformations.get(property);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.dotnetguru.lazykiller.pojo.ILazyPojo#getLazyString()
+	 * @see net.sf.gilead.pojo.base.ILightEntity#getDebugString()
 	 */
 	public String getDebugString()
 	{

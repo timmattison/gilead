@@ -16,7 +16,6 @@
 
 package net.sf.gilead.pojo.base;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -24,7 +23,7 @@ import java.util.Map;
  * All the persistent POJO must implements this interface in stateless mode.
  * @author bruno.marchesson
  */
-public interface ILazyPojo
+public interface ILightEntity
 {
 	//-----
 	// Constant

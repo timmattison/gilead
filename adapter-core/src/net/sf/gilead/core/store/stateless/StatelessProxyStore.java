@@ -23,13 +23,13 @@ import java.util.Map;
 import net.sf.gilead.core.serialization.SerializationManager;
 import net.sf.gilead.core.store.IProxyStore;
 import net.sf.gilead.exception.ProxyStoreException;
-import net.sf.gilead.pojo.base.ILazyPojo;
+import net.sf.gilead.pojo.base.ILightEntity;
 
 /**
  * Stateless proxy store.
- * The proxy informations is stored on the pojo, by implementing the ILazyPojo
+ * The proxy informations is stored on the pojo, by implementing the ILightEntity
  * interface.
- * @see ILazyPojo
+ * @see ILightEntity
  * @author bruno.marchesson
  */
 public class StatelessProxyStore implements IProxyStore
@@ -46,16 +46,16 @@ public class StatelessProxyStore implements IProxyStore
 	public void storeProxyInformations(Object pojo, Serializable pojoId, String property,
 									   Map<String, Serializable> proxyInformations)
 	{
-	//	ILazyPojo checking
+	//	ILightEntity checking
 	//
-		if (pojo instanceof ILazyPojo == false)
+		if (pojo instanceof ILightEntity == false)
 		{
-			throw new ProxyStoreException("Class " + pojo + " must implements ILazyPojo interface !", pojo);
+			throw new ProxyStoreException("Class " + pojo + " must implements ILightEntity interface !", pojo);
 		}
 		
 	//	Store information in the POJO
 	//
-		((ILazyPojo)pojo).addProxyInformation(property, 
+		((ILightEntity)pojo).addProxyInformation(property, 
 											  convertSerializableToBytes(proxyInformations));
 	}
 	
@@ -65,13 +65,13 @@ public class StatelessProxyStore implements IProxyStore
 	 */
 	public void removeProxyInformations(Object pojo, String property)
 	{
-	//	ILazyPojo checking
+	//	ILightEntity checking
 	//
-		if (pojo instanceof ILazyPojo)
+		if (pojo instanceof ILightEntity)
 		{	
 		//	Remove information from the POJO
 		//
-			((ILazyPojo)pojo).removeProxyInformation(property);
+			((ILightEntity)pojo).removeProxyInformation(property);
 		}
 	}
 
@@ -82,16 +82,16 @@ public class StatelessProxyStore implements IProxyStore
 	@SuppressWarnings("unchecked")
 	public Map<String, Serializable> getProxyInformations(Object pojo, String property)
 	{
-	//	ILazyPojo checking
+	//	ILightEntity checking
 	//
-		if (pojo instanceof ILazyPojo == false)
+		if (pojo instanceof ILightEntity == false)
 		{
 			return null;
 		}
 		
 	//	Store information in the POJO
 	//
-		return convertBytesToSerializable(((ILazyPojo)pojo).getProxyInformation(property));
+		return convertBytesToSerializable(((ILightEntity)pojo).getProxyInformation(property));
 	}
 	
 	//-------------------------------------------------------------------------

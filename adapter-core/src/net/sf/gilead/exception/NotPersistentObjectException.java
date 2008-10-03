@@ -4,11 +4,11 @@
 package net.sf.gilead.exception;
 
 /**
- * Exception when trying to clone or merge an transient object
+ * Exception when trying to clone or merge an object not persisted with Persistence engine
  * @author bruno.marchesson
  *
  */
-public class TransientHibernateObjectException extends RuntimeException
+public class NotPersistentObjectException extends RuntimeException
 {
 	//----
 	// Attribute
@@ -16,8 +16,8 @@ public class TransientHibernateObjectException extends RuntimeException
 	/**
 	 * Serialisation ID
 	 */
-	private static final long serialVersionUID = -3916689195006928705L;
-	
+	private static final long serialVersionUID = 3274347637647294793L;
+
 	/**
 	 * The exception object
 	 */
@@ -40,7 +40,7 @@ public class TransientHibernateObjectException extends RuntimeException
 	/**
 	 * Base constructor
 	 */
-	public TransientHibernateObjectException(Object object)
+	public NotPersistentObjectException(Object object)
 	{
 		_object = object;
 	}

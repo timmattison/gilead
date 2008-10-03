@@ -41,31 +41,31 @@ import net.sf.gilead.core.store.stateless.StatelessProxyStore;
 import net.sf.gilead.exception.CloneException;
 import net.sf.gilead.exception.InvocationException;
 import net.sf.gilead.exception.NotAssignableException;
-import net.sf.gilead.exception.NotHibernateObjectException;
-import net.sf.gilead.exception.TransientHibernateObjectException;
+import net.sf.gilead.exception.NotPersistentObjectException;
+import net.sf.gilead.exception.TransientObjectException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Manager for Hibernate POJO handling
+ * Manager for Persistent POJO handling
  * @author bruno.marchesson
  *
  */
-public class HibernateBeanManager
+public class PersistenceBeanManager
 {
 	//----
 	// Attributes
 	//----
 	/**
-	 * The unique instance of the Hibernate Helper
+	 * The unique instance of the Persistence Bean Manager
 	 */
-	private static HibernateBeanManager _instance = null;
+	private static PersistenceBeanManager _instance = null;
 	
 	/**
 	 * Log channel
 	 */
-	private Log _log = LogFactory.getLog(HibernateBeanManager.class);
+	private Log _log = LogFactory.getLog(PersistenceBeanManager.class);
 	
 	/**
 	 * The associated Proxy informations store
@@ -93,11 +93,11 @@ public class HibernateBeanManager
 	/**
 	 * @return the unique instance of the singleton
 	 */
-	public synchronized static HibernateBeanManager getInstance()
+	public synchronized static PersistenceBeanManager getInstance()
 	{
 		if (_instance == null)
 		{
-			_instance = new HibernateBeanManager();
+			_instance = new PersistenceBeanManager();
 		}
 		return _instance;
 	}
@@ -167,7 +167,7 @@ public class HibernateBeanManager
 	/**
 	 * Empty Constructor
 	 */
-	public HibernateBeanManager()
+	public PersistenceBeanManager()
 	{
 	//	Default parameters
 	//
@@ -397,7 +397,7 @@ public class HibernateBeanManager
 	 * @param assignable does the source and target class must be assignable
 	 * @return the merged Hibernate POJO
 	 * @exception UnsupportedOperationException if the clone POJO does not 
-	 * implements ILazyPojo and the POJO store is stateless
+	 * implements ILightEntity and the POJO store is stateless
 	 * @exception NotAssignableException if source and target class are not assignable
 	 */
 	protected Object mergePojo(Object clonePojo, boolean assignable)
@@ -444,11 +444,11 @@ public class HibernateBeanManager
 					_log.info("HibernatePOJO not found : can be transient or deleted data : " + clonePojo);
 				}
 			}
-			catch(TransientHibernateObjectException ex)
+			catch(TransientObjectException ex)
 			{
 				_log.info("Transient object : " + clonePojo);
 			}
-			catch(NotHibernateObjectException ex)
+			catch(NotPersistentObjectException ex)
 			{
 				if (holdPersistentObject(clonePojo) == false)
 				{
@@ -509,7 +509,7 @@ public class HibernateBeanManager
 	 * @param clonePojoList the clone pojo list
 	 * @return a list of merged Hibernate POJO 
 	 * @exception UnsupportedOperationException if a POJO from the list does 
-	 * not implements ILazyPojo and the POJO store is stateless
+	 * not implements ILightEntity and the POJO store is stateless
 	 */
 	protected Collection<?> mergeCollection(Collection<?> clonePojoList, boolean assignable)
 	{
@@ -523,7 +523,7 @@ public class HibernateBeanManager
 			{
 				hibernatePojoList.add(merge(clonePojo, assignable));
 			}
-			catch(TransientHibernateObjectException e)
+			catch(TransientObjectException e)
 			{
 			//	Keep new pojo (probably created from GWT)
 			//
@@ -553,7 +553,7 @@ public class HibernateBeanManager
 			{
 				key = merge(key, assignable);
 			}
-			catch (TransientHibernateObjectException ex)
+			catch (TransientObjectException ex)
 			{ /* keep key untouched */ }
 			
 			// Merge value
@@ -562,7 +562,7 @@ public class HibernateBeanManager
 			{
 				value = merge(value, assignable);
 			}
-			catch (TransientHibernateObjectException ex)
+			catch (TransientObjectException ex)
 			{ /* keep value untouched */ }
 			
 			hibernateMap.put(key, value);

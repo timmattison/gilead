@@ -35,12 +35,12 @@ public class ProxyManager
 	/**
 	 * Addition code for Java 1.4 Lazy Pojo 
 	 */
-	public static final String JAVA_14_LAZY_POJO = "net/sf/gilead/proxy/xml/LazyPojo.java14.xml";
+	public static final String JAVA_14_LAZY_POJO = "net/sf/gilead/proxy/xml/LightEntity.java14.xml";
 	
 	/**
 	 * Addition code for Java 1.4 Lazy Pojo 
 	 */
-	public static final String JAVA_5_LAZY_POJO = "net/sf/gilead/proxy/xml/LazyPojo.java5.xml";
+	public static final String JAVA_5_LAZY_POJO = "net/sf/gilead/proxy/xml/LightEntity.java5.xml";
 	
 	
 	//----
