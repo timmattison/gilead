@@ -5,8 +5,8 @@ import java.io.Serializable;
 import junit.framework.TestCase;
 import net.sf.gilead.core.LazyKiller;
 import net.sf.gilead.core.TestHelper;
-import net.sf.gilead.exception.NotHibernateObjectException;
-import net.sf.gilead.exception.TransientHibernateObjectException;
+import net.sf.gilead.exception.NotPersistentObjectException;
+import net.sf.gilead.exception.TransientObjectException;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.HibernateContext;
 import net.sf.gilead.test.HibernateContext.Context;
@@ -80,7 +80,7 @@ public class HibernateUtilTest extends TestCase
 			HibernateUtil.getInstance().getId(user);
 			fail("Expected an exception on transient object");
 		}
-		catch(TransientHibernateObjectException ex)
+		catch(TransientObjectException ex)
 		{ /* expected behavior */ }
 		
 	//	Error test on non Hibernate object
@@ -91,7 +91,7 @@ public class HibernateUtilTest extends TestCase
 			HibernateUtil.getInstance().getId(configuration);
 			fail("Expected an exception on not Hibernate object");
 		}
-		catch(NotHibernateObjectException ex)
+		catch(NotPersistentObjectException ex)
 		{ /* expected behavior */ }
 		
 	}

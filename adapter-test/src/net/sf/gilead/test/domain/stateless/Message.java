@@ -4,19 +4,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.gilead.pojo.java5.LazyPojo;
+import net.sf.gilead.pojo.java5.LightEntity;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
 
 /**
  * Message Java 1.4 domain class for stateless pojo store
- * This class just has to inherit from LazyPojo;
+ * This class just has to inherit from LightEntity;
  * The 'Keywords' property has private getter and setter
  * 
  * @author bruno.marchesson
  *
  */
-public class Message extends LazyPojo implements IMessage
+public class Message extends LightEntity implements IMessage
 {
 	/**
 	 * Serialisation ID

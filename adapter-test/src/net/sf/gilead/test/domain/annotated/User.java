@@ -18,7 +18,7 @@ import javax.persistence.Version;
 
 import net.sf.gilead.annotations.ReadOnly;
 import net.sf.gilead.annotations.ServerOnly;
-import net.sf.gilead.pojo.java5.LazyPojo;
+import net.sf.gilead.pojo.java5.LightEntity;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
 
@@ -28,7 +28,7 @@ import net.sf.gilead.test.domain.IUser;
 @Entity
 @Table(name="user")
 @Inheritance(strategy=InheritanceType.JOINED)
-public class User extends LazyPojo implements IUser
+public class User extends LightEntity implements IUser
 {
 	/**
 	 * Serialisation ID

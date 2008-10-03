@@ -18,7 +18,7 @@ import javax.persistence.Version;
 
 import net.sf.gilead.annotations.ReadOnly;
 import net.sf.gilead.annotations.ServerOnly;
-import net.sf.gilead.pojo.java5.LazyPojo;
+import net.sf.gilead.pojo.java5.LightEntity;
 import net.sf.gilead.test.domain.IMessage;
 
 import org.hibernate.annotations.CollectionOfElements;
@@ -32,7 +32,7 @@ import org.hibernate.annotations.CollectionOfElements;
  */
 @Entity
 @Table(name="message")
-public class Message extends LazyPojo implements IMessage
+public class Message extends LightEntity implements IMessage
 {
 	/**
 	 * Serialisation ID

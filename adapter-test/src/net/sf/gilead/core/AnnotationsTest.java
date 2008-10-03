@@ -25,7 +25,7 @@ public class AnnotationsTest extends TestCase
 	/**
 	 * Hibernate lazy manager
 	 */
-	protected HibernateBeanManager _beanManager;
+	protected PersistenceBeanManager _beanManager;
 	
 	//-------------------------------------------------------------------------
 	//
@@ -101,7 +101,7 @@ public class AnnotationsTest extends TestCase
 		
 	//	Load message
 	//
-		Message message = (Message) messageDAO.loadDetailedMessage(messageDAO.loadLastMessage().getId());
+		Message message = (Message) messageDAO.loadDetailedMessage((Integer)TestHelper.getExistingMessageId());
 		assertNotNull(message);
 		assertNotNull(message.getVersion()); // serverOnly
 		assertTrue(message.countKeywords() > 0); // readOnly

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.sf.gilead.pojo.java5.LazyPojo;
+import net.sf.gilead.pojo.java5.LightEntity;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
 
@@ -12,7 +12,7 @@ import net.sf.gilead.test.domain.IUser;
 /**
  * User Domain class for stateless server
  */
-public class User extends LazyPojo implements Serializable, IUser
+public class User extends LightEntity implements Serializable, IUser
 {
 	/**
 	 * Serialisation ID

@@ -3,14 +3,14 @@ package net.sf.gilead.test.domain.dto;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.sf.gilead.pojo.java5.LazyPojo;
+import net.sf.gilead.pojo.java5.LightEntity;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
 
 /**
  * DTO User class for Java5 support
  */
-public class UserDTO extends LazyPojo implements IUser
+public class UserDTO extends LightEntity implements IUser
 {
 	/**
 	 * Serialisation ID

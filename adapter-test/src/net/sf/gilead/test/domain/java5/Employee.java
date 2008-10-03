@@ -1,5 +1,7 @@
 package net.sf.gilead.test.domain.java5;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -14,7 +16,7 @@ import net.sf.gilead.test.domain.IEmployee;
  */
 @Entity
 @Table(name="employee")
-public class Employee extends User implements IEmployee
+public class Employee extends User implements IEmployee, Serializable
 {
     /**
 	 * Serialization ID

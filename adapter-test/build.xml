@@ -65,7 +65,7 @@
     </target>
 	
 	<target name="test" depends="build">
-		<junit printsummary="yes" haltonfailure="yes">
+		<junit printsummary="yes" haltonfailure="no">
 			<classpath refid="project.classpath" />
 			<formatter type="brief" usefile="false" />
 			<batchtest fork="no" todir="${reports.tests}">

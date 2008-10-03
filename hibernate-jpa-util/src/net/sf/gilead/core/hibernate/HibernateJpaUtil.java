@@ -10,8 +10,8 @@ import java.util.Set;
 
 import net.sf.beanlib.hibernate.UnEnhancer;
 import net.sf.gilead.core.IPersistenceUtil;
-import net.sf.gilead.exception.NotHibernateObjectException;
-import net.sf.gilead.exception.TransientHibernateObjectException;
+import net.sf.gilead.exception.NotPersistentObjectException;
+import net.sf.gilead.exception.TransientObjectException;
 import net.sf.gilead.pojo.base.IUserType;
 
 import org.hibernate.EntityMode;
@@ -179,7 +179,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 		{
 		//	Not an hibernate Class !
 		//
-			throw new NotHibernateObjectException(hibernateClass);			
+			throw new NotPersistentObjectException(hibernateClass);			
 		}
 		
 	//	Retrieve Class<?> hibernate metadata
@@ -190,7 +190,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 		//	Component class (persistent but not metadata) : no associated id
 		//	So must be considered as transient
 		//
-			throw new TransientHibernateObjectException(pojo);
+			throw new TransientObjectException(pojo);
 		}
 		
 	//	Retrieve ID
@@ -236,7 +236,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 		if ((id == null) ||
 			(id.toString().equals("0") == true))
 		{
-			throw new TransientHibernateObjectException(pojo);
+			throw new TransientObjectException(pojo);
 		}
 		return id;
 	}
@@ -261,11 +261,11 @@ public class HibernateJpaUtil implements IPersistenceUtil
 			getId(pojo);
 			return true;
 		}
-		catch(TransientHibernateObjectException ex)
+		catch(TransientObjectException ex)
 		{
 			return false;
 		}
-		catch(NotHibernateObjectException ex)
+		catch(NotPersistentObjectException ex)
 		{
 			return false;
 		}

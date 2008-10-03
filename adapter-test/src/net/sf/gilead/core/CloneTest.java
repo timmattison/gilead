@@ -41,7 +41,7 @@ public abstract class CloneTest extends TestCase
 	/**
 	 * Hibernate lazy manager
 	 */
-	protected HibernateBeanManager _beanManager;
+	protected PersistenceBeanManager _beanManager;
 	
 	/**
 	 * Clone user class

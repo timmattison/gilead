@@ -141,6 +141,28 @@ public class TestHelper
 	}
 	
 	/**
+	 * @return an existing message ID
+	 */
+	public static Serializable getExistingMessageId()
+	{
+	//	Load user list
+	//
+		List<IMessage> messageList = DAOFactory.getMessageDAO().loadAllMessage(0, 1);
+		
+		if ((messageList == null) ||
+			(messageList.isEmpty() == true))
+		{
+			return null;
+		}
+		else
+		{
+		//	Return first element
+		//
+			return messageList.get(0).getId();
+		}
+	}
+	
+	/**
 	 * Compute keywords for message
 	 * @param message the message to save
 	 */
@@ -172,14 +194,14 @@ public class TestHelper
 	/**
 	 * Init bean manager for stateless mode
 	 */
-	public static HibernateBeanManager initStatelessBeanManager()
+	public static PersistenceBeanManager initStatelessBeanManager()
 	{
 		HibernateContext.setContext(HibernateContext.Context.stateless);
 		
 		HibernateUtil persistenceUtil = new HibernateUtil(); 
 		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
 		
-		HibernateBeanManager beanManager = new HibernateBeanManager();
+		PersistenceBeanManager beanManager = new PersistenceBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(new StatelessProxyStore());
 		
@@ -189,7 +211,7 @@ public class TestHelper
 	/**
 	 * Init bean manager for stateless mode
 	 */
-	public static HibernateBeanManager initStatefulBeanManager()
+	public static PersistenceBeanManager initStatefulBeanManager()
 	{
 		HibernateContext.setContext(HibernateContext.Context.stateful);
 		
@@ -199,7 +221,7 @@ public class TestHelper
 		InMemoryProxyStore proxyStore = new InMemoryProxyStore();
 		proxyStore.setPersistenceUtil(persistenceUtil);
 		
-		HibernateBeanManager beanManager = new HibernateBeanManager();
+		PersistenceBeanManager beanManager = new PersistenceBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(proxyStore);
 		
@@ -210,14 +232,14 @@ public class TestHelper
 	 * Init bean manager for dynamic proxy mode
 	 * @throws FileNotFoundException 
 	 */
-	public static HibernateBeanManager initProxyBeanManager() throws FileNotFoundException
+	public static PersistenceBeanManager initProxyBeanManager() throws FileNotFoundException
 	{
 		HibernateContext.setContext(HibernateContext.Context.proxy);
 		
 		HibernateUtil persistenceUtil = new HibernateUtil(); 
 		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
 		
-		HibernateBeanManager beanManager = new HibernateBeanManager();
+		PersistenceBeanManager beanManager = new PersistenceBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(new StatelessProxyStore());
 		
@@ -229,14 +251,14 @@ public class TestHelper
 	/**
 	 * Init bean manager for Java5 support mode
 	 */
-	public static HibernateBeanManager initJava5SupportBeanManager() throws FileNotFoundException
+	public static PersistenceBeanManager initJava5SupportBeanManager() throws FileNotFoundException
 	{
 		HibernateContext.setContext(HibernateContext.Context.java5);
 		
 		HibernateUtil persistenceUtil = new HibernateUtil(); 
 		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
 		
-		HibernateBeanManager beanManager = new HibernateBeanManager();
+		PersistenceBeanManager beanManager = new PersistenceBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(new StatelessProxyStore());
 		
@@ -252,14 +274,14 @@ public class TestHelper
 	/**
 	 * Init bean manager for annotated Java5 mode
 	 */
-	public static HibernateBeanManager initJava5AnnotatedBeanManager() throws FileNotFoundException
+	public static PersistenceBeanManager initJava5AnnotatedBeanManager() throws FileNotFoundException
 	{
 		HibernateContext.setContext(HibernateContext.Context.annotated);
 		
 		HibernateUtil persistenceUtil = new HibernateUtil(); 
 		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
 		
-		HibernateBeanManager beanManager = new HibernateBeanManager();
+		PersistenceBeanManager beanManager = new PersistenceBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(new StatelessProxyStore());
 		

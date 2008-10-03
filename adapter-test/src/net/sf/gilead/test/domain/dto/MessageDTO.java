@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.gilead.pojo.java5.LazyPojo;
+import net.sf.gilead.pojo.java5.LightEntity;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
 
@@ -15,7 +15,7 @@ import net.sf.gilead.test.domain.IUser;
  * @author bruno.marchesson
  *
  */
-public class MessageDTO extends LazyPojo implements IMessage
+public class MessageDTO extends LightEntity implements IMessage
 {
 	/**
 	 * Serialisation ID
