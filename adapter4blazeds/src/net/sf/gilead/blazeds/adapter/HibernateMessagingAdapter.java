@@ -1,6 +1,4 @@
-package net.sf.hibernate4gwt.blazeds.adapter;
-
-import java.util.List;
+package net.sf.gilead.blazeds.adapter;
 
 import net.sf.gilead.core.PersistenceBeanManager;
 import net.sf.gilead.core.IPersistenceUtil;
@@ -11,17 +9,17 @@ import org.apache.commons.logging.LogFactory;
 
 import flex.messaging.FlexContext;
 import flex.messaging.config.ConfigMap;
+import flex.messaging.messages.AsyncMessage;
 import flex.messaging.messages.Message;
-import flex.messaging.messages.RemotingMessage;
-import flex.messaging.services.remoting.adapters.JavaAdapter;
+import flex.messaging.services.messaging.adapters.ActionScriptAdapter;
 
 /**
- * Hibernate adapter for BlazeDS
+ * Hibernate adapter for BlazeDS Messing
  * It is based on hibernate4gwt core and delegates Hibernate beans management to it.
  * @author bruno.marchesson
  *
  */
-public class HibernateAdapter extends JavaAdapter
+public class HibernateMessagingAdapter extends ActionScriptAdapter
 {
 	//----
 	// Attribute
@@ -29,17 +27,17 @@ public class HibernateAdapter extends JavaAdapter
 	/**
 	 * Log channel
 	 */
-	private static Log _log = LogFactory.getLog(HibernateAdapter.class);
+	private static Log _log = LogFactory.getLog(HibernateMessagingAdapter.class);
 	
 	/**
 	 * The Hibernate bean manager
 	 */
 	private PersistenceBeanManager _beanManager;
-	
+
 	/**
 	 * Stateless store flag
 	 */
-	private boolean _stateless;
+	private boolean _stateless;	
 	
 	//-------------------------------------------------------------------------
 	//
@@ -100,7 +98,7 @@ public class HibernateAdapter extends JavaAdapter
 	@Override
 	public Object invoke(Message message)
 	{
-		RemotingMessage remotingMessage = (RemotingMessage) message;
+		AsyncMessage asyncMessage = (AsyncMessage) message;
 		
 		try
 		{
@@ -110,21 +108,18 @@ public class HibernateAdapter extends JavaAdapter
 			{
 				HttpSessionProxyStore.setHttpSession(FlexContext.getHttpRequest().getSession(true));
 			}
-			
-		//	Merge input arguments
+		
+		//	Clone body to remove proxies
 		//
-			_log.info("Merging input parameters " + remotingMessage.getParameters());
-			List mergedParameters = (List) _beanManager.merge(remotingMessage.getParameters());
-			remotingMessage.setParameters(mergedParameters);
+			Object body = asyncMessage.getBody();
+			_log.info("Cloning body " + body);
+			body = _beanManager.clone(body);
 			
-		// 	Call Java adapter
+			asyncMessage.setBody(body);
+		
+		// 	Call ActionScript adapter
 		//
-			Object result = super.invoke(message);
-			
-		//	Clone result
-		//
-			_log.info("Cloning result " + result);
-			return _beanManager.clone(result);
+			return super.invoke(message);
 		}
 		catch (RuntimeException e)
 		{

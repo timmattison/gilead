@@ -1,7 +1,4 @@
-/**
- * 
- */
-package net.sf.hibernate4gwt.blazeds.adapter;
+package net.sf.gilead.blazeds.adapter;
 
 import java.lang.reflect.Method;
 import java.util.Iterator;
