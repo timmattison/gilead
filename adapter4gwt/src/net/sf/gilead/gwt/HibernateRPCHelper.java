@@ -5,11 +5,11 @@ package net.sf.gilead.gwt;
 
 import javax.servlet.http.HttpSession;
 
-import net.sf.gilead.core.HibernateBeanManager;
+import net.sf.gilead.core.PersistenceBeanManager;
 import net.sf.gilead.core.beanlib.mapper.ProxyClassMapper;
 import net.sf.gilead.core.store.stateful.HttpSessionProxyStore;
 import net.sf.gilead.exception.NotAssignableException;
-import net.sf.gilead.exception.TransientHibernateObjectException;
+import net.sf.gilead.exception.TransientObjectException;
 import net.sf.gilead.proxy.ProxyClassLoader;
 
 import org.apache.commons.logging.Log;
@@ -59,7 +59,7 @@ public class HibernateRPCHelper
 	 * @param session the HTTP session (for HTTP Pojo store)
 	 */
 	public static void parseInputParameters(RPCRequest rpcRequest, 
-											HibernateBeanManager beanManager,
+											PersistenceBeanManager beanManager,
 											HttpSession session)
 	{
 	//	Init classloader for proxy mode
@@ -91,7 +91,7 @@ public class HibernateRPCHelper
 					{
 						log.debug(parameters[index] + " not assignable");
 					}
-					catch (TransientHibernateObjectException ex)
+					catch (TransientObjectException ex)
 					{
 						log.info(parameters[index] + " is transient : cannot merge...");
 					}
@@ -108,7 +108,7 @@ public class HibernateRPCHelper
 	 * @return the cloned service value
 	 */
 	public static final Object parseReturnValue(Object returnValue,
-											    HibernateBeanManager beanManager)
+											    PersistenceBeanManager beanManager)
 	{
 	//	Clone if needed
 	//
@@ -122,7 +122,7 @@ public class HibernateRPCHelper
 			{
 				log.debug(returnValue + " not assignable");
 			}
-			catch (TransientHibernateObjectException ex)
+			catch (TransientObjectException ex)
 			{
 				log.info(returnValue + " is transient : cannot clone...");
 			}

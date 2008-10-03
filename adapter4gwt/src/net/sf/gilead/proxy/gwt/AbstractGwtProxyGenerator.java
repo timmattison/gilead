@@ -18,7 +18,7 @@ package net.sf.gilead.proxy.gwt;
 
 import java.io.PrintWriter;
 
-import net.sf.gilead.pojo.base.ILazyPojo;
+import net.sf.gilead.pojo.base.ILightEntity;
 import net.sf.gilead.proxy.xml.AdditionalCode;
 import net.sf.gilead.proxy.xml.AdditionalCodeReader;
 import net.sf.gilead.proxy.xml.Attribute;
@@ -88,7 +88,7 @@ public abstract class AbstractGwtProxyGenerator extends Generator
 			JClassType requestedClass = typeOracle.getType(typeName);
 			
 			// Do not generate proxy for a class already implementing 
-			// ILazyPojo interface
+			// ILightEntity interface
 			if (isLazyPojo(requestedClass) == true)
 			{
 				// LOGGER is not compatible from GWT 1.4 to GWT 1.5 !
@@ -270,7 +270,7 @@ public abstract class AbstractGwtProxyGenerator extends Generator
 	}
 	
 	/**
-	 * Check if the argument class already implements ILazyPojo
+	 * Check if the argument class already implements ILightEntity
 	 * @param clazz
 	 * @return
 	 */
@@ -279,8 +279,8 @@ public abstract class AbstractGwtProxyGenerator extends Generator
 	//	Check superclass name
 	//
 		String superclassName = clazz.getSuperclass().getQualifiedSourceName();
-		if ((net.sf.gilead.pojo.java14.LazyPojo.class.getCanonicalName().equals(superclassName)) ||
-			(net.sf.gilead.pojo.java5.LazyPojo.class.getCanonicalName().equals(superclassName)))
+		if ((net.sf.gilead.pojo.java14.LightEntity.class.getCanonicalName().equals(superclassName)) ||
+			(net.sf.gilead.pojo.java5.LightEntity.class.getCanonicalName().equals(superclassName)))
 		{
 			return true;
 		}
@@ -291,9 +291,9 @@ public abstract class AbstractGwtProxyGenerator extends Generator
 		for (int index = 0; index < interfaceList.length; index++)
 		{
 			String interfaceName = interfaceList[index].getQualifiedSourceName();
-			if (ILazyPojo.class.getName().equals(interfaceName))
+			if (ILightEntity.class.getName().equals(interfaceName))
 			{
-			//	ILazyPojo
+			//	ILightEntity
 			//
 				return true;
 			}

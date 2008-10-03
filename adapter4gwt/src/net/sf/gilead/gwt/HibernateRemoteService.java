@@ -20,7 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.ServletException;
 
-import net.sf.gilead.core.HibernateBeanManager;
+import net.sf.gilead.core.PersistenceBeanManager;
 import net.sf.gilead.core.beanlib.mapper.ProxyClassMapper;
 
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
@@ -42,7 +42,7 @@ public abstract class HibernateRemoteService extends RemoteServiceServlet
 	/**
 	 * The Hibernate lazy manager
 	 */
-	protected HibernateBeanManager _beanManager;
+	protected PersistenceBeanManager _beanManager;
 	
 	//----
 	// Properties
@@ -50,7 +50,7 @@ public abstract class HibernateRemoteService extends RemoteServiceServlet
 	/**
 	 * @return the Hibernate Bean Manager
 	 */
-	public HibernateBeanManager getBeanManager()
+	public PersistenceBeanManager getBeanManager()
 	{
 		return _beanManager;
 	}
@@ -58,7 +58,7 @@ public abstract class HibernateRemoteService extends RemoteServiceServlet
 	/**
 	 * @param manager the Hibernate Bean Manager to set
 	 */
-	public void setBeanManager(HibernateBeanManager manager)
+	public void setBeanManager(PersistenceBeanManager manager)
 	{
 		_beanManager = manager;
 	}
@@ -75,13 +75,13 @@ public abstract class HibernateRemoteService extends RemoteServiceServlet
 	{
 	//	Default Hibernate Lazy Manager
 	//
-		_beanManager = HibernateBeanManager.getInstance();
+		_beanManager = PersistenceBeanManager.getInstance();
 	}
 	
 	/**
 	 * Base constructor
 	 */
-	public HibernateRemoteService(HibernateBeanManager lazyManager)
+	public HibernateRemoteService(PersistenceBeanManager lazyManager)
 	{
 		_beanManager = lazyManager;
 	}
