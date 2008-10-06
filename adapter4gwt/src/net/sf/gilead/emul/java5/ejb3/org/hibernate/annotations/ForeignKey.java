@@ -1,5 +1,5 @@
 //$Id: $
-package net.sf.gilead.emul.java5.ejb3.org.hibernate.annotations;
+package org.hibernate.annotations;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;

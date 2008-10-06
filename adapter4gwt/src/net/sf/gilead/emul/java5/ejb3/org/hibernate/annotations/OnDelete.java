@@ -1,4 +1,4 @@
-package net.sf.gilead.emul.java5.ejb3.org.hibernate.annotations;
+package org.hibernate.annotations;
 
 import static java.lang.annotation.ElementType.*;
 import java.lang.annotation.Retention;

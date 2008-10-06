@@ -9,7 +9,7 @@
 	<source path='pojo/java14'/>
 	
 	<!-- Proxy generator -->
-	<generate-with class="net.sf.gilead.proxy.gwt.Gwt14ProxyGenerator">
+	<!-- generate-with class="net.sf.gilead.proxy.gwt.Gwt14ProxyGenerator">
 		<when-type-assignable class="java.io.Serializable" />
-	</generate-with>
+	</generate-with-->
 </module>

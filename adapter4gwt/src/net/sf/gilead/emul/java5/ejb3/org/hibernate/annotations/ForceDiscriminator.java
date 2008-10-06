@@ -1,5 +1,5 @@
 //$Id: $
-package net.sf.gilead.emul.java5.ejb3.org.hibernate.annotations;
+package org.hibernate.annotations;
 
 import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;

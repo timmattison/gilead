@@ -34,7 +34,7 @@
  * holder.
  */
 
-package net.sf.gilead.emul.java5.ejb3.javax.persistence;
+package javax.persistence;
 
 import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.*;

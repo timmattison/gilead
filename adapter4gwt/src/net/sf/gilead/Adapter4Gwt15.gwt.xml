@@ -8,7 +8,7 @@
 	<source path='pojo/java5'/>
 	
 	<!-- Proxy generator -->
-	<generate-with class="net.sf.gilead.proxy.gwt.Gwt15ProxyGenerator">
+	<!-- generate-with class="net.sf.gilead.proxy.gwt.Gwt15ProxyGenerator">
 		<when-type-assignable class="java.io.Serializable" />
-	</generate-with>
+	</generate-with-->
 </module>

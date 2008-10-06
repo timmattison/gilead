@@ -1,4 +1,4 @@
-package net.sf.gilead.emul.java5.ejb3.org.hibernate.annotations;
+package org.hibernate.annotations;
 
 /**
  * Cascade types (can override default EJB3 cascades

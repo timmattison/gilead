@@ -1,5 +1,5 @@
 //$Id:
-package net.sf.gilead.emul.java5.ejb3.org.hibernate.annotations;
+package org.hibernate.annotations;
 
 /**
  * Possible checks on Sql Insert, Delete, Update

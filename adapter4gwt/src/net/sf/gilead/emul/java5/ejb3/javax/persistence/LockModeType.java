@@ -33,7 +33,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package net.sf.gilead.emul.java5.ejb3.javax.persistence;
+package javax.persistence;
 
 /**
  * Lock modes that can be specified by means of the 

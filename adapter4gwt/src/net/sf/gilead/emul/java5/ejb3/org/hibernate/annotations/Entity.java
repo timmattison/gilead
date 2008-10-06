@@ -1,5 +1,5 @@
 //$Id: Entity.java 11282 2007-03-14 22:05:59Z epbernard $
-package net.sf.gilead.emul.java5.ejb3.org.hibernate.annotations;
+package org.hibernate.annotations;
 
 import static java.lang.annotation.ElementType.TYPE;
 import java.lang.annotation.Retention;

@@ -1,5 +1,5 @@
 //$Id: NamedQuery.java 14392 2008-03-05 21:57:56Z epbernard $
-package net.sf.gilead.emul.java5.ejb3.org.hibernate.annotations;
+package org.hibernate.annotations;
 
 import static java.lang.annotation.ElementType.PACKAGE;
 import static java.lang.annotation.ElementType.TYPE;
