@@ -18,11 +18,11 @@ import org.apache.commons.logging.LogFactory;
 import com.google.gwt.user.server.rpc.RPCRequest;
 
 /**
- * Static helper class for HibernateRemoteService and HibernateRPCServiceExporter (GWT-SL)
+ * Static helper class for PersistentRemoteService and HibernateRPCServiceExporter (GWT-SL)
  * @author bruno.marchesson
  *
  */
-public class HibernateRPCHelper
+public class GileadRPCHelper
 {
 	//----
 	// Attributes
@@ -30,7 +30,7 @@ public class HibernateRPCHelper
 	/**
 	 * The log channel
 	 */
-	private static Log log = LogFactory.getLog(HibernateRPCHelper.class);
+	private static Log log = LogFactory.getLog(GileadRPCHelper.class);
 	
 	//-------------------------------------------------------------------------
 	//
@@ -45,7 +45,8 @@ public class HibernateRPCHelper
 		ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 		if (contextClassLoader instanceof ProxyClassLoader == false)
 		{
-		// Set Proxy class loader
+		// 	Set Proxy class loader
+		//
 			Thread.currentThread().setContextClassLoader(
 							new ProxyClassLoader(contextClassLoader));
 		}

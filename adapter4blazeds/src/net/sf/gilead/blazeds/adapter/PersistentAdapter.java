@@ -1,5 +1,7 @@
 package net.sf.gilead.blazeds.adapter;
 
+import java.util.List;
+
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.store.stateful.HttpSessionProxyStore;
@@ -9,17 +11,16 @@ import org.apache.commons.logging.LogFactory;
 
 import flex.messaging.FlexContext;
 import flex.messaging.config.ConfigMap;
-import flex.messaging.messages.AsyncMessage;
 import flex.messaging.messages.Message;
-import flex.messaging.services.messaging.adapters.ActionScriptAdapter;
+import flex.messaging.messages.RemotingMessage;
+import flex.messaging.services.remoting.adapters.JavaAdapter;
 
 /**
- * Hibernate adapter for BlazeDS Messing
- * It is based on hibernate4gwt core and delegates Hibernate beans management to it.
+ * Persistent adapter for BlazeDS
  * @author bruno.marchesson
  *
  */
-public class HibernateMessagingAdapter extends ActionScriptAdapter
+public class PersistentAdapter extends JavaAdapter
 {
 	//----
 	// Attribute
@@ -27,17 +28,17 @@ public class HibernateMessagingAdapter extends ActionScriptAdapter
 	/**
 	 * Log channel
 	 */
-	private static Log _log = LogFactory.getLog(HibernateMessagingAdapter.class);
+	private static Log _log = LogFactory.getLog(PersistentAdapter.class);
 	
 	/**
 	 * The Hibernate bean manager
 	 */
 	private PersistentBeanManager _beanManager;
-
+	
 	/**
 	 * Stateless store flag
 	 */
-	private boolean _stateless;	
+	private boolean _stateless;
 	
 	//-------------------------------------------------------------------------
 	//
@@ -98,7 +99,7 @@ public class HibernateMessagingAdapter extends ActionScriptAdapter
 	@Override
 	public Object invoke(Message message)
 	{
-		AsyncMessage asyncMessage = (AsyncMessage) message;
+		RemotingMessage remotingMessage = (RemotingMessage) message;
 		
 		try
 		{
@@ -108,18 +109,21 @@ public class HibernateMessagingAdapter extends ActionScriptAdapter
 			{
 				HttpSessionProxyStore.setHttpSession(FlexContext.getHttpRequest().getSession(true));
 			}
-		
-		//	Clone body to remove proxies
-		//
-			Object body = asyncMessage.getBody();
-			_log.info("Cloning body " + body);
-			body = _beanManager.clone(body);
 			
-			asyncMessage.setBody(body);
-		
-		// 	Call ActionScript adapter
+		//	Merge input arguments
 		//
-			return super.invoke(message);
+			_log.info("Merging input parameters " + remotingMessage.getParameters());
+			List mergedParameters = (List) _beanManager.merge(remotingMessage.getParameters());
+			remotingMessage.setParameters(mergedParameters);
+			
+		// 	Call Java adapter
+		//
+			Object result = super.invoke(message);
+			
+		//	Clone result
+		//
+			_log.info("Cloning result " + result);
+			return _beanManager.clone(result);
 		}
 		catch (RuntimeException e)
 		{

@@ -30,11 +30,11 @@ import com.google.gwt.user.server.rpc.RPCRequest;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
- * Abstract class for GWT remote service using Hibernate POJO 
+ * Abstract class for GWT remote service using persistent POJO 
  * @author bruno.marchesson
  *
  */
-public abstract class HibernateRemoteService extends RemoteServiceServlet
+public abstract class PersistentRemoteService extends RemoteServiceServlet
 {
 	//----
 	// Attribute
@@ -48,7 +48,7 @@ public abstract class HibernateRemoteService extends RemoteServiceServlet
 	// Properties
 	//----
 	/**
-	 * @return the Hibernate Bean Manager
+	 * @return the Persistent Bean Manager
 	 */
 	public PersistentBeanManager getBeanManager()
 	{
@@ -71,7 +71,7 @@ public abstract class HibernateRemoteService extends RemoteServiceServlet
 	/**
 	 * Empty constructor
 	 */
-	public HibernateRemoteService()
+	public PersistentRemoteService()
 	{
 	//	Default Hibernate Lazy Manager
 	//
@@ -81,7 +81,7 @@ public abstract class HibernateRemoteService extends RemoteServiceServlet
 	/**
 	 * Base constructor
 	 */
-	public HibernateRemoteService(PersistentBeanManager lazyManager)
+	public PersistentRemoteService(PersistentBeanManager lazyManager)
 	{
 		_beanManager = lazyManager;
 	}
@@ -124,7 +124,7 @@ public abstract class HibernateRemoteService extends RemoteServiceServlet
 		if ((_beanManager != null) &&
 			(_beanManager.getClassMapper() instanceof ProxyClassMapper))
 		{
-			HibernateRPCHelper.initClassLoader();
+			GileadRPCHelper.initClassLoader();
 		}
 	}
 	
@@ -144,13 +144,13 @@ public abstract class HibernateRemoteService extends RemoteServiceServlet
 	      
 	    //	Invoke method
 	    //
-	       HibernateRPCHelper.parseInputParameters(rpcRequest, _beanManager, 
+	       GileadRPCHelper.parseInputParameters(rpcRequest, _beanManager, 
 	    		   								   getThreadLocalRequest().getSession());
 	       Object returnValue = RPCCopy.getInstance().invoke(this, rpcRequest.getMethod(), 
 	    		  							   rpcRequest.getParameters(),
 	    		  							   rpcRequest.getSerializationPolicy());
 	      
-	       returnValue = HibernateRPCHelper.parseReturnValue(returnValue, _beanManager);
+	       returnValue = GileadRPCHelper.parseReturnValue(returnValue, _beanManager);
 	      
 	    //	Encode response
 	    //  
