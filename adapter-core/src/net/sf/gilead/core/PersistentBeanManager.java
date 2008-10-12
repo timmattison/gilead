@@ -52,7 +52,7 @@ import org.apache.commons.logging.LogFactory;
  * @author bruno.marchesson
  *
  */
-public class PersistenceBeanManager
+public class PersistentBeanManager
 {
 	//----
 	// Attributes
@@ -60,12 +60,12 @@ public class PersistenceBeanManager
 	/**
 	 * The unique instance of the Persistence Bean Manager
 	 */
-	private static PersistenceBeanManager _instance = null;
+	private static PersistentBeanManager _instance = null;
 	
 	/**
 	 * Log channel
 	 */
-	private Log _log = LogFactory.getLog(PersistenceBeanManager.class);
+	private Log _log = LogFactory.getLog(PersistentBeanManager.class);
 	
 	/**
 	 * The associated Proxy informations store
@@ -93,11 +93,11 @@ public class PersistenceBeanManager
 	/**
 	 * @return the unique instance of the singleton
 	 */
-	public synchronized static PersistenceBeanManager getInstance()
+	public synchronized static PersistentBeanManager getInstance()
 	{
 		if (_instance == null)
 		{
-			_instance = new PersistenceBeanManager();
+			_instance = new PersistentBeanManager();
 		}
 		return _instance;
 	}
@@ -167,7 +167,7 @@ public class PersistenceBeanManager
 	/**
 	 * Empty Constructor
 	 */
-	public PersistenceBeanManager()
+	public PersistentBeanManager()
 	{
 	//	Default parameters
 	//
@@ -718,57 +718,60 @@ public class PersistenceBeanManager
 				boolean isCollection = Collection.class.isAssignableFrom(propertyClass) ||
 									   Map.class.isAssignableFrom(propertyClass);
 				
-				if ((ClassUtils.immutable(propertyClass) == false) &&
-					(ClassUtils.isJavaPackage(propertyClass) == false) &&
-					(isCollection == false))
+				if ((ClassUtils.immutable(propertyClass) == true) ||
+						((ClassUtils.isJavaPackage(propertyClass) == true) &&
+						 (isCollection == false)))
 				{
-				// 	Not a basic type, so a check is needed
+				//	Basic type : no check needed
 				//
-					// collection and recursive search handling
-					Method readMethod = descriptor.getReadMethod();
-					readMethod.setAccessible(true);
-					Object propertyValue = readMethod.invoke(pojo, (Object[])null);
-					
-					if (propertyValue != null)
+					continue;
+				}
+				
+			// 	Not a basic type, so a check is needed
+			//
+				// collection and recursive search handling
+				Method readMethod = descriptor.getReadMethod();
+				readMethod.setAccessible(true);
+				Object propertyValue = readMethod.invoke(pojo, (Object[])null);
+				
+				if (propertyValue != null)
+				{
+					if (propertyValue instanceof Collection<?>)
 					{
-						if (propertyValue instanceof Collection<?>)
+					//	Check collection values
+					//
+						Collection<?> propertyCollection = (Collection<?>)propertyValue;
+						for(Object value : propertyCollection)
 						{
-						//	Check collection values
-						//
-							Collection<?> propertyCollection = (Collection<?>)propertyValue;
-							for(Object value : propertyCollection)
-							{
-								if (holdPersistentObject(value) == true)
-								{
-									return true;
-								}
-							}
-						}
-						else if (propertyValue instanceof Map<?, ?>)
-						{
-						//	Check map entry and values
-						//
-							Map<?,?> propertyMap = (Map<?, ?>) propertyValue;
-							for(Map.Entry<?, ?> value : propertyMap.entrySet())
-							{
-								if ((holdPersistentObject(value.getKey()) == true) ||
-									(holdPersistentObject(value.getValue()) == true))
-								{
-									return true;
-								}
-							}
-						}
-						else
-						{
-						//	Recursive search
-						//
-							if (holdPersistentObject(propertyValue) == true)
+							if (holdPersistentObject(value) == true)
 							{
 								return true;
 							}
 						}
 					}
-					
+					else if (propertyValue instanceof Map<?, ?>)
+					{
+					//	Check map entry and values
+					//
+						Map<?,?> propertyMap = (Map<?, ?>) propertyValue;
+						for(Map.Entry<?, ?> value : propertyMap.entrySet())
+						{
+							if ((holdPersistentObject(value.getKey()) == true) ||
+								(holdPersistentObject(value.getValue()) == true))
+							{
+								return true;
+							}
+						}
+					}
+					else
+					{
+					//	Recursive search
+					//
+						if (holdPersistentObject(propertyValue) == true)
+						{
+							return true;
+						}
+					}
 				}
 			}
 			

@@ -41,7 +41,7 @@ public abstract class CloneTest extends TestCase
 	/**
 	 * Hibernate lazy manager
 	 */
-	protected PersistenceBeanManager _beanManager;
+	protected PersistentBeanManager _beanManager;
 	
 	/**
 	 * Clone user class
@@ -1050,6 +1050,54 @@ public abstract class CloneTest extends TestCase
 	//	Save for test
 	//
 		userDAO.saveUser(mergeUser);
+	}
+	
+
+	/**
+	 * Test delete property on client side
+	 */
+	public void testDeletePropertyAfterClone()
+	{  
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Load user
+	//
+		IUser user = userDAO.searchUserAndMessagesByLogin("junit");
+		assertNotNull(user);
+		assertNotNull(user.getMessageList());
+		assertFalse(user.getMessageList().isEmpty());
+		int messageCount = user.getMessageList().size();
+		
+	//	Clone user
+	//
+		IUser cloneUser = (IUser) _beanManager.clone(user); 
+		 
+		// delete a message
+		cloneUser.getMessageList().remove(cloneUser.getMessageList().iterator().next()); 
+		 
+	//	Merge user
+	//
+		IUser mergeUser = (IUser) _beanManager.merge(cloneUser); 
+		assertNotNull(mergeUser);
+		assertNotNull(mergeUser.getMessageList());
+		assertFalse(mergeUser.getMessageList().isEmpty());
+		 
+		assertEquals(messageCount -1, mergeUser.getMessageList().size());
+		
+	//	Save merged user
+	//
+		userDAO.saveUser(mergeUser);
+		
+	//	Reload user to count messages
+	//
+		user = userDAO.searchUserAndMessagesByLogin("junit");
+		assertNotNull(user);
+		assertNotNull(user.getMessageList());
+		assertFalse(user.getMessageList().isEmpty());
+		assertEquals(messageCount -1, user.getMessageList().size());
 	}
 	
 	//-------------------------------------------------------------------------

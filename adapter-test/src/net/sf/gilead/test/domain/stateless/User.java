@@ -115,5 +115,6 @@ public class User extends LightEntity implements Serializable, IUser
 	public void removeMessage(IMessage message)
 	{
 		messageList.remove(message);
+		((Message)message).setAuthor(this);
 	}
 }

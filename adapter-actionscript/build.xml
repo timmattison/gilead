@@ -25,7 +25,7 @@
 	
 	<target name="swc" depends="init">
 		<compc output="${output.dir}/${output.file}"
-			 include-classes="net.sf.hibernate4gwt.pojo.actionscript.LazyPojo">
+			 include-classes="net.sf.gilead.pojo.actionscript.LightEntity">
 			<source-path path-element="${basedir}/${source.dir}" />
 		</compc>
 	</target>

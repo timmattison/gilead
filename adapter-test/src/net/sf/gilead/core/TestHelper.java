@@ -194,14 +194,14 @@ public class TestHelper
 	/**
 	 * Init bean manager for stateless mode
 	 */
-	public static PersistenceBeanManager initStatelessBeanManager()
+	public static PersistentBeanManager initStatelessBeanManager()
 	{
 		HibernateContext.setContext(HibernateContext.Context.stateless);
 		
 		HibernateUtil persistenceUtil = new HibernateUtil(); 
 		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
 		
-		PersistenceBeanManager beanManager = new PersistenceBeanManager();
+		PersistentBeanManager beanManager = new PersistentBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(new StatelessProxyStore());
 		
@@ -211,7 +211,7 @@ public class TestHelper
 	/**
 	 * Init bean manager for stateless mode
 	 */
-	public static PersistenceBeanManager initStatefulBeanManager()
+	public static PersistentBeanManager initStatefulBeanManager()
 	{
 		HibernateContext.setContext(HibernateContext.Context.stateful);
 		
@@ -221,7 +221,7 @@ public class TestHelper
 		InMemoryProxyStore proxyStore = new InMemoryProxyStore();
 		proxyStore.setPersistenceUtil(persistenceUtil);
 		
-		PersistenceBeanManager beanManager = new PersistenceBeanManager();
+		PersistentBeanManager beanManager = new PersistentBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(proxyStore);
 		
@@ -232,14 +232,14 @@ public class TestHelper
 	 * Init bean manager for dynamic proxy mode
 	 * @throws FileNotFoundException 
 	 */
-	public static PersistenceBeanManager initProxyBeanManager() throws FileNotFoundException
+	public static PersistentBeanManager initProxyBeanManager() throws FileNotFoundException
 	{
 		HibernateContext.setContext(HibernateContext.Context.proxy);
 		
 		HibernateUtil persistenceUtil = new HibernateUtil(); 
 		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
 		
-		PersistenceBeanManager beanManager = new PersistenceBeanManager();
+		PersistentBeanManager beanManager = new PersistentBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(new StatelessProxyStore());
 		
@@ -251,14 +251,14 @@ public class TestHelper
 	/**
 	 * Init bean manager for Java5 support mode
 	 */
-	public static PersistenceBeanManager initJava5SupportBeanManager() throws FileNotFoundException
+	public static PersistentBeanManager initJava5SupportBeanManager() throws FileNotFoundException
 	{
 		HibernateContext.setContext(HibernateContext.Context.java5);
 		
 		HibernateUtil persistenceUtil = new HibernateUtil(); 
 		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
 		
-		PersistenceBeanManager beanManager = new PersistenceBeanManager();
+		PersistentBeanManager beanManager = new PersistentBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(new StatelessProxyStore());
 		
@@ -274,14 +274,14 @@ public class TestHelper
 	/**
 	 * Init bean manager for annotated Java5 mode
 	 */
-	public static PersistenceBeanManager initJava5AnnotatedBeanManager() throws FileNotFoundException
+	public static PersistentBeanManager initJava5AnnotatedBeanManager() throws FileNotFoundException
 	{
 		HibernateContext.setContext(HibernateContext.Context.annotated);
 		
 		HibernateUtil persistenceUtil = new HibernateUtil(); 
 		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
 		
-		PersistenceBeanManager beanManager = new PersistenceBeanManager();
+		PersistentBeanManager beanManager = new PersistentBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(new StatelessProxyStore());
 		

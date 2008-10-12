@@ -23,7 +23,7 @@ public class TimestampTest extends TestCase
 	
 	//	Hibernate lazy manager
 	//
-		PersistenceBeanManager beanManager = TestHelper.initStatelessBeanManager();
+		PersistentBeanManager beanManager = TestHelper.initStatelessBeanManager();
 
 	//	Initialize DB if needed
 	//

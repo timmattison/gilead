@@ -25,7 +25,7 @@ public class AnnotationsTest extends TestCase
 	/**
 	 * Hibernate lazy manager
 	 */
-	protected PersistenceBeanManager _beanManager;
+	protected PersistentBeanManager _beanManager;
 	
 	//-------------------------------------------------------------------------
 	//

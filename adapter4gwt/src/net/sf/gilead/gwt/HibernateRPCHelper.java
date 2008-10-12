@@ -5,7 +5,7 @@ package net.sf.gilead.gwt;
 
 import javax.servlet.http.HttpSession;
 
-import net.sf.gilead.core.PersistenceBeanManager;
+import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.beanlib.mapper.ProxyClassMapper;
 import net.sf.gilead.core.store.stateful.HttpSessionProxyStore;
 import net.sf.gilead.exception.NotAssignableException;
@@ -59,7 +59,7 @@ public class HibernateRPCHelper
 	 * @param session the HTTP session (for HTTP Pojo store)
 	 */
 	public static void parseInputParameters(RPCRequest rpcRequest, 
-											PersistenceBeanManager beanManager,
+											PersistentBeanManager beanManager,
 											HttpSession session)
 	{
 	//	Init classloader for proxy mode
@@ -108,7 +108,7 @@ public class HibernateRPCHelper
 	 * @return the cloned service value
 	 */
 	public static final Object parseReturnValue(Object returnValue,
-											    PersistenceBeanManager beanManager)
+											    PersistentBeanManager beanManager)
 	{
 	//	Clone if needed
 	//

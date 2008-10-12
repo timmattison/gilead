@@ -1,6 +1,6 @@
 package net.sf.gilead.blazeds.adapter;
 
-import net.sf.gilead.core.PersistenceBeanManager;
+import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.store.stateful.HttpSessionProxyStore;
 
@@ -32,7 +32,7 @@ public class HibernateMessagingAdapter extends ActionScriptAdapter
 	/**
 	 * The Hibernate bean manager
 	 */
-	private PersistenceBeanManager _beanManager;
+	private PersistentBeanManager _beanManager;
 
 	/**
 	 * Stateless store flag
@@ -72,7 +72,7 @@ public class HibernateMessagingAdapter extends ActionScriptAdapter
 					}
 					
 					IPersistenceUtil persistenceUtil = PersistenceUtilManager.createPersistenceUtil(config);
-					_beanManager = new PersistenceBeanManager();
+					_beanManager = new PersistentBeanManager();
 					
 					if (_stateless == false)
 					{
