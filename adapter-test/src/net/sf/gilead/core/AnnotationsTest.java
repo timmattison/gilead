@@ -104,6 +104,11 @@ public class AnnotationsTest extends TestCase
 		Message message = (Message) messageDAO.loadDetailedMessage((Integer)TestHelper.getExistingMessageId());
 		assertNotNull(message);
 		assertNotNull(message.getVersion()); // serverOnly
+		if (message.countKeywords() == 0)
+		{
+			message.addKeyword("test", 2);
+			messageDAO.saveMessage(message);
+		}
 		assertTrue(message.countKeywords() > 0); // readOnly
 		
 	//	Clone message
@@ -116,9 +121,8 @@ public class AnnotationsTest extends TestCase
 		assertNull(cloneMessage.getVersion()); // serverOnly
 		assertTrue(cloneMessage.countKeywords() > 0); // readOnly
 		
-		cloneMessage.addKeyword("readOnly", 8);
-		
-		
+		cloneMessage.clearKeywords();
+	
 	//	Merge Message
 	//
 		Message mergeMessage = (Message) _beanManager.merge(cloneMessage);
