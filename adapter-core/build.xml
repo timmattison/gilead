@@ -3,9 +3,8 @@
 	
 	<!-- Properties -->
     <property environment="env"/>
-    <property name="version" value="1.0"/>
-	<property name="project" value="adapter-core" />
-	<property name="output.jar" value="${project}-${version}.jar" />
+    <property name="version" value="1.2"/>
+	<property name="core.jar" value="adapter-core-${version}.jar" />
 	
 	<property name="source.dir" value="src"/>
     <property name="build.dir" value="classes"/>
@@ -47,6 +46,6 @@
 	
 	<target name="jar" depends="build">
 		<mkdir dir="${jar.dir}" />
-	    <jar jarfile="${jar.dir}/${output.jar}" basedir="${build.dir}/"/>
+	    <jar jarfile="${jar.dir}/${core.jar}" basedir="${build.dir}/"/>
 	  </target>
 </project>

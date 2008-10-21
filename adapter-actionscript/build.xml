@@ -3,13 +3,12 @@
 	
 	<!-- Properties -->
     <property environment="env"/>
-    <property name="version" value="1.0"/>
-	<property name="project" value="adapter-actionscript" />
-	<property name="output.file" value="${project}-${version}.swc" />
+    <property name="version" value="1.2"/>
+	<property name="output.file" value="adapter-actionscript-${version}.swc" />
 	
 	<property name="source.dir" value="src"/>
     <property name="lib.dir" value="lib"/>
-	<property name="output.dir"  value="dist"/>
+	<property name="swc.dir"  value="dist"/>
 	
 	<!-- Targets -->
     <target name="init">
@@ -20,11 +19,11 @@
     </target>
     
 	<target name="clean">
-    	<delete dir="${output.dir}"/>
+    	<delete dir="${swc.dir}"/>
     </target>
 	
 	<target name="swc" depends="init">
-		<compc output="${output.dir}/${output.file}"
+		<compc output="${swc.dir}/${output.file}"
 			 include-classes="net.sf.gilead.pojo.actionscript.LightEntity">
 			<source-path path-element="${basedir}/${source.dir}" />
 		</compc>

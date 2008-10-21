@@ -3,9 +3,8 @@
 	
 	<!-- Properties -->
     <property environment="env"/>
-    <property name="version" value="1.0"/>
-	<property name="project" value="hibernate-util" />
-	<property name="output.jar" value="${project}-${version}.jar" />
+    <property name="version" value="1.2"/>
+	<property name="hibernate.jar" value="hibernate-util-${version}.jar" />
 	
 	<property name="source.dir" value="src"/>
     <property name="build.dir" value="classes"/>
@@ -30,7 +29,7 @@
 	<!-- Targets -->
     <target name="init">
     	<ant antfile="${core.dir}/build.xml" target="jar" 
-    		 inheritall="false"/>
+    		 dir="${core.dir}"/>
     	
         <mkdir dir="${build.dir}"/>
     </target>
@@ -50,6 +49,6 @@
 	
 	<target name="jar" depends="build">
 		<mkdir dir="${jar.dir}" />
-	    <jar jarfile="${jar.dir}/${output.jar}" basedir="${build.dir}/"/>
+	    <jar jarfile="${jar.dir}/${hibernate.jar}" basedir="${build.dir}/"/>
 	  </target>
 </project>

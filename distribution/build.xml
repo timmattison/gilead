@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="distribution" name="gilead">
-	
+
 	<!-- Properties -->
-    <property environment="env"/>
-    <property name="version" value="1.2"/>
+	<property environment="env"/>
 	<property name="project" value="gilead" />
-	<property name="output.dir" value="../../${project}-${version}" />
-	
+
 	<property name="src.dir" value="src"/>
 	<property name="build.dir" value="classes"/>
 	<property name="jar.dir" value="dist"/>
 	<property name="doc.dir" value="doc"/>
-	
+	<property name="lib.dir" value="lib"/>
+
 	<property name="core.dir" value="../adapter-core"/>
 	<property name="core.test.dir" value="../adapter-test"/>
 	<property name="hibernate.dir" value="../hibernate-util"/>
@@ -19,50 +18,74 @@
 	<property name="adapter4gwt.dir" value="../adapter4gwt"/>
 	<property name="adapter-actionscript.dir" value="../adapter-actionscript"/>
 	<property name="adapter4blazeds.dir" value="../adapter4blazeds"/>
-	
+
 	<!-- Targets -->
-    <target name="init">
-        <mkdir dir="${output.dir}"/>
-    </target>
-    
+	<target name="svn.version">
+		<typedef resource="com/googlecode/svntask/svntask.xml">
+			<classpath>
+				<fileset dir="${lib.dir}">
+					<include name="svnkit.jar"/>
+					<include name="svntask.jar"/>
+				</fileset>
+			</classpath>
+		</typedef>
+
+		<!-- Do an update first to make sure you have the latest version -->
+		<!-- svn>
+			<update path="." force="true" recursive="true" />
+		</svn -->
+
+		<svn>
+			<info path="." revisionProperty="revisionVersion" />
+		</svn>
+		<property name="svn.version" value="${revisionVersion}" />
+	</target>
+
+	<target name="init" depends="svn.version">
+		<property name="version" value="1.2.0.${svn.version}"/>
+		<property name="output.dir" value="../../../distribution/${project}-${version}" />
+		
+		<mkdir dir="${output.dir}"/>
+	</target>
+
 	<target name="clean">
 		<ant antfile="${core.dir}/build.xml" target="clean" 
-   		 	inheritall="false"/>
+   		 	dir="${core.dir}"/>
 		<ant antfile="${hibernate.dir}/build.xml" target="clean" 
-   		 	inheritall="false"/>
-    	<ant antfile="${hibernate-jpa.dir}/build.xml" target="clean" 
-    	   	inheritall="false"/>
+			dir="${hibernate.dir}"/>
+		<ant antfile="${hibernate-jpa.dir}/build.xml" target="clean" 
+			dir="${hibernate-jpa.dir}"/>
 		<ant antfile="${adapter4gwt.dir}/build.xml" target="clean" 
-   		 	inheritall="false"/>
-    	<ant antfile="${adapter-actionscript.dir}/build.xml" target="clean" 
-    	   	inheritall="false"/>
-    	<ant antfile="${adapter4blazeds.dir}/build.xml" target="clean" 
-    	   	inheritall="false"/>
+			dir="${adapter4gwt.dir}"/>
+		<ant antfile="${adapter-actionscript.dir}/build.xml" target="clean" 
+			dir="${adapter-actionscript.dir}"/>
+		<ant antfile="${adapter4blazeds.dir}/build.xml" target="clean" 
+			dir="${adapter4blazeds.dir}"/>
 		<ant antfile="${core.test.dir}/build.xml" target="clean" 
-		    inheritall="false"/>
+			dir="${core.test.dir}"/>
 		<delete dir="${output.dir}"/>
-    </target>
-	
-    <target name="build" depends="init">
-    	<ant antfile="${core.dir}/build.xml" target="jar" 
-   		 	inheritall="false"/>
-		<ant antfile="${hibernate.dir}/build.xml" target="jar" 
-   		 	inheritall="false"/>
-    	<ant antfile="${hibernate-jpa.dir}/build.xml" target="jar" 
-    	   	inheritall="false"/>
-		<ant antfile="${adapter4gwt.dir}/build.xml" target="jar" 
-   		 	inheritall="false"/>
-    	<ant antfile="${adapter-actionscript.dir}/build.xml" target="swc" 
-    	   	inheritall="false"/>
-    	<ant antfile="${adapter4blazeds.dir}/build.xml" target="jar" 
-    	   	inheritall="false"/>
-    </target>
-	
-	<target name="test" depends="init">
-	    <ant antfile="${core.test.dir}/build.xml" target="test" 
-	   		 inheritall="false"/>
 	</target>
-	
+
+	<target name="build" depends="init">
+		<ant antfile="${core.dir}/build.xml" target="jar" 
+   		 	dir="${core.dir}"/>
+		<ant antfile="${hibernate.dir}/build.xml" target="jar" 
+			dir="${hibernate.dir}"/>
+		<ant antfile="${hibernate-jpa.dir}/build.xml" target="jar" 
+			dir="${hibernate-jpa.dir}"/>
+		<ant antfile="${adapter4gwt.dir}/build.xml" target="jar" 
+			dir="${adapter4gwt.dir}"/>
+		<ant antfile="${adapter-actionscript.dir}/build.xml" target="swc" 
+			dir="${adapter-actionscript.dir}"/>
+		<ant antfile="${adapter4blazeds.dir}/build.xml" target="jar" 
+			dir="${adapter4blazeds.dir}"/>
+	</target>
+
+	<target name="test" depends="init">
+		<ant antfile="${core.test.dir}/build.xml" target="test" 
+	   		 dir="${core.test.dir}"/>
+	</target>
+
 	<target name="distribution" depends="clean, build, test">
 		<!-- copy jar files -->
 		<copy todir="${output.dir}/${jar.dir}">
@@ -85,7 +108,7 @@
 				<include name="*.jar"/>
 			</fileset>
 		</copy>
-		
+
 		<!-- Copy src & lib for each component -->
 		<copy todir="${output.dir}/adapter-core"
 			  includeemptydirs="false">
@@ -96,7 +119,7 @@
 				<exclude name="**/${jar.dir}/**/*"/>
 			</fileset>
 		</copy>
-		
+
 		<copy todir="${output.dir}/hibernate-util"
 			  includeemptydirs="false">
 			<fileset dir="${hibernate.dir}">
@@ -106,7 +129,7 @@
 				<exclude name="**/${jar.dir}/**/*"/>
 			</fileset>
 		</copy>
-					
+
 		<copy todir="${output.dir}/hibernate-jpa-util"
 			  includeemptydirs="false">
 			<fileset dir="${hibernate-jpa.dir}">
@@ -116,7 +139,7 @@
 				<exclude name="**/${jar.dir}/**/*"/>
 			</fileset>
 		</copy>
-					
+
 		<copy todir="${output.dir}/adapter4gwt"
 			  includeemptydirs="false">
 			<fileset dir="${adapter4gwt.dir}">
@@ -126,7 +149,7 @@
 				<exclude name="**/${jar.dir}/**/*"/>
 			</fileset>
 		</copy>
-		
+
 		<copy todir="${output.dir}/adapter-actionscript"
 			  includeemptydirs="false">
 			<fileset dir="${adapter-actionscript.dir}">
@@ -136,7 +159,7 @@
 				<exclude name="**/${jar.dir}/**/*"/>
 			</fileset>
 		</copy>
-		
+
 		<copy todir="${output.dir}/adapter4blazeds"
 			  includeemptydirs="false">
 			<fileset dir="${adapter4blazeds.dir}">
@@ -153,9 +176,10 @@
 				<exclude name="**/bin/**/*"/>
 				<exclude name="**/${build.dir}/**/*"/>
 				<exclude name="**/${jar.dir}/**/*"/>
+				<exclude name="**/hsqldb*.*"/>
 			</fileset>
 		</copy>
-		
+
 		<!-- generate unified Javadoc -->
 		<copy todir="${output.dir}/${src.dir}">
 			<fileset dir="${core.dir}/${src.dir}">
@@ -176,11 +200,11 @@
 				<exclude name="**/emul/**/*.java"/>
 			</fileset>
 		</copy>
-		
+
 		<javadoc destdir="${output.dir}/${doc.dir}">
 			<fileset dir="${output.dir}/${src.dir}" />
 		</javadoc>
-		
+
 		<delete dir="${output.dir}/${src.dir}"/>
 	</target>
 </project>

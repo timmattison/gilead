@@ -3,9 +3,8 @@
 	
 	<!-- Properties -->
     <property environment="env"/>
-    <property name="version" value="1.0"/>
-	<property name="project" value="adapter-test" />
-	<property name="output.jar" value="${project}-${version}.jar" />
+    <property name="version" value="1.2"/>
+	<property name="test.jar" value="adapter-test-${version}.jar" />
 	
 	<property name="source.dir" value="src"/>
 	<property name="resource.dir" value="resources"/>
@@ -42,11 +41,11 @@
 	<!-- Targets -->
     <target name="init">
     	<ant antfile="${core.dir}/build.xml" target="jar" 
-    	    		 inheritall="false"/>
+    	     dir="${core.dir}"/>
     	<ant antfile="${hibernate.dir}/build.xml" target="jar" 
-    	    		 inheritall="false"/>
+    	     dir="${hibernate.dir}"/>
     	<ant antfile="${adapter4gwt.dir}/build.xml" target="jar" 
-    	    		 inheritall="false"/>
+    	     dir="${adapter4gwt.dir}"/>
     	
         <mkdir dir="${build.dir}"/>
     </target>
@@ -77,5 +76,4 @@
 			</batchtest>
 		</junit>
 	</target>
-	
 </project>
