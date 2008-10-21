@@ -29,6 +29,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.classic.Session;
+import org.hibernate.jdbc.Work;
 import org.hibernate.stat.SessionStatistics;
 import org.hibernate.type.Type;
 
@@ -492,6 +493,10 @@ public class LoadingSession implements Session {
 
 	public void setFlushMode(FlushMode flushMode) {
 		_wrappedSession.setFlushMode(flushMode);
+	}
+	
+	public void doWork(Work arg0) throws HibernateException {
+		_wrappedSession.doWork(arg0);	
 	}
 
 	// -------------------------------------------------------------------------

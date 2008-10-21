@@ -31,9 +31,9 @@
 		</typedef>
 
 		<!-- Do an update first to make sure you have the latest version -->
-		<!-- svn>
-			<update path="." force="true" recursive="true" />
-		</svn -->
+		<svn>
+			<update path=".." force="true" recursive="true" />
+		</svn>
 
 		<svn>
 			<info path="." revisionProperty="revisionVersion" />
