@@ -6,8 +6,6 @@ package com.google.gwt.user.server.rpc;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.google.gwt.dev.GWTCompiler;
-import com.google.gwt.dev.GWTShell;
 import com.google.gwt.user.client.rpc.SerializationException;
 /**
  * Encapsulation of both RPCCopy for GWT 1.4 and GWT 1.5
@@ -162,16 +160,17 @@ public class RPCCopy
 	 * Encode failure response method.
 	 * @throws SerializationException 
 	 */
-	public String encodeResponseForFailure(Method serviceMethod, Throwable cause)
+	public String encodeResponseForFailure(Method serviceMethod, Throwable cause,
+										   SerializationPolicy serializationPolicy)
 										   throws SerializationException
 	{
 		if (_version == Version.GWT14)
 		{
-			return RPCCopy_GWT14.encodeResponseForFailure(serviceMethod, cause);
+			return RPCCopy_GWT14.encodeResponseForFailure(serviceMethod, cause, serializationPolicy);
 		}
 		else
 		{
-			return RPCCopy_GWT15.encodeResponseForFailure(serviceMethod, cause);
+			return RPCCopy_GWT15.encodeResponseForFailure(serviceMethod, cause, serializationPolicy);
 		}
 	}
 	

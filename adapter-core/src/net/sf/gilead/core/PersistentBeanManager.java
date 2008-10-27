@@ -719,8 +719,8 @@ public class PersistentBeanManager
 									   Map.class.isAssignableFrom(propertyClass);
 				
 				if ((ClassUtils.immutable(propertyClass) == true) ||
-						((ClassUtils.isJavaPackage(propertyClass) == true) &&
-						 (isCollection == false)))
+				   ((ClassUtils.isJavaPackage(propertyClass) == true) &&
+					(isCollection == false)))
 				{
 				//	Basic type : no check needed
 				//

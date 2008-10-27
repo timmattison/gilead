@@ -4,6 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/hibernate3.jar" sourcepath="C:/GWT/hibernate3.2/src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/adapter-core"/>
-	<classpathentry kind="lib" path="/adapter-core/lib/beanlib-hibernate-3.3.0beta20b.jar"/>
+	<classpathentry kind="lib" path="/adapter-core/lib/beanlib-hibernate-3.3.0beta21b.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
