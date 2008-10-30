@@ -68,7 +68,7 @@ public class ProxyManager
 	/**
 	 * @return the instance
 	 */
-	public static ProxyManager getInstance()
+	public static synchronized ProxyManager getInstance()
 	{
 		if (_instance == null)
 		{

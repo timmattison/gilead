@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>gilead</artifactId>
+		<groupId>net.sf.gilead</groupId>
+		<version>1.2.0</version>
+		<relativePath>../</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>${parent.groupId}</groupId>
+	<artifactId>adapter-core</artifactId>
+	<packaging>jar</packaging>
+	<name>adapter-core</name>
+	<version>${parent.version}</version>
+	<dependencies>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.beanlib</groupId>
+			<artifactId>beanlib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.beanlib</groupId>
+			<artifactId>beanlib-hibernate</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss</groupId>
+			<artifactId>javassist</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+		</dependency>
+	</dependencies>
+</project>

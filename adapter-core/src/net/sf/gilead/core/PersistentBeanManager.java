@@ -731,6 +731,10 @@ public class PersistentBeanManager
 			//
 				// collection and recursive search handling
 				Method readMethod = descriptor.getReadMethod();
+				if (readMethod == null)
+				{
+					continue;
+				}
 				readMethod.setAccessible(true);
 				Object propertyValue = readMethod.invoke(pojo, (Object[])null);
 				
