@@ -14,7 +14,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 /**
- * DAO for message beans.
+ * DAO for user beans.
  * This implementation use HQL to work seamlessly with all implementation of the Message domain class
  * (Java 1.4 _ stateful or stateless _ and Java5)
  * @author bruno.marchesson
@@ -65,6 +65,46 @@ public class UserDAO implements IUserDAO
     /**
      * Load the user with the argument login
      */
+    public IUser loadUserByLogin(String login)
+	{
+    	Session session = null;
+		Transaction transaction = null;
+		try
+		{
+		//	Get session
+		//
+			session = HibernateContext.getSessionFactory().getCurrentSession();
+			transaction = session.beginTransaction();
+	
+		//	Create query
+		//
+	    	StringBuffer hqlQuery = new StringBuffer();
+	    	hqlQuery.append("from User user where user.login=:login");
+	    	
+	    //	Fill query
+	    //
+			Query query = session.createQuery(hqlQuery.toString());
+			query.setString("login", login);
+			
+		//	Execute query
+		//
+			IUser user = (IUser) query.uniqueResult();
+			transaction.commit();
+			
+			return user;
+		}
+		catch (RuntimeException e)
+		{
+		//	Rollback
+		//
+			transaction.rollback();
+			throw e;
+		}
+	}
+
+    /**
+     * Load the user with the argument login
+     */
     public IUser searchUserAndMessagesByLogin(String login)
 	{
     	Session session = null;
@@ -103,7 +143,7 @@ public class UserDAO implements IUserDAO
 			throw e;
 		}
 	}
-    
+
     /**
      * Load all the users
      */

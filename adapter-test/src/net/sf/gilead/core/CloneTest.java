@@ -16,9 +16,11 @@ import net.sf.gilead.core.wrapper.WrappingClass;
 import net.sf.gilead.core.wrapper.WrappingClass.ErrorCode;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.HibernateContext;
+import net.sf.gilead.test.dao.IEmployeeDAO;
 import net.sf.gilead.test.dao.IMessageDAO;
 import net.sf.gilead.test.dao.IUserDAO;
 import net.sf.gilead.test.domain.Configuration;
+import net.sf.gilead.test.domain.IEmployee;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
 import net.sf.gilead.test.domain.Style;
@@ -46,32 +48,32 @@ public abstract class CloneTest extends TestCase
 	/**
 	 * Clone user class
 	 */
-	protected Class _cloneUserClass = null;
+	protected Class<?> _cloneUserClass = null;
 	
 	/**
 	 * Clone employee class
 	 */
-	protected Class _cloneEmployeeClass = null;
+	protected Class<?> _cloneEmployeeClass = null;
 	
 	/**
 	 * Domain message class
 	 */
-	protected Class _cloneMessageClass = null;
+	protected Class<?> _cloneMessageClass = null;
 	
 	/**
 	 * Domain user class
 	 */
-	protected Class _domainUserClass = null;
+	protected Class<?> _domainUserClass = null;
 	
 	/**
 	 * Domain employee class
 	 */
-	protected Class _domainEmployeeClass = null;
+	protected Class<?> _domainEmployeeClass = null;
 	
 	/**
 	 * Domain message class
 	 */
-	protected Class _domainMessageClass = null;
+	protected Class<?> _domainMessageClass = null;
 	
 	
 	//-------------------------------------------------------------------------
@@ -161,25 +163,25 @@ public abstract class CloneTest extends TestCase
 	 */
 	public void testCloneAndMergeMessageAuthorSubclass()
 	{
-	//	Get UserDAO and message DAO
+	//	Get employee DAO and message DAO
 	//
-		IUserDAO userDAO = DAOFactory.getUserDAO();
-		assertNotNull(userDAO);
+		IEmployeeDAO employeeDAO = DAOFactory.getEmployeeDAO();
+		assertNotNull(employeeDAO);
 		
 		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
 		assertNotNull(messageDAO);
 		
 	//	Load employee
 	//
-		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.EMPLOYEE_LOGIN);
-		assertNotNull(user);
-		assertEquals(_domainEmployeeClass, user.getClass());
-		assertNotNull(user.getMessageList());
-		assertFalse(user.getMessageList().isEmpty());
+		IEmployee employee = employeeDAO.searchEmployeeAndMessagesByLogin(TestHelper.EMPLOYEE_LOGIN);
+		assertNotNull(employee);
+		assertEquals(_domainEmployeeClass, employee.getClass());
+		assertNotNull(employee.getMessageList());
+		assertFalse(employee.getMessageList().isEmpty());
 		
 	//	Load the employee message
 	//
-		IMessage message = user.getMessageList().iterator().next();
+		IMessage message = employee.getMessageList().iterator().next();
 		message = messageDAO.loadDetailedMessage(message.getId());
 		
 		assertNotNull(message);
@@ -228,7 +230,8 @@ public abstract class CloneTest extends TestCase
 		
 	//	Load user
 	//
-		IUser user = (IUser) sessionFactory.openSession().load(_domainUserClass, 1);
+		IUser user = (IUser) sessionFactory.openSession().load(_domainUserClass, 
+															  TestHelper.getExistingUserId());
 		user.getFirstName();
 		assertNotNull(user);
 		
@@ -287,7 +290,7 @@ public abstract class CloneTest extends TestCase
 		
 	//	Load message and user
 	//
-		IMessage message = messageDAO.loadDetailedMessage(1);
+		IMessage message = messageDAO.loadDetailedMessage(TestHelper.getExistingMessageId());
 		assertNotNull(message);
 		assertNotNull(message.getAuthor());
 		assertFalse(Hibernate.isInitialized(message.getAuthor().getMessageList()));
@@ -465,7 +468,7 @@ public abstract class CloneTest extends TestCase
 		
 	//	Load last message
 	//
-		IMessage message = messageDAO.loadDetailedMessage(1);
+		IMessage message = messageDAO.loadDetailedMessage(TestHelper.getExistingMessageId());
 		assertNotNull(message);
 		assertEquals(_domainMessageClass, message.getClass());
 		
@@ -484,7 +487,14 @@ public abstract class CloneTest extends TestCase
 		assertEquals(message.getMessage(), cloneMessage.getMessage());
 		
 		assertNotNull(cloneMessage.getAuthor());
-		assertEquals(_cloneUserClass, cloneMessage.getAuthor().getClass());
+		if (cloneMessage.getAuthor().getLogin().equals(TestHelper.EMPLOYEE_LOGIN) == false)
+		{
+			assertEquals(_cloneUserClass, cloneMessage.getAuthor().getClass());
+		}
+		else
+		{
+			assertEquals(_cloneEmployeeClass, cloneMessage.getAuthor().getClass());
+		}
 		
 	//	Modify clone message
 	//
@@ -670,7 +680,7 @@ public abstract class CloneTest extends TestCase
 	//	Fill wrapper
 	//
 		wrapper.setErrorCode(ErrorCode.error);
-		wrapper.setUser(userDAO.loadUser(1));
+		wrapper.setUser(userDAO.loadUserByLogin(TestHelper.JUNIT_LOGIN));
 		wrapper.setMessageList(messageDAO.loadAllMessage(0, 10));
 		
 	//	Loading verification
@@ -853,7 +863,7 @@ public abstract class CloneTest extends TestCase
 		
 	//	Load last message
 	//
-		IMessage message = messageDAO.loadDetailedMessage(1);
+		IMessage message = messageDAO.loadDetailedMessage(TestHelper.getExistingMessageId());
 		assertNotNull(message);
 		assertEquals(_domainMessageClass, message.getClass());
 		
@@ -865,11 +875,11 @@ public abstract class CloneTest extends TestCase
 		IUser user = null;
 		if (message.getAuthor().getLogin().equals(TestHelper.JUNIT_LOGIN))
 		{
-			user = userDAO.loadUser(1);
+			user = userDAO.searchUserAndMessagesByLogin(TestHelper.GUEST_LOGIN);
 		}
 		else
 		{
-			user = userDAO.loadUser(2);
+			user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
 		}
 		assertNotNull(user);
 		assertEquals(_domainUserClass, user.getClass());
@@ -931,7 +941,7 @@ public abstract class CloneTest extends TestCase
 		
 	//	Load last message
 	//
-		IMessage message = messageDAO.loadDetailedMessage(1);
+		IMessage message = messageDAO.loadDetailedMessage(TestHelper.getExistingMessageId());
 		assertNotNull(message);
 		assertEquals(_domainMessageClass, message.getClass());
 		
@@ -1065,7 +1075,7 @@ public abstract class CloneTest extends TestCase
 		
 	//	Load user
 	//
-		IUser user = userDAO.searchUserAndMessagesByLogin("junit");
+		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
 		assertNotNull(user);
 		assertNotNull(user.getMessageList());
 		assertFalse(user.getMessageList().isEmpty());

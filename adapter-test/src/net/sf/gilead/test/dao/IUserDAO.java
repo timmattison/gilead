@@ -19,6 +19,11 @@ public interface IUserDAO {
 	/**
      * Load the user with the argument login
      */
+	public IUser loadUserByLogin(String login);
+
+	/**
+     * Load the user with the argument login
+     */
 	public IUser searchUserAndMessagesByLogin(String login);
 
 	/**

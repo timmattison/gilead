@@ -17,6 +17,7 @@
 package net.sf.gilead.core;
 
 import java.beans.BeanInfo;
+import java.beans.IndexedPropertyDescriptor;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
@@ -701,7 +702,8 @@ public class PersistentBeanManager
 				}
 			}
 			
-			if (_persistenceUtil.isPersistentClass(pojoClass) == true)
+			if ((_persistenceUtil.isPersistentClass(pojoClass) == true) ||
+				(_persistenceUtil.isPersistentCollection(pojoClass) == true))
 			{
 				return true;
 			}
@@ -714,6 +716,12 @@ public class PersistentBeanManager
 			{
 				PropertyDescriptor descriptor = descriptors[index];
 				Class<?> propertyClass = descriptor.getPropertyType();
+				if (propertyClass == null)
+				{
+				//	Indexed property
+				//
+					propertyClass  = ((IndexedPropertyDescriptor) descriptor).getPropertyType();
+				}
 				
 				boolean isCollection = Collection.class.isAssignableFrom(propertyClass) ||
 									   Map.class.isAssignableFrom(propertyClass);
@@ -738,6 +746,28 @@ public class PersistentBeanManager
 				readMethod.setAccessible(true);
 				Object propertyValue = readMethod.invoke(pojo, (Object[])null);
 				
+				if (propertyValue == null)
+				{
+					continue;
+				}
+				
+				// Get real property class
+				propertyClass = propertyValue.getClass();
+				
+				if ((_classMapper != null) &&
+					(_classMapper.getSourceClass(propertyClass) != null))
+				{
+					propertyClass = _classMapper.getSourceClass(propertyClass);
+				}
+				
+				if ((_persistenceUtil.isPersistentClass(propertyClass) == true) ||
+					(_persistenceUtil.isPersistentCollection(propertyClass) == true))
+				{
+					return true;
+				}
+				
+			//	Check property value
+			//
 				if (propertyValue != null)
 				{
 					if (propertyValue instanceof Collection<?>)

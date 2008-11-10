@@ -105,7 +105,7 @@ public class TestHelper
 		employee.setPassword("employee");
 		employee.setFirstName("John");
 		employee.setLastName("Doe");
-		employee.setEmail("john.doe@hibernate4gwt.com");
+		employee.setEmail("john.doe@gilead.com");
 		
 		// create message
 		IMessage employeeMessage = createMessage();
@@ -143,7 +143,7 @@ public class TestHelper
 	/**
 	 * @return an existing message ID
 	 */
-	public static Serializable getExistingMessageId()
+	public static Integer getExistingMessageId()
 	{
 	//	Load user list
 	//
