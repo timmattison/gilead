@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.5.0_06"/>
+	<classpathentry kind="lib" path="lib/gwt-sl/gwt-servlet-1.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-sl/gwt-sl-0.1.5a.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-sl/spring-2.5.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/adapter-core"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/adapter4gwt"/>
+	<classpathentry kind="lib" path="/adapter4gwt/lib/gwt-user.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
