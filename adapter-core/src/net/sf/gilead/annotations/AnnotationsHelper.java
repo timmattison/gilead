@@ -45,9 +45,12 @@ public class AnnotationsHelper
 			for (int index = 0; index < descriptors.length; index++)
 			{
 				PropertyDescriptor descriptor = descriptors[index];
-				if (descriptor.getReadMethod().isAnnotationPresent(ServerOnly.class))
+				if ((descriptor != null) && (descriptor.getReadMethod() != null))
 				{
-					return true;
+					if (descriptor.getReadMethod().isAnnotationPresent(ServerOnly.class))
+					{
+						return true;
+					}
 				}
 			}
 		} 
@@ -91,10 +94,13 @@ public class AnnotationsHelper
 			for (int index = 0; index < descriptors.length; index++)
 			{
 				PropertyDescriptor descriptor = descriptors[index];
-				if ((descriptor.getName().equals(propertyName)) &&
-					(descriptor.getReadMethod().isAnnotationPresent(ServerOnly.class)))
+				if ((descriptor != null) && (descriptor.getReadMethod() != null))
 				{
-					return true;
+					if ((descriptor.getName().equals(propertyName)) &&
+						(descriptor.getReadMethod().isAnnotationPresent(ServerOnly.class)))
+					{
+						return true;
+					}
 				}
 			}
 		} 
@@ -134,10 +140,13 @@ public class AnnotationsHelper
 			for (int index = 0; index < descriptors.length; index++)
 			{
 				PropertyDescriptor descriptor = descriptors[index];
-				if ((descriptor.getReadMethod().isAnnotationPresent(ServerOnly.class)) ||
-					(descriptor.getReadMethod().isAnnotationPresent(ReadOnly.class)))
+				if ((descriptor != null) && (descriptor.getReadMethod() != null))
 				{
-					return true;
+					if ((descriptor.getReadMethod().isAnnotationPresent(ServerOnly.class)) ||
+						(descriptor.getReadMethod().isAnnotationPresent(ReadOnly.class)))
+					{
+						return true;
+					}
 				}
 			}
 		} 
@@ -176,9 +185,12 @@ public class AnnotationsHelper
 			for (int index = 0; index < descriptors.length; index++)
 			{
 				PropertyDescriptor descriptor = descriptors[index];
-				if (descriptor.getReadMethod().isAnnotationPresent(ReadOnly.class))
+				if ((descriptor != null) && (descriptor.getReadMethod() != null))
 				{
-					return true;
+					if (descriptor.getReadMethod().isAnnotationPresent(ReadOnly.class))
+					{
+						return true;
+					}
 				}
 			}
 		} 
@@ -222,10 +234,13 @@ public class AnnotationsHelper
 			for (int index = 0; index < descriptors.length; index++)
 			{
 				PropertyDescriptor descriptor = descriptors[index];
-				if ((descriptor.getName().equals(propertyName)) &&
-					(descriptor.getReadMethod().isAnnotationPresent(ReadOnly.class)))
-				{
-					return true;
+				if ((descriptor != null) && (descriptor.getReadMethod() != null))
+				{		
+					if ((descriptor.getName().equals(propertyName)) &&
+						(descriptor.getReadMethod().isAnnotationPresent(ReadOnly.class)))
+					{
+						return true;
+					}
 				}
 			}
 		} 
