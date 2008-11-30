@@ -26,7 +26,7 @@ public class SerializationManagerTest extends TestCase
 	//	Integer conversion
 	//
 		Integer value = new Integer(1);
-		String serialized = SerializationManager.getInstance().serialize(value);
+		byte[] serialized = SerializationManager.getInstance().serialize(value);
 		assertEquals(value, SerializationManager.getInstance().unserialize(serialized));
 		
 	//	int conversion
@@ -44,7 +44,7 @@ public class SerializationManagerTest extends TestCase
 	//	Integer conversion
 	//
 		Long value = new Long(1);
-		String serialized = SerializationManager.getInstance().serialize(value);
+		byte[] serialized = SerializationManager.getInstance().serialize(value);
 		assertEquals(value, SerializationManager.getInstance().unserialize(serialized));
 		
 	//	int conversion
