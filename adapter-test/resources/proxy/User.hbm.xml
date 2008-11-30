@@ -34,9 +34,9 @@
         
         <set name="groupList" table="user_group" 
 			 inverse="true" cascade="all, delete-orphan">
-			<key column="ID" />
-			<many-to-many class="net.sf.gilead.test.domain.stateless.Group" 
-						  column="ID" />
+			<key column="USER_ID" />
+			<many-to-many class="net.sf.gilead.test.domain.proxy.Group" 
+						  column="GROUP_ID" />
 		</set>
         
         <joined-subclass name="net.sf.gilead.test.domain.proxy.Employee">

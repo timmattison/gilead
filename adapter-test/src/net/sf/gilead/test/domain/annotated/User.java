@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -153,6 +154,7 @@ public class User extends LightEntity implements IUser
 	/**
 	 * @return the groupList
 	 */
+	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="members", targetEntity=Group.class)
 	public Set<IGroup> getGroupList() {
 		return groupList;
 	}

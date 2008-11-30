@@ -150,7 +150,7 @@ public class User implements Serializable, IUser
 	/**
 	 * @return the groupList
 	 */
-	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="members")
+	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="members", targetEntity=Group.class)
 	public Set<IGroup> getGroupList() {
 		return groupList;
 	}

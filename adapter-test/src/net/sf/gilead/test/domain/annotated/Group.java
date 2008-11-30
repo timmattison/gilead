@@ -44,7 +44,7 @@ public class Group extends LightEntity implements Serializable, IGroup
 	
 	private String name;
 	
-	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, targetEntity=User.class)
 	private Set<IUser> members;
 
 	//----
