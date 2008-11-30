@@ -13,10 +13,12 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import net.sf.gilead.test.domain.IGroup;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
 
@@ -44,6 +46,7 @@ public class User implements Serializable, IUser
 	private String password;
 	
 	private Set<IMessage> messageList;
+	private Set<IGroup> groupList;
 
 	// Properties
 	@Id
@@ -143,5 +146,49 @@ public class User implements Serializable, IUser
 	public void removeMessage(IMessage message)
 	{
 		messageList.remove(message);
+	}
+	/**
+	 * @return the groupList
+	 */
+	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="members")
+	public Set<IGroup> getGroupList() {
+		return groupList;
+	}
+
+	/**
+	 * @param groupList the groupList to set
+	 */
+	public void setGroupList(Set<IGroup> groupList) {
+		this.groupList = groupList;
+	}
+	
+	/**
+	 * Add user to the argument group
+	 */
+	public void addToGroup(IGroup group)
+	{
+		if (groupList == null)
+		{
+			groupList = new HashSet<IGroup>();
+		}
+		
+		if (groupList.contains(group) == false)
+		{
+			groupList.add(group);
+			group.addMember(this);
+		}
+	}
+
+	/**
+	 * Remove user from group
+	 */
+	public void removeUserFromGroup(IGroup group)
+	{
+		if ((groupList != null) &&
+			(groupList.contains(group)))
+		{
+			groupList.remove(group);
+			group.removeMember(this);
+		}
 	}
 }

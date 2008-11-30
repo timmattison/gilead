@@ -1,5 +1,6 @@
 package net.sf.gilead.test.domain;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -40,5 +41,25 @@ public interface IUser
 	public void addMessage(IMessage message);
 	
 	public void removeMessage(IMessage message);
+
+	/**
+	 * @return the groupList
+	 */
+	public Set<IGroup> getGroupList();
+
+	/**
+	 * @param groupList the groupList to set
+	 */
+	public void setGroupList(Set<IGroup> groupList);
+
+	/**
+	 * Add user to the argument group
+	 */
+	public void addToGroup(IGroup group);
+
+	/**
+	 * Remove user from group
+	 */
+	public void removeUserFromGroup(IGroup group);
 
 }

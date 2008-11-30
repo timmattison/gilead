@@ -19,6 +19,7 @@ import javax.persistence.Version;
 import net.sf.gilead.annotations.ReadOnly;
 import net.sf.gilead.annotations.ServerOnly;
 import net.sf.gilead.pojo.java5.LightEntity;
+import net.sf.gilead.test.domain.IGroup;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
 
@@ -45,6 +46,7 @@ public class User extends LightEntity implements IUser
 	private String password;
 	
 	private Set<IMessage> messageList;
+	private Set<IGroup> groupList;
 
 	// Properties
 	@Id
@@ -146,5 +148,49 @@ public class User extends LightEntity implements IUser
 	public void removeMessage(IMessage message)
 	{
 		messageList.remove(message);
+	}
+
+	/**
+	 * @return the groupList
+	 */
+	public Set<IGroup> getGroupList() {
+		return groupList;
+	}
+
+	/**
+	 * @param groupList the groupList to set
+	 */
+	public void setGroupList(Set<IGroup> groupList) {
+		this.groupList = groupList;
+	}
+	
+	/**
+	 * Add user to the argument group
+	 */
+	public void addToGroup(IGroup group)
+	{
+		if (groupList == null)
+		{
+			groupList = new HashSet<IGroup>();
+		}
+		
+		if (groupList.contains(group) == false)
+		{
+			groupList.add(group);
+			group.addMember(this);
+		}
+	}
+
+	/**
+	 * Remove user from group
+	 */
+	public void removeUserFromGroup(IGroup group)
+	{
+		if ((groupList != null) &&
+			(groupList.contains(group)))
+		{
+			groupList.remove(group);
+			group.removeMember(this);
+		}
 	}
 }

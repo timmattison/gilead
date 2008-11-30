@@ -44,7 +44,7 @@ public class StatelessCloneTest extends CloneTest
 	protected void changeAuthorForClone(IMessage message, IUser user)
 	{
 		((net.sf.gilead.test.domain.stateless.Message)message).
-				setAuthor((net.sf.gilead.test.domain.stateless.User)user);
+				setAuthor((IUser)user);
 	}
 	
 	/**
@@ -53,6 +53,6 @@ public class StatelessCloneTest extends CloneTest
 	protected void changeAuthorForDomain(IMessage message, IUser user)
 	{
 		((net.sf.gilead.test.domain.stateless.Message)message).
-				setAuthor((net.sf.gilead.test.domain.stateless.User)user);
+				setAuthor((IUser)user);
 	}
 }

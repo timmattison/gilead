@@ -31,5 +31,6 @@
         <!-- Hibernate XML mapping files -->
         <mapping resource="stateless/User.hbm.xml"/>
         <mapping resource="stateless/Message.hbm.xml"/>
+        <mapping resource="stateless/Group.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

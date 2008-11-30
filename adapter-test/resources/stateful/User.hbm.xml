@@ -32,6 +32,13 @@
             <one-to-many class="net.sf.gilead.test.domain.stateful.Message" />
         </set>
         
+        <set name="groupList" table="user_group" 
+			 inverse="true" cascade="all, delete-orphan">
+			<key column="ID" />
+			<many-to-many class="net.sf.gilead.test.domain.stateless.Group" 
+						  column="ID" />
+		</set>
+        
         <joined-subclass name="net.sf.gilead.test.domain.stateful.Employee">
 	        <key column="ID"/>
 	        <property name="email" type="string">

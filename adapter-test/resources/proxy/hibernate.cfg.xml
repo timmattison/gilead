@@ -31,6 +31,6 @@
         <!-- Hibernate XML mapping files -->
         <mapping resource="proxy/User.hbm.xml"/>
         <mapping resource="proxy/Message.hbm.xml"/>
-
+		<mapping resource="proxy/Group.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

@@ -32,6 +32,6 @@
         <mapping class="net.sf.gilead.test.domain.annotated.Message"/>
         <mapping class="net.sf.gilead.test.domain.annotated.User"/>
         <mapping class="net.sf.gilead.test.domain.annotated.Employee"/>
-
+		<mapping class="net.sf.gilead.test.domain.annotated.Group"/>
     </session-factory>
 </hibernate-configuration>

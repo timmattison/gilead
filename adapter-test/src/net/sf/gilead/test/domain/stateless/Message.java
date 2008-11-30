@@ -29,7 +29,7 @@ public class Message extends LightEntity implements IMessage
     private String message;
     private Date date;
     
-    private User author;
+    private IUser author;
     
     private Map<String, Integer> keywords;
     
@@ -91,8 +91,8 @@ public class Message extends LightEntity implements IMessage
 	/**
 	 * @param author the author to set
 	 */
-	public void setAuthor(User author) {
-		this.author = (User) author;
+	public void setAuthor(IUser author) {
+		this.author = (IUser) author;
 	}
 	
 	/**
