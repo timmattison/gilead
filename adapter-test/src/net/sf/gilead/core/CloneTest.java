@@ -23,6 +23,7 @@ import net.sf.gilead.test.domain.Configuration;
 import net.sf.gilead.test.domain.IEmployee;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
+import net.sf.gilead.test.domain.PagingList;
 import net.sf.gilead.test.domain.Style;
 
 import org.hibernate.Hibernate;
@@ -1108,6 +1109,38 @@ public abstract class CloneTest extends TestCase
 		assertNotNull(user.getMessageList());
 		assertFalse(user.getMessageList().isEmpty());
 		assertEquals(messageCount -1, user.getMessageList().size());
+	}
+	
+	/**
+	 * Test clone and merge ArrayList subclass, such as GWT-Plus PagingList
+	 */
+	public void testCloneAndMergePagingList()
+	{
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Fill paging list
+	//
+		PagingList list = new PagingList();
+		list.addAll(userDAO.loadAll());
+		assertFalse(list.isEmpty());
+		list.setTotalRecords(list.size());
+		
+	//	Clone paging list
+	//
+		PagingList cloneList = (PagingList) _beanManager.clone(list);
+		assertNotNull(cloneList);
+		assertEquals(list.getTotalRecords(), cloneList.getTotalRecords());
+		assertEquals(list.size(), cloneList.size());
+		
+	//	Merge paging list
+	//
+		PagingList mergeList = (PagingList) _beanManager.merge(cloneList);
+		assertNotNull(mergeList);
+		assertEquals(list.getTotalRecords(), mergeList.getTotalRecords());
+		assertEquals(list.size(), mergeList.size());	
 	}
 	
 	//-------------------------------------------------------------------------

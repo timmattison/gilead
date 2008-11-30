@@ -614,12 +614,13 @@ public class PersistentBeanManager
 		{
 		//	Create the same collection
 		//
+			Collection<Object> result = null;
 			try
 			{
 			//	First, search constructor with initial capacity argument
 			//
 				Constructor<?> constructor = collectionClass.getConstructor(Integer.TYPE); 
-				return (Collection<Object>) constructor.newInstance(pojoCollection.size());
+				result = (Collection<Object>) constructor.newInstance(pojoCollection.size());
 			}
 			catch(NoSuchMethodException e)
 			{
@@ -627,7 +628,7 @@ public class PersistentBeanManager
 				try
 				{
 					Constructor<?> constructor = collectionClass.getConstructor((Class[]) null); 
-					return (Collection<Object>) constructor.newInstance();
+					result = (Collection<Object>) constructor.newInstance();
 				}
 				catch(Exception ex)
 				{
@@ -638,6 +639,15 @@ public class PersistentBeanManager
 			{
 				throw new RuntimeException("Cannot instantiate collection !", ex);
 			}
+			
+			if (collectionClass.getPackage().getName().startsWith("java") == false)
+			{
+			//	Extend collections (such as PagingList)
+			//
+				_lazyKiller.populate(result, pojoCollection);
+			}
+			
+			return result;
 		}
 	}
 	
