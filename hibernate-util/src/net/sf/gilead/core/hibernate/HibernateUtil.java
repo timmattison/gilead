@@ -219,7 +219,8 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		Serializable id = null;
 		
-		Class<?> pojoClass = UnEnhancer.unenhanceClass(pojo.getClass());
+		pojo = UnEnhancer.unenhanceObject(pojo);
+		Class<?> pojoClass = pojo.getClass();
 		if (hibernateClass.equals(pojoClass))
 		{
 		//	Same class for pojo and hibernate class : simple use metadata
