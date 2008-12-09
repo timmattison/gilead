@@ -211,7 +211,8 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	//
 		Serializable id = null;
 		
-		if (hibernateClass.equals(pojo.getClass()))
+		Class<?> pojoClass = UnEnhancer.unenhanceClass(pojo.getClass());
+		if (hibernateClass.equals(pojoClass))
 		{
 		//	the pojo has the same class, simple use metadata
 		//
@@ -231,7 +232,6 @@ public class HibernateJpaUtil implements IPersistenceUtil
 				String getter = "get" + property;
 				
 				// Find getter method
-				Class<?> pojoClass = pojo.getClass();
 				Method method = pojoClass.getMethod(getter, (Class[])null);
 				if (method == null)
 				{
@@ -869,6 +869,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 				try
 				{
 					Class<?> itemClass = Thread.currentThread().getContextClassLoader().loadClass(sid.className);
+					itemClass = UnEnhancer.unenhanceClass(itemClass);
 					Object proxy = session.load(itemClass, sid.id);
 					deletedItems.add(proxy);
 				}
