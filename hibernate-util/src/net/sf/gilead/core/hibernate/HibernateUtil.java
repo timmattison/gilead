@@ -32,6 +32,7 @@ import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
+import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.type.CollectionType;
 import org.hibernate.type.Type;
 
@@ -219,13 +220,23 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		Serializable id = null;
 		
-		pojo = UnEnhancer.unenhanceObject(pojo);
-		Class<?> pojoClass = pojo.getClass();
+		Class<?> pojoClass = UnEnhancer.unenhanceClass(pojo.getClass());
 		if (hibernateClass.equals(pojoClass))
 		{
-		//	Same class for pojo and hibernate class : simple use metadata
+		//	Same class for pojo and hibernate class
 		//
-			id = hibernateMetadata.getIdentifier(pojo, EntityMode.POJO);	
+			if (pojo instanceof HibernateProxy)
+			{
+			//	To prevent LazyInitialisationException
+			//
+				id = ((HibernateProxy)pojo).getHibernateLazyInitializer().getIdentifier();
+			}
+			else
+			{
+			//	Otherwise : use metada
+			//
+				id = hibernateMetadata.getIdentifier(pojo, EntityMode.POJO);
+			}
 		}
 		else
 		{
