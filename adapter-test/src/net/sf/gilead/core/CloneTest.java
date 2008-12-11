@@ -19,6 +19,7 @@ import net.sf.gilead.test.HibernateContext;
 import net.sf.gilead.test.dao.IEmployeeDAO;
 import net.sf.gilead.test.dao.IMessageDAO;
 import net.sf.gilead.test.dao.IUserDAO;
+import net.sf.gilead.test.domain.BaseListLoadResult;
 import net.sf.gilead.test.domain.Configuration;
 import net.sf.gilead.test.domain.IEmployee;
 import net.sf.gilead.test.domain.IMessage;
@@ -1141,6 +1142,45 @@ public abstract class CloneTest extends TestCase
 		assertNotNull(mergeList);
 		assertEquals(list.getTotalRecords(), mergeList.getTotalRecords());
 		assertEquals(list.size(), mergeList.size());	
+	}
+	
+	/**
+	 * Test clone of a loaded user and associated messages
+	 */
+	public void testCloneAndMergeBaseListLoadResult()
+	{
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Create BaseListLoadResult
+	//
+		BaseListLoadResult<IUser> userList = new BaseListLoadResult<IUser>(userDAO.loadAll());
+		assertNotNull(userList.getData());
+		assertFalse(userList.getData().isEmpty());
+		
+	//	Clone user list
+	//
+		BaseListLoadResult<IUser> cloneUserList = 
+								(BaseListLoadResult<IUser>) _beanManager.clone(userList);
+		
+	//	Test cloned user list
+	//
+		assertNotNull(cloneUserList);
+		assertNotNull(cloneUserList.getData());
+		assertFalse(cloneUserList.getData().isEmpty());
+		
+	//	Merge user list
+	//
+		BaseListLoadResult<IUser> mergeUserList = 
+								(BaseListLoadResult<IUser>) _beanManager.merge(cloneUserList);
+		
+	//	Test merged user list
+	//
+		assertNotNull(mergeUserList);
+		assertNotNull(mergeUserList.getData());
+		assertFalse(mergeUserList.getData().isEmpty());
 	}
 	
 	//-------------------------------------------------------------------------

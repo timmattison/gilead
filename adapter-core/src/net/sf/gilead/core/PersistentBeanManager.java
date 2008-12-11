@@ -486,7 +486,9 @@ public class PersistentBeanManager
 				}
 				else
 				{
-					hibernatePojo = hibernateClass.newInstance();
+					Constructor<?> constructor = hibernateClass.getDeclaredConstructor(new Class<?>[]{});
+					constructor.setAccessible(true);
+					hibernatePojo = constructor.newInstance();
 				}
 			}
 			catch(Exception e)
