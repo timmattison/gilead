@@ -77,7 +77,9 @@ public class PersistentAdapter extends JavaAdapter
 					
 					if (_stateless == false)
 					{
-						_beanManager.setProxyStore(new HttpSessionProxyStore());
+						HttpSessionProxyStore store = new HttpSessionProxyStore();
+						store.setPersistenceUtil(persistenceUtil);
+						_beanManager.setProxyStore(store);
 					}
 					
 					_beanManager.setPersistenceUtil(persistenceUtil);
@@ -113,7 +115,7 @@ public class PersistentAdapter extends JavaAdapter
 		//	Merge input arguments
 		//
 			_log.info("Merging input parameters " + remotingMessage.getParameters());
-			List mergedParameters = (List) _beanManager.merge(remotingMessage.getParameters());
+			List<?> mergedParameters = (List<?>) _beanManager.merge(remotingMessage.getParameters());
 			remotingMessage.setParameters(mergedParameters);
 			
 		// 	Call Java adapter

@@ -75,7 +75,9 @@ public class PersistentMessagingAdapter extends ActionScriptAdapter
 					
 					if (_stateless == false)
 					{
-						_beanManager.setProxyStore(new HttpSessionProxyStore());
+						HttpSessionProxyStore store = new HttpSessionProxyStore();
+						store.setPersistenceUtil(persistenceUtil);
+						_beanManager.setProxyStore(store);
 					}
 					
 					_beanManager.setPersistenceUtil(persistenceUtil);
