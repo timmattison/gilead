@@ -157,7 +157,8 @@ public class Message implements Serializable, IMessage
 	 */
 	public boolean equals(Object obj)
 	{
-		if (obj == null)
+		if ((obj == null) ||
+			(obj instanceof Message == false))
 		{
 			return false;
 		}

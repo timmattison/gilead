@@ -156,7 +156,8 @@ public class MessageDTO extends LightEntity implements IMessage
 	 */
 	public boolean equals(Object obj)
 	{
-		if (obj == null)
+		if ((obj == null) ||
+			(obj instanceof MessageDTO == false))
 		{
 			return false;
 		}

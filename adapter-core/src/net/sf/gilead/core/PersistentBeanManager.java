@@ -695,15 +695,30 @@ public class PersistentBeanManager
 	 */
 	protected boolean holdPersistentObject(Object pojo)
 	{
+		return holdPersistentObject(pojo, new ArrayList<Object>());
+	}
+	
+	/**
+	 * In deep persistent association checking.
+	 * This method is used to detect wrapping object (ie not persistent
+	 * class holding persistent associations)
+	 * @param pojo the wrapping pojo
+	 * @param alreadyChecked list of already checked pojos
+	 * @return true if the pojo contains persistent member, false otherwise
+	 */
+	protected boolean holdPersistentObject(Object pojo, List<Object> alreadyChecked)
+	{
 		try
 		{
 		//	Precondition checking
 		//
-			if (pojo == null)
+			if ((pojo == null) ||
+				(alreadyChecked.contains(pojo)))
 			{
 				return false;
 			}
 			
+			alreadyChecked.add(pojo);
 			Class<?> pojoClass = pojo.getClass();
 			if (_classMapper != null)
 			{
@@ -789,7 +804,7 @@ public class PersistentBeanManager
 						Collection<?> propertyCollection = (Collection<?>)propertyValue;
 						for(Object value : propertyCollection)
 						{
-							if (holdPersistentObject(value) == true)
+							if (holdPersistentObject(value, alreadyChecked) == true)
 							{
 								return true;
 							}
@@ -802,8 +817,8 @@ public class PersistentBeanManager
 						Map<?,?> propertyMap = (Map<?, ?>) propertyValue;
 						for(Map.Entry<?, ?> value : propertyMap.entrySet())
 						{
-							if ((holdPersistentObject(value.getKey()) == true) ||
-								(holdPersistentObject(value.getValue()) == true))
+							if ((holdPersistentObject(value.getKey(), alreadyChecked) == true) ||
+								(holdPersistentObject(value.getValue(), alreadyChecked) == true))
 							{
 								return true;
 							}
@@ -813,7 +828,7 @@ public class PersistentBeanManager
 					{
 					//	Recursive search
 					//
-						if (holdPersistentObject(propertyValue) == true)
+						if (holdPersistentObject(propertyValue, alreadyChecked) == true)
 						{
 							return true;
 						}
