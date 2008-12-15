@@ -1,138 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-compilation file for gilead-comet
--->
-
-<project name="COMET" default="rebuild">
-
-	<property name="project" value="chat" />
-	<property name="version" value="0.1" />
-    <property name="jsstyle" value="PRETTY" /> <!-- PRETTY, DETAIL, OBFUSCATED -->
+<project basedir="." default="jar" name="comet4gwt">
 	
-	<property name="localWebAppDir" value="C:\Program Files\Apache Software Foundation\Tomcat 6.0\webapps\chat" />
-	<property name="serverDir" value="/var/lib/tomcat-6/webapps" />
-
-	<property environment="env" />
-
-    <property name="srcDir" value="src" />
-    <property name="exDir" value="examples" />
-	<property name="buildDir" value="build" />
-	<property name="javadocDir" value="javadoc" />
-    <property name="jarFile" value="gilead-comet.jar" />
-    <property name="warFile" value="chat.war" />
-
-	<path id="classpath">
-        <pathelement location="${srcDir}" />
-        <pathelement location="${exDir}" />
-		<pathelement location="${buildDir}" />
-		<pathelement location="${buildDir}/WEB-INF/classes" />
-		<fileset dir="lib/">
-			<include name="*.jar" />
-		</fileset>
-        <fileset dir="lib/dev">
-            <include name="*.jar" />
-        </fileset>
-        <fileset dir="lib/annotations">
-            <include name="*.jar" />
-        </fileset>
-        <fileset dir="lib/h4gwt">
-            <include name="*.jar" />
-        </fileset>
-        <fileset dir="lib/hibernate">
-            <include name="*.jar" />
-        </fileset>
-        <fileset dir="lib/tomcat">
-            <include name="*.jar" />
-        </fileset>
-	</path>
-
-
-	<target name="compilserver" depends="">
-		<echo message="Compiling server java code" />
-        <javac srcdir="${srcDir}" 
-            destDir="${buildDir}/WEB-INF/classes" 
-            classpathref="classpath"
-            debug="true"
-            debuglevel="lines,vars,source"
-        />
-        <javac srcdir="${exDir}" 
-            destDir="${buildDir}/WEB-INF/classes" 
-            classpathref="classpath"
-            debug="true"
-            debuglevel="lines,vars,source"
-        />
-	</target>
-
-    <target name="compilclientchat" depends="">
-        <echo message="Compiling client main" />
-        <java classname="com.google.gwt.dev.GWTCompiler" fork="yes" failonerror="true" classpathref="classpath">
-            <jvmarg value="-Xmx512M" />
-            <sysproperty key="ENCODING" value="UTF-8" />
-            <arg value="-style" />
-            <arg value="${jsstyle}" />
-            <arg value="-out" />
-            <arg file="${buildDir}" />
-            <arg value="net.sf.gilead.examples.CometChat" />
-        </java>
+	<!-- Properties -->
+    <property environment="env"/>
+    <property name="version" value="1.2"/>
+	<property name="gwt.jar" value="comet4gwt-${version}.jar" />
+	
+	<property name="source.dir" value="src"/>
+    <property name="build.dir" value="classes"/>
+	<property name="lib.dir"  value="lib"/>
+	<property name="jar.dir"  value="dist"/>
+	
+	<property name="core.dir" value="../adapter-core"/>
+	<property name="adapter4gwt.dir" value="../adapter4gwt"/>
+	
+	<!-- Classpath -->
+    <path id="project.classpath">
+        <pathelement location="${build.dir}"/>
+    	
+    	<fileset dir="${lib.dir}">
+	        <include name="**/*.jar" />
+    	</fileset>
+    	
+    	<fileset dir="${core.dir}">
+	        <include name="**/*.jar" />
+    	</fileset>
+    	
+    	<fileset dir="${adapter4gwt.dir}">
+	        <include name="**/*.jar" />
+    	</fileset>
+    </path>
+	
+	<!-- Targets -->
+    <target name="init">
+    	<ant antfile="${core.dir}/build.xml" target="jar" 
+    	     dir="${core.dir}"/>
+    	
+    	<ant antfile="${adapter4gwt.dir}/build.xml" target="jar" 
+    	    	     dir="${adapter4gwt.dir}"/>
+    	
+        <mkdir dir="${build.dir}"/>
     </target>
-
-     <target name="compilclient" depends="compilclientchat">
-        <echo message="Compiling client java code to javascript" />
-    </target>
-
-	<target name="build" depends="compilserver, compilclient">
-		
-		<echo message="Copy xml files" />
-		<copy todir="${buildDir}/WEB-INF/">
-			<fileset dir="WebContent/WEB-INF/" includes="web.xml" />
-		</copy>
-		<copy todir="${buildDir}/WEB-INF/classes/">
-            <fileset dir="${srcDir}/" includes="*.xml, *.properties" />
-		    <fileset dir="${exDir}/" includes="*.xml, *.properties" />
-		</copy>
-		<copy todir="${buildDir}/">
-            <fileset dir="WebContent/" includes="**/*.htm*,**/*.jsp" excludes="WEB-INF/*,META-INF/*" />
-        </copy>
-		<echo>version ${fullversion} builded</echo>
-	</target>
-
-	<target name="rebuild" depends="clean, build, jaronly">
-	</target>
-
-
-	<target name="copy2local" description="Copy all files to the webapps directory of local tomcat">
-		<copy todir="${localWebAppDir}/">
-			<fileset dir="build/" includes="**" />
-		</copy>
-	</target>
-
-	<target name="javadoc" description="Generates de Java documentation files for the project">
-		<delete dir="${javadocDir}" />
-		<javadoc access="public" author="true" classpathref="classpath" destdir="${javadocDir}" doctitle="Full Metal Planet" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="nc.kroc.formgen,nc.kroc.fmp.client.board,nc.kroc.fmp.rpc,nc.kroc,nc.kroc.fmp.client.home,nc.kroc.fmp.client.form,nc.kroc.fmp.server,com.google.code.p.gwtchismes.client,nc.kroc.fmp.client" source="1.4" sourcepath="src" splitindex="true" use="true" version="true" />
-	</target>
-
+    
 	<target name="clean">
-		<delete file="WebContent/Thumbs.db" />
-		<delete dir="${buildDir}" />
-		<delete dir="${javadocDir}" />
-		<delete file="${warFile}" />
-		<echo>create directory</echo>
-		<mkdir dir="${buildDir}/WEB-INF/classes" />
-	</target>
-
-    <target name="jaronly" depends="">
-        <copy todir="${buildDir}/WEB-INF/classes/">
-            <fileset dir="${srcDir}/" includes="**/*.java" />
-        </copy>
-        <jar destfile="${jarFile}">
-            <fileset dir="${buildDir}/WEB-INF/classes" includes="**/*.*" excludes="**/examples/**/*"/>
-        </jar>
+        <delete dir="${build.dir}"/>
+		<delete dir="${jar.dir}"/>
     </target>
-
-    <target name="waronly" depends="">
-        <jar destfile="${warFile}">
-            <fileset dir="${buildDir}" includes="**/*.*" />
-        </jar>
+	
+    <target name="build" depends="init">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+    	 <javac debug="on" destdir="${build.dir}">
+            <src path="${source.dir}"/>
+    	 	<exclude name="net/sf/gilead/emul/**"/>
+        	<classpath refid="project.classpath"/>
+        </javac>
     </target>
-
+	
+	<target name="jar" depends="build">
+		<mkdir dir="${jar.dir}" />
+	    <jar jarfile="${jar.dir}/${gwt.jar}" basedir="${build.dir}/"/>
+	  </target>
 </project>
