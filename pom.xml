@@ -80,12 +80,12 @@
 			<dependency>
 				<groupId>net.sf.beanlib</groupId>
 				<artifactId>beanlib</artifactId>
-				<version>3.3.0beta19</version>
+				<version>3.3.0beta20b</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.beanlib</groupId>
 				<artifactId>beanlib-hibernate</artifactId>
-				<version>3.3.0beta19</version>
+				<version>3.3.0beta20b</version>
 			</dependency>
 			<dependency>
 				<groupId>cglib</groupId>

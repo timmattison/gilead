@@ -103,8 +103,8 @@
 				<version>2.0</version>
 				<configuration>
 					<excludes>
-						<value>net/sf/hibernate4gwt/emul/java14/java/sql/**</value>
-						<value>net/sf/hibernate4gwt/emul/java5/**</value>
+						<value>**/emul/java14/java/sql/**</value>
+						<value>**/emul/java5/**</value>
 					</excludes>
 				</configuration>
 			</plugin>
