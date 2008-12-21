@@ -18,6 +18,7 @@
 		<module>distribution</module>
 		<module>hibernate-jpa-util</module>
 		<module>hibernate-util</module>
+		<module>comet4gwt</module>
 	</modules>
 	<licenses>
 		<license>
@@ -47,6 +48,11 @@
 		<repository>
 			<id>hibernat4gwt-repo</id>
 			<url>https://hibernate4gwt.svn.sourceforge.net/svnroot/hibernate4gwt/branches/jens_meiss/maven/</url>
+		</repository>
+		<repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net Repository for Maven</name>
+			<url>http://download.java.net/maven/2/</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
@@ -173,11 +179,13 @@
 		</dependency>
 	</dependencies>
 	
-	
-	<!-- Tests currently not available -->
 	<properties>
 		<maven.test.skip>true</maven.test.skip>
+		<catalina.version>6.0.18</catalina.version>
 	</properties>
+	
+	<!-- Tests currently not available -->
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -197,5 +205,26 @@
 				<directory>src</directory>
 			</resource>
 		</resources>
+		<extensions>
+			<extension>
+				<groupId>org.jvnet.wagon-svn</groupId>
+				<artifactId>wagon-svn</artifactId>
+				<version>1.8</version>
+			</extension>
+		</extensions>
 	</build>
+	<distributionManagement>
+                <!-- use the following if you're not using a snapshot version. -->
+                <repository>
+                        <id>releases</id>
+                        <name>releases</name>
+                        <url>svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo</url>
+                </repository>
+                <!-- use the following if you ARE using a snapshot version. -->
+                <snapshotRepository>
+                        <id>snapshots</id>
+                        <name>snapshots</name>
+                        <url>svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo</url>
+                </snapshotRepository>
+     </distributionManagement>
 </project>
