@@ -229,6 +229,8 @@ public class DirectoryClassMapper implements IClassMapper
 		
 	//	Is the correspondance already computed ?
 	//
+		// work on copy to prevent syncrhnoisation issue
+		String cloneSuffix = _cloneSuffix;
 		synchronized (this) 
 		{
 			Class<?> sourceClass = _targetSourceMap.get(targetClass);
@@ -243,13 +245,13 @@ public class DirectoryClassMapper implements IClassMapper
 			String suffix = targetClassName.substring(_rootClonePackage.length());
 			sourceClassName = _rootDomainPackage + suffix;
 			
-			if ((_cloneSuffix != null) &&
-				(sourceClassName.endsWith(_cloneSuffix)))
+			if ((cloneSuffix != null) &&
+				(sourceClassName.endsWith(cloneSuffix)))
 			{
 			//	Remove clone suffix
 			//
 				sourceClassName = sourceClassName.substring(0, 
-						sourceClassName.length() - _cloneSuffix.length());
+						sourceClassName.length() - cloneSuffix.length());
 			}
 		
 		//	Instantiate target Class<?>

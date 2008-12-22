@@ -198,11 +198,19 @@ public class LoadingProxyManager
 		
 		if (returnType != Void.TYPE)
 		{
-			if ((Collection.class.isAssignableFrom(returnType)) ||
-				(Map.class.isAssignableFrom(returnType)))
+			if (Collection.class.isAssignableFrom(returnType))
+			{
+				// Generate wrapper for nested Loading interface
+				getWrapper(interfaceMethod.getGenericReturnType().getClass());
+				
+				code.append(" return wrapAs(");
+				code.append(returnType.getName());
+				code.append(".class,");
+			}
+			else if (Map.class.isAssignableFrom(returnType))
 			{
 				// TODO
-				throw new RuntimeException("Not yet implemented  : collection wrapping !");
+				throw new RuntimeException("Not yet implemented  : map wrapping !");
 			}
 			else if (returnType.getAnnotation(LoadingInterface.class) != null)
 			{

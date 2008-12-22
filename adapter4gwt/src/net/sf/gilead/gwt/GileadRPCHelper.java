@@ -3,6 +3,9 @@
  */
 package net.sf.gilead.gwt;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 import javax.servlet.http.HttpSession;
 
 import net.sf.gilead.core.PersistentBeanManager;
@@ -42,14 +45,20 @@ public class GileadRPCHelper
 	 */
 	public static void initClassLoader()
 	{
-		ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-		if (contextClassLoader instanceof ProxyClassLoader == false)
-		{
-		// 	Set Proxy class loader
-		//
-			Thread.currentThread().setContextClassLoader(
-							new ProxyClassLoader(contextClassLoader));
-		}
+	// 	Set Proxy class loader (privileged code needed)
+	//
+		 AccessController.doPrivileged(new PrivilegedAction()
+		 {
+			 public Object run()
+	         {
+				 ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+				 if (contextClassLoader instanceof ProxyClassLoader == false)
+				 {
+					 Thread.currentThread().setContextClassLoader(new ProxyClassLoader(contextClassLoader));
+	        	 }
+	             return null; // nothing to return
+	         }
+	     });
 	}
 	
 	/**

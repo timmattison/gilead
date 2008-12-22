@@ -750,12 +750,14 @@ public class PersistentBeanManager
 					propertyClass  = ((IndexedPropertyDescriptor) descriptor).getPropertyType();
 				}
 				
+				// Check needed for collection or property declared as bare Object
 				boolean isCollection = Collection.class.isAssignableFrom(propertyClass) ||
 									   Map.class.isAssignableFrom(propertyClass);
+				boolean isObject = propertyClass.equals(Object.class);
 				
 				if ((ClassUtils.immutable(propertyClass) == true) ||
 				   ((ClassUtils.isJavaPackage(propertyClass) == true) &&
-					(isCollection == false)))
+					(isCollection == false) && (isObject == false)))
 				{
 				//	Basic type : no check needed
 				//

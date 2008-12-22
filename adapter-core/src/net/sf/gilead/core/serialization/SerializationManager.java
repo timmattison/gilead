@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 
 import net.sf.gilead.exception.ConvertorException;
 
@@ -111,7 +112,7 @@ public class SerializationManager
 	{
 		if (_log.isDebugEnabled())
 		{
-			_log.debug("Unserialization of " + bytes);
+			_log.debug("Unserialization of " + Arrays.toString(bytes));
 		}
 		
 	//	Precondition checking
