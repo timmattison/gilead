@@ -75,22 +75,13 @@
     	
     	<!-- setProxyInformations-->
     	<method visibility="public" returnType="void" name="setProxyInformations" >
-    		<javadoc>
-    			<![CDATA[
-    				@gwt.typeArgs proxyInformations <java.lang.String, java.util.Map<java.lang.String, byte[]>>
-    			]]>
-    		</javadoc>
     		<parameters>
-    			<parameter type="java.util.Map" name="proxyInformations">
-    				<collectionType>
-	    				<![CDATA[
-	    					java.lang.String, java.util.Map<java.lang.String, byte[]>
-	    				]]>
-	    			</collectionType>
-    			</parameter>
+    			<parameter type="java.util.Map" name="proxyInformations" />
     		</parameters>
     		<code>
+    		<![CDATA[
     			{ _proxyInformations = proxyInformations; }
+    		]]>
     		</code>
     	</method>
     </methods>
