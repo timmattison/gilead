@@ -208,6 +208,10 @@ public class PersistentBeanManager
 		{
 			return null;
 		}
+		if (_persistenceUtil == null)
+		{
+			throw new RuntimeException("No Persistence Util set !");
+		}
 	
 	//	Collection handling
 	//
@@ -259,6 +263,11 @@ public class PersistentBeanManager
 		if (object == null)
 		{
 			return null;
+		}
+		
+		if (_persistenceUtil == null)
+		{
+			throw new RuntimeException("No Persistence Util set !");
 		}
 	
 	//	Collection handling
