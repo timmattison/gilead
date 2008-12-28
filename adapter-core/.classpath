@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="lib/proxy/javassist-3.4.GA.jar"/>
 	<classpathentry kind="lib" path="lib/beanlib-3.3.0beta21b.jar"/>
 	<classpathentry kind="lib" path="lib/beanlib-hibernate-3.3.0beta21b.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

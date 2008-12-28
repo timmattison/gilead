@@ -8,7 +8,7 @@ import net.sf.beanlib.spi.CustomBeanTransformerSpi;
 import net.sf.beanlib.spi.DetailedBeanPopulatable;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.beanlib.IClassMapper;
-import net.sf.gilead.core.beanlib.TimestampCustomTransformer;
+import net.sf.gilead.core.beanlib.transformer.CustomTransformersFactory;
 import net.sf.gilead.core.store.IProxyStore;
 
 /**
@@ -46,15 +46,16 @@ public class MergeBeanPopulator
 		transformer.initMapReplicatable(MergeMapReplicator.factory);
 		((MergeMapReplicator) transformer.getMapReplicatable()).setPersistenceUtil(persistenceUtil);
 		
-	//	Timestamp handling
+	//	Custom transformers (timestamp handling)
 	//
-		transformer.initCustomTransformer(new CustomBeanTransformerSpi.Factory()
+        transformer.initCustomTransformerFactory(new CustomBeanTransformerSpi.Factory()
 		{
 			public CustomBeanTransformerSpi newCustomBeanTransformer(final BeanTransformerSpi beanTransformer)
 			{
-				return new TimestampCustomTransformer(beanTransformer);
+				return CustomTransformersFactory.getInstance().createUnionCustomBeanTransformer(beanTransformer);
 			}
 		});
+
 		
 	//	Lazy properties handling
 	//

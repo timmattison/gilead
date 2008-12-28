@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.gilead.core.beanlib;
+package net.sf.gilead.core.beanlib.transformer;
 
 import java.sql.Timestamp;
 import java.util.Date;
