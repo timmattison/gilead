@@ -74,10 +74,12 @@ public class InMemoryProxyStore implements IProxyStore
 	 * @see net.sf.gilead.core.store.IProxyStore#storeProxyInformations(java.lang.Object, java.lang.String, java.util.Map)
 	 */
 	@SuppressWarnings("unchecked")
-	public void storeProxyInformations(Object pojo, Serializable pojoId, String property,
+	public void storeProxyInformations(Object cloneBean, Object persistentBean, 
+									   String property,
 									   Map<String, Serializable> proxyInformations)
 	{
-		_map.put(computeKey(pojo, pojoId, property), proxyInformations);
+		_map.put(computeKey(cloneBean, _persistenceUtil.getId(persistentBean), property), 
+				 proxyInformations);
 	}
 	
 	/*

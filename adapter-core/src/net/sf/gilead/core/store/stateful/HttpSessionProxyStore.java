@@ -83,12 +83,14 @@ public class HttpSessionProxyStore implements IProxyStore
 	 * @see net.sf.gilead.core.store.IProxyStore#storeProxyInformations(java.lang.Object, java.lang.String, java.util.Map)
 	 */
 	@SuppressWarnings("unchecked")
-	public void storeProxyInformations(Object pojo, Serializable pojoId, String property,
+	public void storeProxyInformations(Object cloneBean, Object persistentBean, 
+									   String property,
 									   Map<String, Serializable> proxyInformations)
 	{
 	//	Compute pojo name
 	//
-		String id = UniqueNameGenerator.generateUniqueName(pojoId, _persistenceUtil.getUnenhancedClass(pojo.getClass()));
+		String id = UniqueNameGenerator.generateUniqueName(_persistenceUtil.getId(persistentBean), 
+														   _persistenceUtil.getUnenhancedClass(cloneBean.getClass()));
 		
 	//	Create POJO map if needed
 	//

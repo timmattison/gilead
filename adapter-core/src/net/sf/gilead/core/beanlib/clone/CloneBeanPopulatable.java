@@ -168,7 +168,7 @@ public class CloneBeanPopulatable implements DetailedBeanPopulatable
 				
 			//	Store proxy information
 			//
-				_proxyStore.storeProxyInformations(toBean, _persistenceUtil.getId(fromBean),
+				_proxyStore.storeProxyInformations(toBean, fromBean,
 												   propertyName, proxyInformations);
 				
 				return false;
@@ -180,7 +180,7 @@ public class CloneBeanPopulatable implements DetailedBeanPopulatable
 				Map<String, Serializable> proxyInformations = 
 					_persistenceUtil.serializePersistentCollection(fromValue);
 
-				_proxyStore.storeProxyInformations(toBean, _persistenceUtil.getId(fromBean),
+				_proxyStore.storeProxyInformations(toBean, fromBean,
 												   propertyName, proxyInformations);
 			}
 			

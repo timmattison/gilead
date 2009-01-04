@@ -33,12 +33,13 @@ public interface IProxyStore
 	//-------------------------------------------------------------------------
 	/**
 	 * Store the argument proxy informations.
-	 * @param pojo the root pojo
-	 * @param pojoId id of the pojo
+	 * @param cloneBean the cloned, target bean
+	 * @param persistentBean the persistent, source bean
 	 * @param property the proxy property name
 	 * @param proxyInformations the associated proxy informations
 	 */
-	public void storeProxyInformations(Object pojo, Serializable pojoId, String property,
+	public void storeProxyInformations(Object cloneBean, Object persistentBean, 
+									   String property,
 									   Map<String, Serializable> proxyInformations);
 	
 	/**

@@ -43,20 +43,21 @@ public class StatelessProxyStore implements IProxyStore
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.core.store.IProxyStore#storeProxyInformations(java.lang.Object, java.lang.String, java.util.Map)
 	 */
-	public void storeProxyInformations(Object pojo, Serializable pojoId, String property,
+	public void storeProxyInformations(Object cloneBean, Object persistentBean, 
+									   String property,
 									   Map<String, Serializable> proxyInformations)
 	{
 	//	ILightEntity checking
 	//
-		if (pojo instanceof ILightEntity == false)
+		if (cloneBean instanceof ILightEntity == false)
 		{
-			throw new ProxyStoreException("Class " + pojo + " must implements ILightEntity interface !", pojo);
+			throw new ProxyStoreException("Class " + cloneBean.getClass() + " must implements ILightEntity interface !", cloneBean);
 		}
 		
 	//	Store information in the POJO
 	//
-		((ILightEntity)pojo).addProxyInformation(property, 
-											  convertSerializableToBytes(proxyInformations));
+		((ILightEntity)cloneBean).addProxyInformation(property, 
+											  		  convertSerializableToBytes(proxyInformations));
 	}
 	
 	/*
