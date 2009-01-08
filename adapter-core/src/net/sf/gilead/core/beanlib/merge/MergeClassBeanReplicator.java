@@ -145,13 +145,19 @@ public class MergeClassBeanReplicator extends Hibernate3JavaBeanReplicator
     // Override
     //----
 	@Override
-	protected Object replicate(Object from)
+	public <V extends Object, T extends Object> T replicateBean(V from, java.lang.Class<T> toClass)
 	{
 	//	Reset bean local
 	//
 		BeanlibThreadLocal.setProxyInformations(null);
 		
-		return super.replicate(from);
+	//	Add current bean to stack
+	//
+		BeanlibThreadLocal.getBeanStack().push(from);
+		T result = super.replicateBean(from, toClass);
+		BeanlibThreadLocal.getBeanStack().pop();
+		
+		return result;
 	}
 	
 	@Override

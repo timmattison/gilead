@@ -20,6 +20,7 @@ import net.sf.beanlib.hibernate.HibernateBeanReplicator;
 import net.sf.beanlib.provider.BeanPopulator;
 import net.sf.gilead.core.beanlib.IClassMapper;
 import net.sf.gilead.core.beanlib.clone.CloneBeanReplicator;
+import net.sf.gilead.core.beanlib.merge.BeanlibThreadLocal;
 import net.sf.gilead.core.beanlib.merge.MergeBeanPopulator;
 import net.sf.gilead.core.store.IProxyStore;
 
@@ -249,6 +250,11 @@ public class LazyKiller
 																	   _classMapper, 
 																	   _persistenceUtil,
 																	   _proxyStore);
+	//	Store root pojo on bean stack
+	//
+		BeanlibThreadLocal.getBeanStack().clear();
+		BeanlibThreadLocal.getBeanStack().push(clonePojo);
+		
 		replicator.populate();
 	}
 }

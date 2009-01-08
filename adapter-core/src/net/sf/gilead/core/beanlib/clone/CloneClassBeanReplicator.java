@@ -16,11 +16,13 @@
 
 package net.sf.gilead.core.beanlib.clone;
 
+import net.sf.beanlib.BeanlibException;
 import net.sf.beanlib.hibernate3.Hibernate3JavaBeanReplicator;
 import net.sf.beanlib.spi.BeanTransformerSpi;
 import net.sf.beanlib.spi.replicator.BeanReplicatorSpi;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.beanlib.IClassMapper;
+import net.sf.gilead.core.beanlib.merge.BeanlibThreadLocal;
 import net.sf.gilead.core.beanlib.merge.MergeClassBeanReplicator;
 
 /**
@@ -109,6 +111,15 @@ public class CloneClassBeanReplicator extends Hibernate3JavaBeanReplicator
 	//----
     // Override
     //----
+	@Override
+	public <V extends Object, T extends Object> T replicateBean(V from, java.lang.Class<T> toClass)
+	{
+		BeanlibThreadLocal.getBeanStack().push(from);
+		T result = super.replicateBean(from, toClass);
+		BeanlibThreadLocal.getBeanStack().pop();
+		return result;
+	}
+	
     @Override
     @SuppressWarnings("unchecked")
     protected <T extends Object> T createToInstance(Object from, java.lang.Class<T> toClass) 

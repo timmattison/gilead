@@ -19,9 +19,12 @@ package net.sf.gilead.core.store.stateful;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 import net.sf.gilead.core.IPersistenceUtil;
+import net.sf.gilead.core.beanlib.merge.BeanlibThreadLocal;
 import net.sf.gilead.core.store.IProxyStore;
+import net.sf.gilead.exception.ComponentTypeException;
 import net.sf.gilead.exception.NotPersistentObjectException;
 import net.sf.gilead.exception.TransientObjectException;
 
@@ -78,15 +81,15 @@ public class InMemoryProxyStore implements IProxyStore
 									   String property,
 									   Map<String, Serializable> proxyInformations)
 	{
-		_map.put(computeKey(cloneBean, _persistenceUtil.getId(persistentBean), property), 
-				 proxyInformations);
+		Serializable id = UniqueNameGenerator.getUniqueId(_persistenceUtil, persistentBean);
+		_map.put(computeKey(cloneBean, id, property), 
+					 proxyInformations);
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.core.store.IProxyStore#getProxyInformations(java.lang.Object, java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
 	public Map<String, Serializable> getProxyInformations(Object pojo,
 														  String property)
     {
@@ -110,7 +113,6 @@ public class InMemoryProxyStore implements IProxyStore
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.core.store.IProxyStore#removeProxyInformations(java.lang.Object, java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
 	public void removeProxyInformations(Object pojo, String property)
 	{
 		_map.remove(computeKey(pojo, property));
