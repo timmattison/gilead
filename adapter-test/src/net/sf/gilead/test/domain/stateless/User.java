@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.sf.gilead.pojo.java5.LightEntity;
+import net.sf.gilead.test.domain.IAddress;
 import net.sf.gilead.test.domain.IGroup;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
@@ -28,6 +29,8 @@ public class User extends LightEntity implements Serializable, IUser
 	private String firstName;
 	private String lastName;
 	private String password;
+	
+	private IAddress address;
 	
 	private Set<IMessage> messageList;
 	private Set<IGroup> groupList;
@@ -81,6 +84,20 @@ public class User extends LightEntity implements Serializable, IUser
 		this.password = password;
 	}
 	
+
+	/**
+	 * @return the address
+	 */
+	public IAddress getAddress() {
+		return address;
+	}
+
+	/**
+	 * @param address the address to set
+	 */
+	public void setAddress(IAddress address) {
+		this.address = address;
+	}
 
 	/**
 	 * @return the message List
@@ -147,7 +164,7 @@ public class User extends LightEntity implements Serializable, IUser
 		if (groupList.contains(group) == false)
 		{
 			groupList.add(group);
-			group.addMember(this);
+			// group.addMember(this);
 		}
 	}
 
@@ -160,7 +177,7 @@ public class User extends LightEntity implements Serializable, IUser
 			(groupList.contains(group)))
 		{
 			groupList.remove(group);
-			group.removeMember(this);
+			// group.removeMember(this);
 		}
 	}
 }

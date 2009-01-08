@@ -1,7 +1,7 @@
 /**
  * 
  */
-package net.sf.gilead.test.domain;
+package net.sf.gilead.test.domain.misc;
 
 import java.util.ArrayList;
 

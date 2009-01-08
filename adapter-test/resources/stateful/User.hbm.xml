@@ -39,6 +39,18 @@
 						  column="GROUP_ID" />
 		</set>
         
+        <!-- Embedded address -->
+		<component name="address" 
+				   class="net.sf.gilead.test.domain.stateful.Address">
+			<property name="street" type="string" column="STREET"
+				not-null="true" />
+			<property name="city" type="string" column="CITY"
+				not-null="true" />
+			<many-to-one name="country" cascade="save-update" 
+						class="net.sf.gilead.test.domain.stateful.Country"/>
+		</component>
+
+		<!-- Subclass -->
         <joined-subclass name="net.sf.gilead.test.domain.stateful.Employee">
 	        <key column="ID"/>
 	        <property name="email" type="string">

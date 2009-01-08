@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.sf.gilead.test.domain.IAddress;
 import net.sf.gilead.test.domain.IGroup;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
@@ -26,6 +27,8 @@ public class User implements Serializable, IUser
 	private String firstName;
 	private String lastName;
 	private String password;
+	
+	private IAddress address;
 	
 	private Set<IMessage> messageList;
 	private Set<IGroup> groupList;
@@ -197,5 +200,21 @@ public class User implements Serializable, IUser
 			groupList.remove(group);
 			group.removeMember(this);
 		}
+	}
+
+	/**
+	 * @return the embedded address
+	 */
+	public IAddress getAddress()
+	{
+		return address;
+	}
+
+	/**
+	 * Sets the embedded address
+	 */
+	public void setAddress(IAddress address)
+	{
+		this.address = address;
 	}
 }

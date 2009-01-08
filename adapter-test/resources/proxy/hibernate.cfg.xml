@@ -6,7 +6,7 @@
         <!-- Settings for a local HSQL (testing) database. -->
         <property name="dialect">org.hibernate.dialect.HSQLDialect</property>
         <property name="connection.driver_class">org.hsqldb.jdbcDriver</property>
-        <property name="connection.url">jdbc:hsqldb:file:hsqldb</property>
+        <property name="connection.url">jdbc:hsqldb:file:hsqldb_proxy</property>
         <property name="connection.username">sa</property>
         <property name="connection.password"></property>
 
@@ -32,5 +32,6 @@
         <mapping resource="proxy/User.hbm.xml"/>
         <mapping resource="proxy/Message.hbm.xml"/>
 		<mapping resource="proxy/Group.hbm.xml"/>
+		<mapping resource="proxy/Country.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

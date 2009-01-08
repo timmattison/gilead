@@ -62,4 +62,14 @@ public interface IUser
 	 */
 	public void removeUserFromGroup(IGroup group);
 
+	/**
+	 * @return the address
+	 */
+	public IAddress getAddress();
+
+	/**
+	 * @param address the address to set
+	 */
+	public void setAddress(IAddress address);
+
 }

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.sf.gilead.pojo.java5.LightEntity;
+import net.sf.gilead.test.domain.IAddress;
 import net.sf.gilead.test.domain.IGroup;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
@@ -26,6 +27,8 @@ public class UserDTO extends LightEntity implements IUser
 	private String firstName;
 	private String lastName;
 	private String password;
+	
+	private IAddress address;
 	
 	private Set<IMessage> messageList;
 	private Set<IGroup> groupList;
@@ -159,5 +162,15 @@ public class UserDTO extends LightEntity implements IUser
 			groupList.remove(group);
 			group.removeMember(this);
 		}
+	}
+
+	public IAddress getAddress()
+	{
+		return address;
+	}
+
+	public void setAddress(IAddress address)
+	{
+		this.address = address;
 	}
 }

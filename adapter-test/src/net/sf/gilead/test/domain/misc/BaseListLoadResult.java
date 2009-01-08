@@ -1,4 +1,4 @@
-package net.sf.gilead.test.domain;
+package net.sf.gilead.test.domain.misc;
 
 import java.io.Serializable;
 import java.util.List;

@@ -48,11 +48,15 @@ public class Java5DynamicProxyCloneTest extends CloneTest
 		_cloneMessageClass = ProxyManager.getInstance().generateProxyClass(_domainMessageClass, additionalCode);
 		_cloneUserClass = ProxyManager.getInstance().generateProxyClass(_domainUserClass, additionalCode);
 		_cloneEmployeeClass = ProxyManager.getInstance().generateProxyClass(_domainEmployeeClass, additionalCode);
-	
+			
 		assertTrue(_cloneMessageClass.getName().endsWith(additionalCode.getSuffix()));
 		assertTrue(_cloneUserClass.getName().endsWith(additionalCode.getSuffix()));
 		assertTrue(_cloneEmployeeClass.getName().endsWith(additionalCode.getSuffix()));
 		
+		// other Domain class proxy generation
+		ProxyManager.getInstance().generateProxyClass(net.sf.gilead.test.domain.proxy.Address.class, additionalCode);
+		ProxyManager.getInstance().generateProxyClass(net.sf.gilead.test.domain.proxy.Country.class, additionalCode);
+
 	//	Call base setup
 	//
 		super.setUp();

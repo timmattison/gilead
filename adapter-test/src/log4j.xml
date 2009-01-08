@@ -54,7 +54,7 @@
     <level value="WARN"></level>
   </logger>
   <logger name="org.hibernate">
-    <level value="INFO"></level>
+    <level value="DEBUG"></level>
   </logger>
   <!-- ========================================================= Root -->
   <root>

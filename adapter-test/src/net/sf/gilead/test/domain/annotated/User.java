@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,6 +21,7 @@ import javax.persistence.Version;
 import net.sf.gilead.annotations.ReadOnly;
 import net.sf.gilead.annotations.ServerOnly;
 import net.sf.gilead.pojo.java5.LightEntity;
+import net.sf.gilead.test.domain.IAddress;
 import net.sf.gilead.test.domain.IGroup;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
@@ -45,6 +47,8 @@ public class User extends LightEntity implements IUser
 	private String firstName;
 	private String lastName;
 	private String password;
+	
+	private Address address;
 	
 	private Set<IMessage> messageList;
 	private Set<IGroup> groupList;
@@ -194,5 +198,16 @@ public class User extends LightEntity implements IUser
 			groupList.remove(group);
 			group.removeMember(this);
 		}
+	}
+
+	@Embedded
+	public Address getAddress()
+	{
+		return address;
+	}
+
+	public void setAddress(IAddress address)
+	{
+		this.address = (Address) address;
 	}
 }

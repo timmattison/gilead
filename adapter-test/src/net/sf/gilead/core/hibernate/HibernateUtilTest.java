@@ -11,9 +11,9 @@ import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.HibernateContext;
 import net.sf.gilead.test.HibernateContext.Context;
 import net.sf.gilead.test.dao.IUserDAO;
-import net.sf.gilead.test.domain.Configuration;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
+import net.sf.gilead.test.domain.misc.Configuration;
 import net.sf.gilead.test.domain.stateless.Message;
 import net.sf.gilead.test.domain.stateless.User;
 

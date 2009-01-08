@@ -19,13 +19,13 @@ import net.sf.gilead.test.HibernateContext;
 import net.sf.gilead.test.dao.IEmployeeDAO;
 import net.sf.gilead.test.dao.IMessageDAO;
 import net.sf.gilead.test.dao.IUserDAO;
-import net.sf.gilead.test.domain.BaseListLoadResult;
-import net.sf.gilead.test.domain.Configuration;
 import net.sf.gilead.test.domain.IEmployee;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
-import net.sf.gilead.test.domain.PagingList;
-import net.sf.gilead.test.domain.Style;
+import net.sf.gilead.test.domain.misc.BaseListLoadResult;
+import net.sf.gilead.test.domain.misc.Configuration;
+import net.sf.gilead.test.domain.misc.PagingList;
+import net.sf.gilead.test.domain.misc.Style;
 
 import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
@@ -1105,7 +1105,7 @@ public abstract class CloneTest extends TestCase
 		
 	//	Reload user to count messages
 	//
-		user = userDAO.searchUserAndMessagesByLogin("junit");
+		user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
 		assertNotNull(user);
 		assertNotNull(user.getMessageList());
 		assertFalse(user.getMessageList().isEmpty());
@@ -1181,6 +1181,114 @@ public abstract class CloneTest extends TestCase
 		assertNotNull(mergeUserList);
 		assertNotNull(mergeUserList.getData());
 		assertFalse(mergeUserList.getData().isEmpty());
+	}
+	
+	/**
+	 * Test delete property on client side
+	 */
+	/*public void testDeleteManyToManyAfterClone()
+	{  
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Load user
+	//
+		IUser user = userDAO.searchUserAndGroupsByLogin(TestHelper.GUEST_LOGIN);
+		assertNotNull(user);
+		assertNotNull(user.getGroupList());
+		assertFalse(user.getGroupList().isEmpty());
+		int groupCount = user.getGroupList().size();
+		
+	//	Clone user
+	//
+		IUser cloneUser = user;//(IUser) _beanManager.clone(user); 
+		 
+		// remove user from group
+		IGroup group = null;
+		for (IGroup cloneGroup : cloneUser.getGroupList())
+		{
+			if (cloneGroup.getName().equals(TestHelper.GUEST_GROUP))
+			{
+				group = cloneGroup;
+				break;
+			}
+		}
+		assertNotNull(group);
+		cloneUser.removeUserFromGroup(group); 
+		 
+	//	Merge user
+	//
+		IUser mergeUser = user; //(IUser) _beanManager.merge(cloneUser); 
+		assertNotNull(mergeUser);
+		assertNotNull(mergeUser.getGroupList());
+		assertFalse(mergeUser.getGroupList().isEmpty());
+		 
+		assertEquals(groupCount -1, mergeUser.getGroupList().size());
+		
+	//	Save merged user
+	//
+		userDAO.saveUser(mergeUser);
+		
+	//	Reload user to count group
+	//
+		user = userDAO.searchUserAndGroupsByLogin(TestHelper.GUEST_LOGIN);
+		assertNotNull(user);
+		assertNotNull(user.getGroupList());
+		assertFalse(user.getGroupList().isEmpty());
+		assertEquals(groupCount -1, user.getGroupList().size());
+	}*/
+	
+	/**
+	 * Test clone of a loaded user and associated address (component type)
+	 */
+	public void testCloneAndMergeComponentType()
+	{
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Load user
+	//
+		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
+		assertNotNull(user);
+		
+	//	Address loading verification
+	//
+		assertNotNull(user.getAddress());
+		assertNotNull(user.getAddress().getCountry());
+		assertFalse(_beanManager.getPersistenceUtil().isInitialized(user.getAddress().getCountry()));
+		
+	//	Clone user
+	//
+		IUser cloneUser = (IUser) _beanManager.clone(user);
+		
+	//	Test cloned user
+	//
+		assertNotNull(cloneUser);
+		assertEquals(_cloneUserClass, cloneUser.getClass());
+				
+		//	Address cloning verification
+		assertNotNull(cloneUser.getAddress());
+		assertNull(cloneUser.getAddress().getCountry());
+		
+	//	Merge user
+	//
+		IUser mergeUser = (IUser) _beanManager.merge(cloneUser);
+		
+	//	Test merged user
+	//
+		assertNotNull(mergeUser);
+		assertEquals(_domainUserClass, 
+					 _beanManager.getPersistenceUtil().getUnenhancedClass(mergeUser.getClass()));
+		
+		//	Address merging verification
+		assertNotNull(mergeUser.getAddress());
+		assertNotNull(mergeUser.getAddress().getCountry());
+		assertFalse(_beanManager.getPersistenceUtil().isInitialized(mergeUser.getAddress().getCountry()));
+	
 	}
 	
 	//-------------------------------------------------------------------------

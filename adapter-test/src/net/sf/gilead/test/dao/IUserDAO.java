@@ -27,6 +27,11 @@ public interface IUserDAO {
 	public IUser searchUserAndMessagesByLogin(String login);
 
 	/**
+     * Load the user with the argument login
+     */
+	public IUser searchUserAndGroupsByLogin(String login);
+
+	/**
      * Load all the users
      */
     public List<IUser> loadAll();

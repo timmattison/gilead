@@ -4,9 +4,10 @@
 package net.sf.gilead.annotations;
 
 import junit.framework.TestCase;
-import net.sf.gilead.test.domain.Configuration;
+import net.sf.gilead.test.domain.annotated.Address;
 import net.sf.gilead.test.domain.annotated.Message;
 import net.sf.gilead.test.domain.annotated.User;
+import net.sf.gilead.test.domain.misc.Configuration;
 
 /**
  * Test case for annotation helper.
@@ -90,7 +91,10 @@ public class AnnotationsHelperTest extends TestCase
 		assertTrue(AnnotationsHelper.isReadOnly(User.class, "login"));
 		assertFalse(AnnotationsHelper.isReadOnly(User.class, "password"));
 		assertFalse(AnnotationsHelper.isReadOnly(User.class, "doesNotExist"));
-
+		
+	//	Test on private getter
+	//
+//		assertTrue(AnnotationsHelper.isReadOnly(Address.class, "zipCode"));
 	}
 
 }

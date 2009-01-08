@@ -6,7 +6,7 @@
 -->
 <hibernate-mapping>
 	<class name="net.sf.gilead.test.domain.proxy.Group"
-		table="group">
+		table="groupe">
 		<id name="id" type="integer">
 			<column name="ID" />
 			<generator class="native" />

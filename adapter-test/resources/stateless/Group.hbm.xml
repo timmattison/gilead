@@ -6,7 +6,7 @@
 -->
 <hibernate-mapping>
 	<class name="net.sf.gilead.test.domain.stateless.Group"
-		table="group">
+		table="groupe">
 		<id name="id" type="integer">
 			<column name="ID" />
 			<generator class="native" />
@@ -17,7 +17,8 @@
 			<column name="NAME" length="255" not-null="true" />
 		</property>
 
-		<set name="members" table="user_group" cascade="all,delete-orphan">
+		<set name="members" table="user_group" 
+			 inverse="true" cascade="save-update,delete-orphan">
 			<key column="GROUP_ID" />
 			<many-to-many class="net.sf.gilead.test.domain.stateless.User" 
 						  column="USER_ID" />

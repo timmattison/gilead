@@ -14,7 +14,10 @@ import net.sf.gilead.core.store.stateless.StatelessProxyStore;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.HibernateContext;
 import net.sf.gilead.test.HibernateContext.Context;
+import net.sf.gilead.test.domain.IAddress;
+import net.sf.gilead.test.domain.ICountry;
 import net.sf.gilead.test.domain.IEmployee;
+import net.sf.gilead.test.domain.IGroup;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
 
@@ -43,6 +46,16 @@ public class TestHelper
 	 */
 	public final static String EMPLOYEE_LOGIN = "employee";
 	
+	/**
+	 * The 'test' group
+	 */
+	public final static String TEST_GROUP = "test";
+	
+	/**
+	 * The 'guest' group
+	 */
+	public final static String GUEST_GROUP = "guests";
+	
 
 	//-------------------------------------------------------------------------
 	//
@@ -63,6 +76,14 @@ public class TestHelper
 	 */
 	public static void initializeDB()
 	{
+	//	Create guest & test group
+	//
+		IGroup guestGroup = createGroup();
+		guestGroup.setName(GUEST_GROUP);
+		
+		IGroup testGroup = createGroup();
+		testGroup.setName(TEST_GROUP);
+		
 	//	Create guest user (no password)
 	//
 		IUser guestUser = createUser();
@@ -70,14 +91,26 @@ public class TestHelper
 		guestUser.setFirstName("No");
 		guestUser.setLastName("name");
 		
+		// address
+		IAddress address = createAddress();
+		address.setStreet("Baker street");
+		address.setCity("London");
+		address.setCountry(createCountry());
+		address.getCountry().setName("England");
+		guestUser.setAddress(address);	
+		
 		// create welcome message
 		IMessage guestMessage = createMessage();
-		guestMessage.setMessage("Welcome in hibernate4gwt sample application");
+		guestMessage.setMessage("Welcome in Gilead sample application");
 		guestMessage.setDate(new Date());
 		computeKeywords(guestMessage);
 		guestUser.addMessage(guestMessage);
 		
-		// save user (message is cascaded)
+		// group
+		guestUser.addToGroup(guestGroup);
+		guestUser.addToGroup(testGroup);
+		
+		// save user (message and group are cascaded)
 		DAOFactory.getUserDAO().saveUser(guestUser);
 		
 	//	Create JUnit user
@@ -88,6 +121,14 @@ public class TestHelper
 		junitUser.setFirstName("Unit");
 		junitUser.setLastName("Test");
 		
+		// address
+		address = createAddress();
+		address.setStreet("Main street");
+		address.setCity("Castle Rock");
+		address.setCountry(createCountry());
+		address.getCountry().setName("United States of America");
+		junitUser.setAddress(address);
+		
 		// create message
 		IMessage junitMessage = createMessage();
 		junitMessage.setMessage("JUnit first message");
@@ -95,7 +136,10 @@ public class TestHelper
 		computeKeywords(junitMessage);
 		junitUser.addMessage(junitMessage);
 		
-		// save user (message is cascaded)
+		// group
+		junitUser.addToGroup(testGroup);
+		
+		// save user (message and group are cascaded)
 		DAOFactory.getUserDAO().saveUser(junitUser);
 		
 	//	Create Employee user
@@ -107,6 +151,14 @@ public class TestHelper
 		employee.setLastName("Doe");
 		employee.setEmail("john.doe@gilead.com");
 		
+		// address
+		address = createAddress();
+		address.setStreet("Champs Elysée");
+		address.setCity("Paris");
+		address.setCountry(createCountry());
+		address.getCountry().setName("France");
+		employee.setAddress(address);	
+		
 		// create message
 		IMessage employeeMessage = createMessage();
 		employeeMessage.setMessage("John Doe's message");
@@ -114,7 +166,10 @@ public class TestHelper
 		computeKeywords(employeeMessage);
 		employee.addMessage(employeeMessage);
 		
-		// save user (message is cascaded)
+		// group
+		employee.addToGroup(guestGroup);
+		
+		// save user (message and group are cascaded)
 		DAOFactory.getUserDAO().saveUser(employee);
 	}
 	
@@ -392,6 +447,108 @@ public class TestHelper
 		{
 			// Annotated Java5
 			return new net.sf.gilead.test.domain.annotated.Message();
+		}
+	}
+	
+	/**
+	 * Create a new message (depends on the server configuration)
+	 */
+	private static IGroup createGroup()
+	{
+		Context context = HibernateContext.getContext();
+		
+		if (context == Context.stateless) 
+		{
+			// stateless
+			return new net.sf.gilead.test.domain.stateless.Group();
+		}
+		else if (context == Context.stateful) 
+		{
+			// stateful
+			return new net.sf.gilead.test.domain.stateful.Group();
+		}
+		else if (context == Context.proxy) 
+		{
+			// dynamic proxy
+			return new net.sf.gilead.test.domain.proxy.Group();
+		}
+		else if (context == Context.java5) 
+		{
+			// Java5
+			return new net.sf.gilead.test.domain.java5.Group();
+		}
+		else
+		{
+			// Annotated Java5
+			return new net.sf.gilead.test.domain.annotated.Group();
+		}
+	}
+	
+	/**
+	 * Create a new address (depends on the server configuration)
+	 */
+	private static IAddress createAddress()
+	{
+		Context context = HibernateContext.getContext();
+		
+		if (context == Context.stateless) 
+		{
+			// stateless
+			return new net.sf.gilead.test.domain.stateless.Address();
+		}
+		else if (context == Context.stateful) 
+		{
+			// stateful
+			return new net.sf.gilead.test.domain.stateful.Address();
+		}
+		else if (context == Context.proxy) 
+		{
+			// dynamic proxy
+			return new net.sf.gilead.test.domain.proxy.Address();
+		}
+		else if (context == Context.java5) 
+		{
+			// Java5
+			return new net.sf.gilead.test.domain.java5.Address();
+		}
+		else
+		{
+			// Annotated Java5
+			return new net.sf.gilead.test.domain.annotated.Address();
+		}
+	}
+	
+	/**
+	 * Create a new address (depends on the server configuration)
+	 */
+	private static ICountry createCountry()
+	{
+		Context context = HibernateContext.getContext();
+		
+		if (context == Context.stateless) 
+		{
+			// stateless
+			return new net.sf.gilead.test.domain.stateless.Country();
+		}
+		else if (context == Context.stateful) 
+		{
+			// stateful
+			return new net.sf.gilead.test.domain.stateful.Country();
+		}
+		else if (context == Context.proxy) 
+		{
+			// dynamic proxy
+			return new net.sf.gilead.test.domain.proxy.Country();
+		}
+		else if (context == Context.java5) 
+		{
+			// Java5
+			return new net.sf.gilead.test.domain.java5.Country();
+		}
+		else
+		{
+			// Annotated Java5
+			return new net.sf.gilead.test.domain.annotated.Country();
 		}
 	}
 }

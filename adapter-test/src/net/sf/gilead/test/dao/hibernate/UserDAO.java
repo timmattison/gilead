@@ -143,6 +143,48 @@ public class UserDAO implements IUserDAO
 			throw e;
 		}
 	}
+    
+    /**
+     * Load the user with the argument login
+     */
+    public IUser searchUserAndGroupsByLogin(String login)
+	{
+    	Session session = null;
+		Transaction transaction = null;
+		try
+		{
+		//	Get session
+		//
+			session = HibernateContext.getSessionFactory().getCurrentSession();
+			transaction = session.beginTransaction();
+	
+		//	Create query
+		//
+	    	StringBuffer hqlQuery = new StringBuffer();
+	    	hqlQuery.append("from User user");
+	    	hqlQuery.append(" left join fetch user.groupList");
+	    	hqlQuery.append(" where user.login=:login");
+	    	
+	    //	Fill query
+	    //
+			Query query = session.createQuery(hqlQuery.toString());
+			query.setString("login", login);
+			
+		//	Execute query
+		//
+			IUser user = (IUser) query.uniqueResult();
+			transaction.commit();
+			
+			return user;
+		}
+		catch (RuntimeException e)
+		{
+		//	Rollback
+		//
+			transaction.rollback();
+			throw e;
+		}
+	}
 
     /**
      * Load all the users

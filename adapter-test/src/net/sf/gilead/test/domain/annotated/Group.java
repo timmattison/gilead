@@ -24,7 +24,7 @@ import net.sf.gilead.test.domain.IUser;
  * @author bruno.marchesson
  *
  */
-@Entity
+@Entity(name="Groupe")
 public class Group extends LightEntity implements Serializable, IGroup
 {
 	//----

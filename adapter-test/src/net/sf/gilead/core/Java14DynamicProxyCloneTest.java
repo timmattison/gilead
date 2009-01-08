@@ -53,6 +53,10 @@ public class Java14DynamicProxyCloneTest extends CloneTest
 		assertTrue(_cloneUserClass.getName().endsWith(additionalCode.getSuffix()));
 		assertTrue(_cloneEmployeeClass.getName().endsWith(additionalCode.getSuffix()));
 		
+		// other Domain class proxy generation
+		ProxyManager.getInstance().generateProxyClass(net.sf.gilead.test.domain.proxy.Address.class, additionalCode);
+		ProxyManager.getInstance().generateProxyClass(net.sf.gilead.test.domain.proxy.Country.class, additionalCode);
+		
 	//	Call base setup
 	//
 		super.setUp();

@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -18,6 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import net.sf.gilead.test.domain.IAddress;
 import net.sf.gilead.test.domain.IGroup;
 import net.sf.gilead.test.domain.IMessage;
 import net.sf.gilead.test.domain.IUser;
@@ -44,6 +47,8 @@ public class User implements Serializable, IUser
 	private String firstName;
 	private String lastName;
 	private String password;
+	
+	private Address address;
 	
 	private Set<IMessage> messageList;
 	private Set<IGroup> groupList;
@@ -190,5 +195,16 @@ public class User implements Serializable, IUser
 			groupList.remove(group);
 			group.removeMember(this);
 		}
+	}
+
+	@Embedded
+	public Address getAddress()
+	{
+		return address;
+	}
+
+	public void setAddress(IAddress address)
+	{
+		this.address = (Address) address;
 	}
 }
