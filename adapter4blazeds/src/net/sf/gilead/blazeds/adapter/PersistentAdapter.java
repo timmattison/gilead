@@ -116,7 +116,10 @@ public class PersistentAdapter extends JavaAdapter
 		//
 			if (remotingMessage != null)
 			{
-				_log.info("Merging input parameters " + remotingMessage.getParameters());
+				if (_log.isDebugEnabled())
+				{
+					_log.debug("Merging input parameters " + remotingMessage.getParameters());
+				}
 				List<?> mergedParameters = (List<?>) _beanManager.merge(remotingMessage.getParameters());
 				remotingMessage.setParameters(mergedParameters);
 			}
@@ -127,7 +130,6 @@ public class PersistentAdapter extends JavaAdapter
 			
 		//	Clone result
 		//
-			_log.info("Cloning result " + result);
 			return _beanManager.clone(result);
 		}
 		catch (RuntimeException e)
