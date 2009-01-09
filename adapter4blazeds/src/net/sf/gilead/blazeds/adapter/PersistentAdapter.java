@@ -114,9 +114,12 @@ public class PersistentAdapter extends JavaAdapter
 			
 		//	Merge input arguments
 		//
-			_log.info("Merging input parameters " + remotingMessage.getParameters());
-			List<?> mergedParameters = (List<?>) _beanManager.merge(remotingMessage.getParameters());
-			remotingMessage.setParameters(mergedParameters);
+			if (remotingMessage != null)
+			{
+				_log.info("Merging input parameters " + remotingMessage.getParameters());
+				List<?> mergedParameters = (List<?>) _beanManager.merge(remotingMessage.getParameters());
+				remotingMessage.setParameters(mergedParameters);
+			}
 			
 		// 	Call Java adapter
 		//

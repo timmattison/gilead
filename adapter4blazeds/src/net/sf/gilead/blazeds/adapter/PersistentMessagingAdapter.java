@@ -112,12 +112,15 @@ public class PersistentMessagingAdapter extends ActionScriptAdapter
 		
 		//	Clone body to remove proxies
 		//
-			Object body = asyncMessage.getBody();
-			_log.info("Cloning body " + body);
-			body = _beanManager.clone(body);
+			if (asyncMessage !=  null)
+			{
+				Object body = asyncMessage.getBody();
+				_log.info("Cloning body " + body);
+				body = _beanManager.clone(body);
+				
+				asyncMessage.setBody(body);
+			}
 			
-			asyncMessage.setBody(body);
-		
 		// 	Call ActionScript adapter
 		//
 			return super.invoke(message);
