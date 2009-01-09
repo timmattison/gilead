@@ -34,11 +34,16 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	// Attributes
 	//-----
 	/**
+	 * Serialization ID
+	 */
+	private static final long serialVersionUID = 535611044803301746L;
+
+	/**
 	 * Map of proxy informations
 	 * The key is the property name, the value is a map with
 	 * persistence informations filled by the persistence util
 	 * implementation.
-	 * @gwt.typeArgs <java.lang.String, java.util.Map<java.lang.String, java.lang.Byte>>
+	 * @gwt.typeArgs <java.lang.String, java.util.Map<java.lang.String, java.lang.String>>
 	 */
 	protected Map _proxyInformations;
 	
@@ -47,7 +52,7 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	//----
 	/**
 	 * @return the persistent collections properties
-	 * @gwt.typeArgs <java.lang.String, java.util.Map<java.lang.String, java.lang.Byte>>
+	 * @gwt.typeArgs <java.lang.String, java.util.Map<java.lang.String, java.lang.String>>
 	 */
 	public Map getProxyInformations()
 	{
@@ -56,7 +61,7 @@ public abstract class LightEntity implements ILightEntity, Serializable
 
 	/**
 	 * @param properties the persistent collection properties to set
-	 * @gwt.typeArgs properties <java.lang.String, java.util.Map<java.lang.String, java.lang.Byte>>
+	 * @gwt.typeArgs properties <java.lang.String, java.util.Map<java.lang.String, java.lang.String>>
 	 */
 	public void setProxyInformations(Map properties)
 	{

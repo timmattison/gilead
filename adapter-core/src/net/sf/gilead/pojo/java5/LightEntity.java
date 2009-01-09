@@ -34,12 +34,17 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	// Attributes
 	//-----
 	/**
+	 * Serialization ID
+	 */
+	private static final long serialVersionUID = 1061336746068017740L;
+
+	/**
 	 * Map of persistence proxy informations.
 	 * The key is the property name, the value is a map with
 	 * persistence informations filled by the persistence util
 	 * implementation
 	 */
-	protected Map<String, Map<String, byte[]>> _proxyInformations;
+	protected Map<String, Map<String, String>> _proxyInformations;
 	
 	//----
 	// Properties
@@ -47,7 +52,7 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	/**
 	 * @return the proxy informations
 	 */
-	public Map<String, Map<String, byte[]>> getProxyInformations()
+	public Map<String, Map<String, String>> getProxyInformations()
 	{
 		return _proxyInformations;
 	}
@@ -72,7 +77,7 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	public LightEntity()
 	{
 		super();
-		_proxyInformations = new HashMap<String, Map<String, byte[]>>();
+		_proxyInformations = new HashMap<String, Map<String, String>>();
 	}
 	
 	//-------------------------------------------------------------------------

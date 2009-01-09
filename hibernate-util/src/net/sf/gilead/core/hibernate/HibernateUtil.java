@@ -14,6 +14,7 @@ import java.util.Set;
 
 import net.sf.beanlib.hibernate.UnEnhancer;
 import net.sf.gilead.core.IPersistenceUtil;
+import net.sf.gilead.exception.ComponentTypeException;
 import net.sf.gilead.exception.NotPersistentObjectException;
 import net.sf.gilead.exception.TransientObjectException;
 import net.sf.gilead.pojo.base.IUserType;
@@ -213,7 +214,7 @@ public class HibernateUtil implements IPersistenceUtil
 		//	Component class (persistent but not metadata) : no associated id
 		//	So must be considered as transient
 		//
-			throw new TransientObjectException(pojo);
+			throw new ComponentTypeException(pojo);
 		}
 		
 	//	Retrieve ID

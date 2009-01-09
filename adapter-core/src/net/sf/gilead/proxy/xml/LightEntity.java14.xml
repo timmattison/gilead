@@ -8,7 +8,7 @@
     			   type="java.util.Map" defaultValue="new java.util.HashMap()">
     		<javadoc>
     			<![CDATA[
-    				@gwt.typeArgs <java.lang.String, java.util.Map<java.lang.String, java.lang.Byte>>
+    				@gwt.typeArgs <java.lang.String, java.util.Map<java.lang.String, java.lang.String>>
     			]]>
     		</javadoc>
     	</attribute>
@@ -22,7 +22,7 @@
     	<method visibility="public" returnType="void" name="addProxyInformation">
     		<javadoc>
     			<![CDATA[
-    				@gwt.typeArgs proxyInformation java.util.Map<java.lang.String, java.lang.Byte>
+    				@gwt.typeArgs proxyInformation java.util.Map<java.lang.String, java.lang.String>
     			]]>
     		</javadoc>
     		<parameters>
@@ -48,7 +48,7 @@
     	<method visibility="public" returnType="java.util.Map" name="getProxyInformation">
     		<javadoc>
     			<![CDATA[
-    				@gwt.typeArgs <java.lang.String, java.lang.Byte>
+    				@gwt.typeArgs <java.lang.String, java.lang.String>
     			]]>
     		</javadoc>
     		<parameters>
@@ -70,7 +70,7 @@
     	<method visibility="public" returnType="java.util.Map" name="getProxyInformations">
     		<javadoc>
     			<![CDATA[
-    				javadoc="![CDATA[@gwt.typeArgs <java.lang.String, java.util.Map<java.lang.String, java.lang.Byte>>
+    				javadoc="![CDATA[@gwt.typeArgs <java.lang.String, java.util.Map<java.lang.String, java.lang.String>>
     			]]>
     		</javadoc>
     		<code>
@@ -82,7 +82,7 @@
     	<method visibility="public" returnType="void" name="setProxyInformations" >
     		<javadoc>
     			<![CDATA[
-    				@gwt.typeArgs proxyInformations <java.lang.String, java.util.Map<java.lang.String, java.lang.Byte>>
+    				@gwt.typeArgs proxyInformations <java.lang.String, java.util.Map<java.lang.String, java.lang.String>>
     			]]>
     		</javadoc>
     		<parameters>

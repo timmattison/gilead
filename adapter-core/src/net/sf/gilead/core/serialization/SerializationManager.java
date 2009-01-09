@@ -16,6 +16,9 @@ import net.sf.gilead.exception.ConvertorException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
 /**
  * Serialization manager singleton.
  * It serializes Serializable instances to simple byte array and
@@ -75,7 +78,7 @@ public class SerializationManager
 	/**
 	 * Convert Serializable to bytes.
 	 */
-	public byte[] serialize(Serializable serializable)
+	public byte[] serializeToBytes(Serializable serializable)
 	{
 		if (_log.isDebugEnabled())
 		{
@@ -106,9 +109,39 @@ public class SerializationManager
 	}
 	
 	/**
-	 * Regenerate Serializable from String.
+	 * Convert Serializable to bytes.
 	 */
-	public Serializable unserialize(byte[] bytes)
+	public String serializeToString(Serializable serializable)
+	{
+		if (_log.isDebugEnabled())
+		{
+			_log.debug("Serialization of " + serializable);
+		}
+	//	Precondition checking
+	//
+		if (serializable == null)
+		{
+			return null;
+		}
+		
+	//	Serialize to bytes and encapsulate into string
+	//
+		/*try
+		{
+			return new BASE64Encoder().encode(serializeToBytes(serializable));
+		}
+		catch (Exception e)
+		{
+			throw new ConvertorException("Error converting Serializable", e);
+		}*/
+		XStream xstream = new XStream(new DomDriver());
+		return xstream.toXML(serializable);
+	}
+	
+	/**
+	 * Regenerate Serializable from bytes.
+	 */
+	public Serializable unserializeFromBytes(byte[] bytes)
 	{
 		if (_log.isDebugEnabled())
 		{
@@ -136,5 +169,37 @@ public class SerializationManager
 			throw new ConvertorException("Error converting Serializable", e);
 		}
 
+	}
+	
+	/**
+	 * Regenerate Serializable from String.
+	 */
+	public Serializable unserializeFromString(String string)
+	{
+		if (_log.isDebugEnabled())
+		{
+			_log.debug("Unserialization of " + string);
+		}
+		
+	//	Precondition checking
+	//
+		if ((string == null) ||
+			(string.isEmpty() == true))
+		{
+			return null;
+		}
+		
+	//	Convert back to bytes and Serializable
+	//
+		/*try
+		{
+			return unserializeFromBytes(new BASE64Decoder().decodeBuffer(string));
+		}
+		catch (Exception e)
+		{
+			throw new ConvertorException("Error converting Serializable", e);
+		}*/
+		XStream xstream = new XStream(new DomDriver());
+		return (Serializable) xstream.fromXML(string);
 	}
 }

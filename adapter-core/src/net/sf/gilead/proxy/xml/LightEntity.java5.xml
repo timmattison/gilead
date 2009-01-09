@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<additionalCode suffix="_h4gwt15" implementedInterface="net.sf.gilead.pojo.base.ILightEntity">
+<additionalCode suffix="_gilead_15" implementedInterface="net.sf.gilead.pojo.base.ILightEntity">
 	<!--
 		ATTRIBUTES 
 	 -->
@@ -9,7 +9,7 @@
     			   defaultValue="new java.util.HashMap()">
     		<collectionType>
     		<![CDATA[
-    			java.lang.String, java.util.Map<java.lang.String, byte[]>
+    			java.lang.String, java.util.Map<java.lang.String, java.lang.String>
     		]]>
     		</collectionType>
     	</attribute>
@@ -24,7 +24,7 @@
     		<parameters>
     			<parameter type="String" name="property" />
     			<parameter type="java.util.Map" name="proxyInformation"
-    					   collectionType="java.lang.String, byte[]" >
+    					   collectionType="java.lang.String, java.lang.String" >
     			</parameter>
     		</parameters>
     		<code>
@@ -44,7 +44,7 @@
     	
     	<!-- getProxyInformation -->
     	<method visibility="public" returnType="java.util.Map"
-    			returnCollectionType="java.lang.String, byte[]" 
+    			returnCollectionType="java.lang.String, java.lang.String" 
     			name="getProxyInformation">
     		<parameters>
     			<parameter type="String" name="property" />
@@ -65,7 +65,7 @@
     	<method visibility="public" returnType="java.util.Map" name="getProxyInformations">
     		<returnCollectionType>
 	    		<![CDATA[
-	    			java.lang.String, java.util.Map<java.lang.String, byte[]>
+	    			java.lang.String, java.util.Map<java.lang.String, java.lang.String>
 	    		]]>
     		</returnCollectionType>
     		<code>

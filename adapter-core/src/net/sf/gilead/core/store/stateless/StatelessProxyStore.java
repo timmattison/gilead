@@ -57,7 +57,8 @@ public class StatelessProxyStore implements IProxyStore
 	//	Store information in the POJO
 	//
 		((ILightEntity)cloneBean).addProxyInformation(property, 
-											  		  convertSerializableToBytes(proxyInformations));
+											  		  // convertSerializableToBytes(proxyInformations));
+													  convertSerializableToString(proxyInformations));
 	}
 	
 	/*
@@ -92,7 +93,8 @@ public class StatelessProxyStore implements IProxyStore
 		
 	//	Store information in the POJO
 	//
-		return convertBytesToSerializable(((ILightEntity)pojo).getProxyInformation(property));
+		// return convertBytesToSerializable(((ILightEntity)pojo).getProxyInformation(property));
+		return convertStringToSerializable(((ILightEntity)pojo).getProxyInformation(property));
 	}
 	
 	//-------------------------------------------------------------------------
@@ -119,7 +121,32 @@ public class StatelessProxyStore implements IProxyStore
 		for (Map.Entry<String, Serializable> entry : map.entrySet())
 		{
 			result.put(entry.getKey(),
-					   SerializationManager.getInstance().serialize(entry.getValue()));
+					   SerializationManager.getInstance().serializeToBytes(entry.getValue()));
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Convert Map<String,Serializable> to Map<String, String>
+	 */
+	protected Map<String, String> convertSerializableToString(Map<String, Serializable> map)
+	{
+	//	Precondition checking
+	//
+		if (map == null)
+		{
+			return null;
+		}
+		
+	//	Convert map
+	//
+		Map<String, String> result = new HashMap<String, String>();
+		
+		for (Map.Entry<String, Serializable> entry : map.entrySet())
+		{
+			result.put(entry.getKey(),
+					   SerializationManager.getInstance().serializeToString(entry.getValue()));
 		}
 		
 		return result;
@@ -144,7 +171,32 @@ public class StatelessProxyStore implements IProxyStore
 		for (Map.Entry<String, byte[]> entry : map.entrySet())
 		{
 			result.put(entry.getKey(),
-					   SerializationManager.getInstance().unserialize(entry.getValue()));
+					   SerializationManager.getInstance().unserializeFromBytes(entry.getValue()));
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Convert Map<String,String> to Map<String, Serializable>
+	 */
+	protected Map<String, Serializable> convertStringToSerializable(Map<String, String> map)
+	{
+	//	Precondition checking
+	//
+		if (map == null)
+		{
+			return null;
+		}
+		
+	//	Convert map
+	//
+		Map<String, Serializable> result = new HashMap<String, Serializable>();
+		
+		for (Map.Entry<String, String> entry : map.entrySet())
+		{
+			result.put(entry.getKey(),
+					   SerializationManager.getInstance().unserializeFromString(entry.getValue()));
 		}
 		
 		return result;
