@@ -17,7 +17,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
  * Serialization manager singleton.
@@ -58,6 +57,11 @@ public class SerializationManager
 	 */
 	private static Log _log = LogFactory.getLog(SerializationManager.class);
 	
+	/**
+	 * The XStream facade
+	 */
+	private XStream _xstream;
+	
 	//-------------------------------------------------------------------------
 	//
 	// Constructor
@@ -68,6 +72,7 @@ public class SerializationManager
 	 */
 	protected SerializationManager()
 	{
+		_xstream = new XStream();
 	}
 	
 	//-------------------------------------------------------------------------
@@ -134,8 +139,7 @@ public class SerializationManager
 		{
 			throw new ConvertorException("Error converting Serializable", e);
 		}*/
-		XStream xstream = new XStream(new DomDriver());
-		return xstream.toXML(serializable);
+		return _xstream.toXML(serializable);
 	}
 	
 	/**
@@ -199,7 +203,6 @@ public class SerializationManager
 		{
 			throw new ConvertorException("Error converting Serializable", e);
 		}*/
-		XStream xstream = new XStream(new DomDriver());
-		return (Serializable) xstream.fromXML(string);
+		return (Serializable) _xstream.fromXML(string);
 	}
 }

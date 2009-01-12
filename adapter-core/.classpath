@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="lib/beanlib-3.3.0beta21b.jar"/>
 	<classpathentry kind="lib" path="lib/beanlib-hibernate-3.3.0beta21b.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/stateless/xpp3-1.1.4c.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
