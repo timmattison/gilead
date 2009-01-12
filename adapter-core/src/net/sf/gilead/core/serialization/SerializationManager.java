@@ -184,7 +184,7 @@ public class SerializationManager
 	//	Precondition checking
 	//
 		if ((string == null) ||
-			(string.isEmpty() == true))
+			(string.length() == 0))
 		{
 			return null;
 		}
