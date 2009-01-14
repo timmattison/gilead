@@ -19,12 +19,9 @@ package net.sf.gilead.core.store.stateful;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
 
 import net.sf.gilead.core.IPersistenceUtil;
-import net.sf.gilead.core.beanlib.merge.BeanlibThreadLocal;
 import net.sf.gilead.core.store.IProxyStore;
-import net.sf.gilead.exception.ComponentTypeException;
 import net.sf.gilead.exception.NotPersistentObjectException;
 import net.sf.gilead.exception.TransientObjectException;
 
@@ -76,7 +73,6 @@ public class InMemoryProxyStore implements IProxyStore
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.core.store.IProxyStore#storeProxyInformations(java.lang.Object, java.lang.String, java.util.Map)
 	 */
-	@SuppressWarnings("unchecked")
 	public void storeProxyInformations(Object cloneBean, Object persistentBean, 
 									   String property,
 									   Map<String, Serializable> proxyInformations)

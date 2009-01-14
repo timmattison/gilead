@@ -89,14 +89,14 @@ public class HttpSessionProxyStore implements IProxyStore
 	{
 	//	Compute pojo name
 	//
-		String id = UniqueNameGenerator.generateUniqueName(_persistenceUtil.getId(persistentBean), 
-														   _persistenceUtil.getUnenhancedClass(cloneBean.getClass()));
+		Serializable id = UniqueNameGenerator.getUniqueId(_persistenceUtil, persistentBean);
+		String uniqueId = computeKey(cloneBean, id, property);
 		
 	//	Create POJO map if needed
 	//
 		HttpSession httpSession = getSession();
 		Map<String, Map<String,Serializable>> pojoMap = 
-			(Map<String, Map<String,Serializable>>) httpSession.getAttribute(id);
+			(Map<String, Map<String,Serializable>>) httpSession.getAttribute(uniqueId);
 		
 		if (pojoMap == null)
 		{
@@ -106,7 +106,7 @@ public class HttpSessionProxyStore implements IProxyStore
 	//	Store proxy information in pojo map and the latter in HTTP session
 	//
 		pojoMap.put(property, proxyInformations);
-		httpSession.setAttribute(id, pojoMap);
+		httpSession.setAttribute(uniqueId, pojoMap);
 	}
 	
 	/*
@@ -122,7 +122,7 @@ public class HttpSessionProxyStore implements IProxyStore
 		String id = null;
 		try
 		{
-			id = UniqueNameGenerator.generateUniqueName(_persistenceUtil, pojo);
+			id = computeKey(pojo, property);
 		}
 		catch (TransientObjectException e)
 		{
@@ -160,7 +160,7 @@ public class HttpSessionProxyStore implements IProxyStore
 	{
 	//	Compute pojo name
 	//
-		String id = UniqueNameGenerator.generateUniqueName(_persistenceUtil, pojo);
+		String id = computeKey(pojo, property);
 		
 	//	Create POJO map if needed
 	//
@@ -203,4 +203,28 @@ public class HttpSessionProxyStore implements IProxyStore
 		}
 		return session;
 	}
+	
+	/**
+	 * Compute the hashmap key
+	 * @param pojo
+	 * @param property
+	 * @return
+	 */
+	protected String computeKey(Object pojo, Serializable id, String property)
+	{
+		Class<?> pojoClass = _persistenceUtil.getUnenhancedClass(pojo.getClass());
+		return UniqueNameGenerator.generateUniqueName(id, pojoClass) + '.' + property;
+	}
+	
+	/**
+	 * Compute the hashmap key
+	 * @param pojo
+	 * @param property
+	 * @return
+	 */
+	protected String computeKey(Object pojo, String property)
+	{
+		return UniqueNameGenerator.generateUniqueName(_persistenceUtil, pojo) + '.' + property;
+	}
+
 }
