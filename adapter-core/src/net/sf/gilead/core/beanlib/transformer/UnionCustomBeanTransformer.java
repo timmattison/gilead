@@ -8,19 +8,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * The UnionCustomBeanTransformer loads the files named after the constant TRANSFORMER_XML_FILENAME, reading the CustomTransformers
- * class fully qualified name. After loading all classes it looks for the Constructor of each of those classes which takes a
- * BeanTransformerSpi class as an argument, storing these constructors in a list, where they will be instantiated for
- * every call to the UnionCustomBeanTransformer.newInstance() method. The XML parsing will be done only once, at the first time
- * the method is called. 
+ * The UnionCustomBeanTransformer hold an array of CustomBeanTransformerSpi,
+ * checks if a given instance of a source class if transformable into a destination class
+ * iterating over the array of CustomBeanTransformerSpi finding the first appropriate one.
+ * Transforms the given instance of the source class into and instance of a destination class
+ * iterating over the array of CustomBeanTransformerSpi finding the first appropriate one.
  * 
- * @author Hanson Char, Alexandre Pretyman
+ * This is a copy and paste from
+ * http://groups.google.com/group/beanlib/browse_thread/thread/f300b5470c08f683
  * 
- *         This is a copy and paste from
- *         http://groups.google.com/group/beanlib/browse_thread
- *         /thread/f300b5470c08f683 with implementation to load custom
- *         transformers for Hibernate4Gwt
- *         
+ * @author Hanson Char
+ * 
+ *          
  */
 public class UnionCustomBeanTransformer implements CustomBeanTransformerSpi
 {
@@ -43,7 +42,7 @@ public class UnionCustomBeanTransformer implements CustomBeanTransformerSpi
 	//
 	//-------------------------------------------------------------------------
 	/**
-	 * Constructor
+	 * Register the array of CustomBeanTransformerSpi used by the class
 	 * @param customTransformers
 	 */
 	public UnionCustomBeanTransformer(
@@ -57,7 +56,15 @@ public class UnionCustomBeanTransformer implements CustomBeanTransformerSpi
 	// CustomBeanTransformerSpi implementation
 	//
 	//-------------------------------------------------------------------------
-	// @Override
+
+	/**
+	 * Iterate over the given array of CustomBeanTransformerSpi, checking if there
+	 * is a valid transformer to transform the 'from' object, to the target 'toClass'
+	 * 
+	 * @param from the source object instance
+	 * @param toClass the destination class to transform the 'from' object in 
+	 * @return true if a custom bean transformer was found, false if not
+	 */
 	public <T> boolean isTransformable(Object from, Class<T> toClass,
 			PropertyInfo propertyInfo)
 	{
@@ -71,7 +78,18 @@ public class UnionCustomBeanTransformer implements CustomBeanTransformerSpi
 		return false;
 	}
 
-	// @Override
+	/**
+	 * Transforms 'in' object into an instance of class 'toClass', using the first
+	 * valid transformer in the _customTransformers array. Returns null if no valid
+	 * customTransmer is available. 
+	 *  
+	 * @param in the source object to be transformed
+	 * @param toClass the destination class which the instance will be returned
+	 * @param propertyInfo the property which will be passed on the to the valid 
+	 * 		  CustomBeanTransformerSpi registered
+	 * @return instance of the 'toClass' as a result of a transformation of the 
+	 * 		   'in' object
+	 */
 	public <T> T transform(Object in, Class<T> toClass,
 						   PropertyInfo propertyInfo)
 	{
