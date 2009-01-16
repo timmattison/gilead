@@ -37,6 +37,7 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.type.CollectionType;
+import org.hibernate.type.ComponentType;
 import org.hibernate.type.MapType;
 import org.hibernate.type.Type;
 
@@ -768,6 +769,10 @@ public class HibernateUtil implements IPersistenceUtil
 		}
 	}
 	
+	/**
+	 * Compute persistent for Hibernate type
+	 * @param type
+	 */
 	private void computePersistentForType(Type type)
 	{
 		if (_log.isDebugEnabled())
@@ -775,18 +780,33 @@ public class HibernateUtil implements IPersistenceUtil
 			_log.debug("Scanning type " + type.getName());
 		}
 		
-		if ((type.isComponentType()) ||
-			(IUserType.class.isAssignableFrom(type.getReturnedClass())))
+		if (type.isComponentType())
 		{
 		//	Add the Class to the persistent map
 		//
 			if (_log.isDebugEnabled())
 			{
-				_log.debug("Type " + type.getName() + " is component or user type");
+				_log.debug("Type " + type.getName() + " is user type");
 			}
 			
 			markClassAsPersistent(type.getReturnedClass(), true);
-			return;
+			
+			Type[] subtypes = ((ComponentType)type).getSubtypes();
+			for (int index = 0; index < subtypes.length; index++)
+			{
+				computePersistentForType(subtypes[index]);
+			}
+		}	
+		else if (IUserType.class.isAssignableFrom(type.getReturnedClass()))
+		{
+		//	Add the Class to the persistent map
+		//
+			if (_log.isDebugEnabled())
+			{
+				_log.debug("Type " + type.getName() + " is user type");
+			}
+			
+			markClassAsPersistent(type.getReturnedClass(), true);
 		}
 		else if (type.isCollectionType())
 		{
