@@ -735,17 +735,31 @@ public class HibernateUtil implements IPersistenceUtil
 		for (int index = 0; index < types.length; index++)
 		{
 			Type type = types[index];
+			if (_log.isDebugEnabled())
+			{
+				_log.debug("Scanning type " + type.getName() + " from " + clazz);
+			}
+			
 			if ((type.isComponentType()) ||
 				(IUserType.class.isAssignableFrom(type.getReturnedClass())))
 			{
 			//	Add the Class to the persistent map
 			//
+				if (_log.isDebugEnabled())
+				{
+					_log.debug("Type " + type.getName() + " is component type");
+				}
+				
 				markClassAsPersistent(type.getReturnedClass(), true);
 			}
 			else if(type.isCollectionType()) 
 			{
 			//	Check collection element type
 			//
+				if (_log.isDebugEnabled())
+				{
+					_log.debug("Type " + type.getName() + " is collection type");
+				}
 				Type elementType = ((CollectionType)type).getElementType(_sessionFactory);
 				
 			//	Compute persistence for collection item if needed
@@ -765,6 +779,13 @@ public class HibernateUtil implements IPersistenceUtil
 				{
 					markClassAsPersistent(elementClass, true);
 				} 
+			}
+			else
+			{
+				if (_log.isDebugEnabled())
+				{
+					_log.debug("Type " + type.getName() + " class is " + type.getClass());
+				}
 			}
 		}
 	}
