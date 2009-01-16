@@ -37,6 +37,7 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.type.CollectionType;
+import org.hibernate.type.MapType;
 import org.hibernate.type.Type;
 
 /**
@@ -739,54 +740,7 @@ public class HibernateUtil implements IPersistenceUtil
 			{
 				_log.debug("Scanning type " + type.getName() + " from " + clazz);
 			}
-			
-			if ((type.isComponentType()) ||
-				(IUserType.class.isAssignableFrom(type.getReturnedClass())))
-			{
-			//	Add the Class to the persistent map
-			//
-				if (_log.isDebugEnabled())
-				{
-					_log.debug("Type " + type.getName() + " is component type");
-				}
-				
-				markClassAsPersistent(type.getReturnedClass(), true);
-			}
-			else if(type.isCollectionType()) 
-			{
-			//	Check collection element type
-			//
-				if (_log.isDebugEnabled())
-				{
-					_log.debug("Type " + type.getName() + " is collection type");
-				}
-				Type elementType = ((CollectionType)type).getElementType(_sessionFactory);
-				
-			//	Compute persistence for collection item if needed
-			//
-				Class<?> elementClass = elementType.getReturnedClass();
-				synchronized (_persistenceMap)
-				{
-					Boolean persistent = _persistenceMap.get(clazz);
-					if (persistent == null)
-					{
-						computePersistenceForClass(elementClass);
-					}
-				}
-				
-				if((type.isComponentType()) ||
-				   (IUserType.class.isAssignableFrom(elementClass)))
-				{
-					markClassAsPersistent(elementClass, true);
-				} 
-			}
-			else
-			{
-				if (_log.isDebugEnabled())
-				{
-					_log.debug("Type " + type.getName() + " class is " + type.getClass());
-				}
-			}
+			computePersistentForType(type);
 		}
 	}
 	
@@ -801,16 +755,48 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 			if (persistent)
 			{
-				_log.debug("Marking class " + clazz + " as persistent");
+				_log.debug("Marking " + clazz + " as persistent");
 			}
 			else
 			{
-				_log.debug("Marking class " + clazz + " as not persistent");
+				_log.debug("Marking " + clazz + " as not persistent");
 			}
 		}
 		synchronized (_persistenceMap)
 		{
 			_persistenceMap.put(clazz, persistent);
+		}
+	}
+	
+	private void computePersistentForType(Type type)
+	{
+		if (_log.isDebugEnabled())
+		{
+			_log.debug("Scanning type " + type.getName());
+		}
+		
+		if ((type.isComponentType()) ||
+			(IUserType.class.isAssignableFrom(type.getReturnedClass())))
+		{
+		//	Add the Class to the persistent map
+		//
+			if (_log.isDebugEnabled())
+			{
+				_log.debug("Type " + type.getName() + " is component or user type");
+			}
+			
+			markClassAsPersistent(type.getReturnedClass(), true);
+			return;
+		}
+		else if (type.isCollectionType())
+		{
+		//	Collection handling
+		//
+			if (_log.isDebugEnabled())
+			{
+				_log.debug("Type " + type.getName() + " is collection type");
+			}
+			computePersistentForType(((CollectionType) type).getElementType(_sessionFactory));
 		}
 	}
 	
