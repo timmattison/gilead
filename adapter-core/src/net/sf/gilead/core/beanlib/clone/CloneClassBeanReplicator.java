@@ -114,6 +114,10 @@ public class CloneClassBeanReplicator extends Hibernate3JavaBeanReplicator
 	@Override
 	public <V extends Object, T extends Object> T replicateBean(V from, java.lang.Class<T> toClass)
 	{
+		// Force persistence map computation (useful for subclass)
+		_persistenceUtil.isPersistentPojo(from);
+		
+		
 		BeanlibThreadLocal.getBeanStack().push(from);
 		T result = super.replicateBean(from, toClass);
 		BeanlibThreadLocal.getBeanStack().pop();

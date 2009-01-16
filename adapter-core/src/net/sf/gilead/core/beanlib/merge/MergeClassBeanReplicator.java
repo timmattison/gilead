@@ -151,6 +151,10 @@ public class MergeClassBeanReplicator extends Hibernate3JavaBeanReplicator
 	//
 		BeanlibThreadLocal.setProxyInformations(null);
 		
+	// 	Force persistence map computation (useful for subclass)
+	//
+		_persistenceUtil.isPersistentPojo(from);
+		
 	//	Add current bean to stack
 	//
 		BeanlibThreadLocal.getBeanStack().push(from);
