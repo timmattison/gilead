@@ -703,6 +703,7 @@ public class HibernateUtil implements IPersistenceUtil
 			synchronized (_persistenceMap) {
 				_persistenceMap.put(clazz, false);
 			}
+			
 			return;
 		}
 
@@ -732,12 +733,26 @@ public class HibernateUtil implements IPersistenceUtil
 			{
 			//	Check collection element type
 			//
-				Type elementType = ((CollectionType)type).getElementType(_sessionFactory); 
-				if(elementType.isComponentType()) 
+				Type elementType = ((CollectionType)type).getElementType(_sessionFactory);
+				
+			//	Compute persistence for collection item if needed
+			//
+				Class<?> elementClass = elementType.getReturnedClass();
+				synchronized (_persistenceMap)
+				{
+					Boolean persistent = _persistenceMap.get(clazz);
+					if (persistent == null)
+					{
+						computePersistenceForClass(elementClass);
+					}
+				}
+				
+				if((type.isComponentType()) ||
+				   (IUserType.class.isAssignableFrom(elementClass)))
 				{
 					synchronized (_persistenceMap)
 					{
-						_persistenceMap.put(elementType.getReturnedClass(), true);
+						_persistenceMap.put(elementClass, true);
 					}
 				} 
 			} 
