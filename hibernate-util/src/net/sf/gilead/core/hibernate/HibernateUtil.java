@@ -19,6 +19,8 @@ import net.sf.gilead.exception.NotPersistentObjectException;
 import net.sf.gilead.exception.TransientObjectException;
 import net.sf.gilead.pojo.base.IUserType;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -81,6 +83,11 @@ public class HibernateUtil implements IPersistenceUtil
 	//----
 	// Attributes
 	//----	
+	/**
+	 * Log channel
+	 */
+	private static Log _log = LogFactory.getLog(HibernateUtil.class);
+	
 	/**
 	 * The pseudo unique instance of the singleton
 	 */
@@ -695,23 +702,32 @@ public class HibernateUtil implements IPersistenceUtil
 	 */
 	private void computePersistenceForClass(Class<?> clazz)
 	{
+	//	Precondition checking
+	//
+		synchronized (_persistenceMap)
+		{
+			if (_persistenceMap.get(clazz) != null)
+			{
+			//	already computed
+			//
+				return;
+			}
+		}
+		
+	//	Get associated metadata
+	//
 		ClassMetadata metadata = _sessionFactory.getClassMetadata(clazz);
 		if (metadata == null)
 		{
 		//	Not persistent !
 		//
-			synchronized (_persistenceMap) {
-				_persistenceMap.put(clazz, false);
-			}
-			
+			markClassAsPersistent(clazz, false);
 			return;
 		}
 
 	//	Persistent class
 	//
-		synchronized (_persistenceMap) {
-			_persistenceMap.put(clazz, true);
-		}
+		markClassAsPersistent(clazz, true);
 		
 	//	Look for component classes
 	//
@@ -724,10 +740,7 @@ public class HibernateUtil implements IPersistenceUtil
 			{
 			//	Add the Class to the persistent map
 			//
-				synchronized (_persistenceMap)
-				{
-					_persistenceMap.put(type.getReturnedClass(), true);
-				}
+				markClassAsPersistent(type.getReturnedClass(), true);
 			}
 			else if(type.isCollectionType()) 
 			{
@@ -750,12 +763,33 @@ public class HibernateUtil implements IPersistenceUtil
 				if((type.isComponentType()) ||
 				   (IUserType.class.isAssignableFrom(elementClass)))
 				{
-					synchronized (_persistenceMap)
-					{
-						_persistenceMap.put(elementClass, true);
-					}
+					markClassAsPersistent(elementClass, true);
 				} 
-			} 
+			}
+		}
+	}
+	
+	/**
+	 * Mark class as persistent or not
+	 * @param clazz
+	 * @param persistent
+	 */
+	private void markClassAsPersistent(Class<?> clazz, boolean persistent)
+	{
+		if (_log.isDebugEnabled())
+		{
+			if (persistent)
+			{
+				_log.debug("Marking class " + clazz + " as persistent");
+			}
+			else
+			{
+				_log.debug("Marking class " + clazz + " as not persistent");
+			}
+		}
+		synchronized (_persistenceMap)
+		{
+			_persistenceMap.put(clazz, persistent);
 		}
 	}
 	
