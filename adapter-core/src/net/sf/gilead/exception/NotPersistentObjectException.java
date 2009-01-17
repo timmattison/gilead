@@ -44,4 +44,23 @@ public class NotPersistentObjectException extends RuntimeException
 	{
 		_object = object;
 	}
+	
+	/**
+	 * Get formatted message
+	 */
+	@Override
+	public String getMessage()
+	{
+		StringBuilder stringBuilder = new StringBuilder();
+		
+		stringBuilder.append("Not Persistent Object : ");
+		stringBuilder.append(_object);
+		if (_object != null)
+		{
+			stringBuilder.append(" [Class is ");
+			stringBuilder.append(_object.getClass().getName());
+			stringBuilder.append("]");
+		}
+		return stringBuilder.toString();
+	}
 }
