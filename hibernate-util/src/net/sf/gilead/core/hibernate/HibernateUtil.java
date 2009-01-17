@@ -724,7 +724,23 @@ public class HibernateUtil implements IPersistenceUtil
 		ClassMetadata metadata = _sessionFactory.getClassMetadata(clazz);
 		if (metadata == null)
 		{
-		//	Not persistent !
+		//	Not persistent : check implemented interfaces (they can be declared as persistent !!)
+		//
+			Class<?>[] interfaces = clazz.getInterfaces();
+			if (interfaces != null)
+			{
+				for (int index = 0; index < interfaces.length ; index ++)
+				{
+					if (isPersistentClass(interfaces[index]))
+					{
+						markClassAsPersistent(clazz, true);
+						return;
+					}
+						
+				}
+			}
+			
+		//	Not persistent and no persistent interface!
 		//
 			markClassAsPersistent(clazz, false);
 			return;
