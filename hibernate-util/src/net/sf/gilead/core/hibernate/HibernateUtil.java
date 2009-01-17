@@ -215,7 +215,7 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 		//	Not an hibernate Class !
 		//
-			throw new NotPersistentObjectException(hibernateClass);			
+			throw new NotPersistentObjectException(pojo);			
 		}
 		
 	//	Retrieve Class<?> hibernate metadata
