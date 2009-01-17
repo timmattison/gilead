@@ -36,8 +36,11 @@ import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.type.AbstractComponentType;
+import org.hibernate.type.AssociationType;
 import org.hibernate.type.CollectionType;
 import org.hibernate.type.ComponentType;
+import org.hibernate.type.CompositeCustomType;
 import org.hibernate.type.MapType;
 import org.hibernate.type.Type;
 
@@ -786,12 +789,12 @@ public class HibernateUtil implements IPersistenceUtil
 		//
 			if (_log.isDebugEnabled())
 			{
-				_log.debug("Type " + type.getName() + " is user type");
+				_log.debug("Type " + type.getName() + " is component type");
 			}
 			
 			markClassAsPersistent(type.getReturnedClass(), true);
 			
-			Type[] subtypes = ((ComponentType)type).getSubtypes();
+			Type[] subtypes = ((AbstractComponentType) type).getSubtypes();
 			for (int index = 0; index < subtypes.length; index++)
 			{
 				computePersistentForType(subtypes[index]);
@@ -818,6 +821,14 @@ public class HibernateUtil implements IPersistenceUtil
 			}
 			computePersistentForType(((CollectionType) type).getElementType(_sessionFactory));
 		}
+		else if (type.isEntityType())
+		{
+			if (_log.isDebugEnabled())
+			{
+				_log.debug("Type " + type.getName() + " is entity type");
+			}
+			computePersistenceForClass(type.getReturnedClass());
+ 		}
 	}
 	
 	/**
