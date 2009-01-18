@@ -214,6 +214,7 @@ public class HibernateUtil implements IPersistenceUtil
 		//
 			if (_log.isDebugEnabled())
 			{
+				_log.debug(hibernateClass + " is not persistent");
 				dumpPersistenceMap();
 			}
 			throw new NotPersistentObjectException(pojo);			
