@@ -204,7 +204,9 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Unenhance Class<?> if needed
 	//
+		_log.debug("before unenhance : " + hibernateClass);
 		hibernateClass = UnEnhancer.unenhanceClass(hibernateClass);
+		_log.debug("after unenhance : " + hibernateClass);
 		
 	//	Persistence checking
 	//
