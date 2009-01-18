@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import net.sf.beanlib.hibernate.UnEnhancer;
 import net.sf.gilead.core.IPersistenceUtil;
@@ -215,6 +216,10 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 		//	Not an hibernate Class !
 		//
+			if (_log.isDebugEnabled())
+			{
+				dumpPersistenceMap();
+			}
 			throw new NotPersistentObjectException(pojo);			
 		}
 		
@@ -784,7 +789,21 @@ public class HibernateUtil implements IPersistenceUtil
 		}
 		synchronized (_persistenceMap)
 		{
-			_persistenceMap.put(clazz, persistent);
+		//	Debug check
+		//
+			if (_persistenceMap.get(clazz) == null)
+			{
+				_persistenceMap.put(clazz, persistent);
+			}
+			else
+			{
+			//	Check persistence information
+			//
+				if (persistent != _persistenceMap.get(clazz).booleanValue())
+				{
+					throw new RuntimeException("Invalid persistence state for " + clazz);
+				}
+			}
 		}
 	}
 	
@@ -845,6 +864,22 @@ public class HibernateUtil implements IPersistenceUtil
 			}
 			computePersistenceForClass(type.getReturnedClass());
  		}
+	}
+	
+	/**
+	 * Debug method : dump persistence map for checking
+	 */
+	private void dumpPersistenceMap()
+	{
+		synchronized (_persistenceMap)
+		{
+		// 	Dump every entry
+		//
+			for (Entry<Class<?>, Boolean> persistenceEntry : _persistenceMap.entrySet())
+			{
+				_log.debug(persistenceEntry.getKey() + " persistence is " + persistenceEntry.getValue());
+			}
+		}
 	}
 	
 	/**
