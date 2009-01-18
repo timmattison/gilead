@@ -205,7 +205,15 @@ public class HibernateUtil implements IPersistenceUtil
 	//	Unenhance Class<?> if needed
 	//
 		_log.debug("before unenhance : " + hibernateClass);
-		hibernateClass = UnEnhancer.unenhanceClass(hibernateClass);
+		if ((pojo.getClass() == hibernateClass) &&
+			(pojo instanceof HibernateProxy))
+		{
+			hibernateClass = ((HibernateProxy)pojo).getHibernateLazyInitializer().getPersistentClass();
+		}
+		else
+		{
+			hibernateClass = UnEnhancer.unenhanceClass(hibernateClass);
+		}
 		_log.debug("after unenhance : " + hibernateClass);
 		
 	//	Persistence checking
@@ -236,8 +244,15 @@ public class HibernateUtil implements IPersistenceUtil
 	//	Retrieve ID
 	//
 		Serializable id = null;
-		
-		Class<?> pojoClass = UnEnhancer.unenhanceClass(pojo.getClass());
+		Class<?> pojoClass = null;
+		if (pojo instanceof HibernateProxy)
+		{
+			pojoClass = ((HibernateProxy)pojo).getHibernateLazyInitializer().getPersistentClass();
+		}
+		else
+		{
+			pojoClass = UnEnhancer.unenhanceClass(pojo.getClass());
+		}
 		if (hibernateClass.equals(pojoClass))
 		{
 		//	Same class for pojo and hibernate class
