@@ -36,13 +36,13 @@ import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
+import org.hibernate.persister.entity.AbstractEntityPersister;
+import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.tuple.IdentifierProperty;
+import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.type.AbstractComponentType;
-import org.hibernate.type.AssociationType;
 import org.hibernate.type.CollectionType;
-import org.hibernate.type.ComponentType;
-import org.hibernate.type.CompositeCustomType;
-import org.hibernate.type.MapType;
 import org.hibernate.type.Type;
 
 /**
@@ -285,8 +285,7 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Post condition checking
 	//
-		if ((id == null) ||
-			(id.toString().equals("0") == true))
+		if (isUnsavedValue(id, hibernateClass))
 		{
 			throw new TransientObjectException(pojo);
 		}
@@ -701,7 +700,7 @@ public class HibernateUtil implements IPersistenceUtil
 	{
 		Hibernate.initialize(proxy);
 	}
-
+	
 	//-------------------------------------------------------------------------
 	//
 	// Internal methods
@@ -1121,6 +1120,30 @@ public class HibernateUtil implements IPersistenceUtil
 		
 		return null;
 	}
+	
+	/**
+	 * Check if the id equals the unsaved value or not
+	 * @param entity
+	 * @return
+	 */
+	private boolean isUnsavedValue(Serializable id, Class<?> persistentClass)
+	{
+	//	Precondition checking
+	//
+		if (id == null)
+		{
+			return true;
+		}
+		
+	//	Get unsaved value from entity metamodel
+	//
+		EntityPersister entityPersister = _sessionFactory.getEntityPersister(persistentClass.getName());
+		EntityMetamodel metamodel = entityPersister.getEntityMetamodel();
+		IdentifierProperty idProperty = metamodel.getIdentifierProperty();
+		
+		return idProperty.getUnsavedValue().isUnsaved(id);
+	}
+
 }
 
 /**
