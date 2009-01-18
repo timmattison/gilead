@@ -36,11 +36,7 @@ import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
-import org.hibernate.persister.entity.AbstractEntityPersister;
-import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
-import org.hibernate.tuple.IdentifierProperty;
-import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.type.AbstractComponentType;
 import org.hibernate.type.CollectionType;
 import org.hibernate.type.Type;
@@ -108,7 +104,7 @@ public class HibernateUtil implements IPersistenceUtil
 	 * The persistance map, with persistance status of all classes
 	 * including persistent component classes
 	 */
-	private Map<Class<?>, Boolean> _persistenceMap;
+	private Map<String, Boolean> _persistenceMap;
 	
 	/**
 	 * The current opened session
@@ -168,17 +164,17 @@ public class HibernateUtil implements IPersistenceUtil
 	public HibernateUtil()
 	{
 		_session = new ThreadLocal<Session>();
-		_persistenceMap = new HashMap<Class<?>, Boolean>();
+		_persistenceMap = new HashMap<String, Boolean>();
 		
 		// Filling persistence map with primitive types
-		_persistenceMap.put(Byte.class, false);
-		_persistenceMap.put(Short.class, false);
-		_persistenceMap.put(Integer.class, false);
-		_persistenceMap.put(Long.class, false);
-		_persistenceMap.put(Float.class, false);
-		_persistenceMap.put(Double.class, false);
-		_persistenceMap.put(Boolean.class, false);
-		_persistenceMap.put(String.class, false);
+		_persistenceMap.put(Byte.class.getName(), false);
+		_persistenceMap.put(Short.class.getName(), false);
+		_persistenceMap.put(Integer.class.getName(), false);
+		_persistenceMap.put(Long.class.getName(), false);
+		_persistenceMap.put(Float.class.getName(), false);
+		_persistenceMap.put(Double.class.getName(), false);
+		_persistenceMap.put(Boolean.class.getName(), false);
+		_persistenceMap.put(String.class.getName(), false);
 	}
 	
 	//-------------------------------------------------------------------------
@@ -342,7 +338,7 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		synchronized (_persistenceMap)
 		{
-			Boolean persistent = _persistenceMap.get(clazz);
+			Boolean persistent = _persistenceMap.get(clazz.getName());
 			if (persistent != null)
 			{
 				return persistent.booleanValue();
@@ -352,7 +348,7 @@ public class HibernateUtil implements IPersistenceUtil
 	//	First clall for this Class<?> : compute persistence class
 	//
 		computePersistenceForClass(clazz);
-		return _persistenceMap.get(clazz).booleanValue();
+		return _persistenceMap.get(clazz.getName()).booleanValue();
 	}
 	
 	/* (non-Javadoc)
@@ -715,7 +711,7 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		synchronized (_persistenceMap)
 		{
-			if (_persistenceMap.get(clazz) != null)
+			if (_persistenceMap.get(clazz.getName()) != null)
 			{
 			//	already computed
 			//
@@ -790,15 +786,16 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 		//	Debug check
 		//
-			if (_persistenceMap.get(clazz) == null)
+			String className = clazz.getName();
+			if (_persistenceMap.get(className) == null)
 			{
-				_persistenceMap.put(clazz, persistent);
+				_persistenceMap.put(className, persistent);
 			}
 			else
 			{
 			//	Check persistence information
 			//
-				if (persistent != _persistenceMap.get(clazz).booleanValue())
+				if (persistent != _persistenceMap.get(className).booleanValue())
 				{
 					throw new RuntimeException("Invalid persistence state for " + clazz);
 				}
@@ -874,10 +871,12 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 		// 	Dump every entry
 		//
-			for (Entry<Class<?>, Boolean> persistenceEntry : _persistenceMap.entrySet())
+			_log.debug("-- Start of persistence map --");
+			for (Entry<String, Boolean> persistenceEntry : _persistenceMap.entrySet())
 			{
 				_log.debug(persistenceEntry.getKey() + " persistence is " + persistenceEntry.getValue());
 			}
+			_log.debug("-- End of persistence map --");
 		}
 	}
 	
@@ -1137,11 +1136,12 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Get unsaved value from entity metamodel
 	//
-		EntityPersister entityPersister = _sessionFactory.getEntityPersister(persistentClass.getName());
+		/*EntityPersister entityPersister = _sessionFactory.getEntityPersister(persistentClass.getName());
 		EntityMetamodel metamodel = entityPersister.getEntityMetamodel();
 		IdentifierProperty idProperty = metamodel.getIdentifierProperty();
 		
-		return idProperty.getUnsavedValue().isUnsaved(id);
+		return idProperty.getUnsavedValue().isUnsaved(id);*/
+		return id.toString().equals("0");
 	}
 
 }
