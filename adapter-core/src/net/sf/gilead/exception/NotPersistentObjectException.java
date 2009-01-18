@@ -54,7 +54,7 @@ public class NotPersistentObjectException extends RuntimeException
 		StringBuilder stringBuilder = new StringBuilder();
 		
 		stringBuilder.append("Not Persistent Object : ");
-		stringBuilder.append(_object);
+		// stringBuilder.append(_object);
 		if (_object != null)
 		{
 			stringBuilder.append(" [Class is ");
