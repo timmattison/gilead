@@ -187,7 +187,7 @@ public class HibernateUtil implements IPersistenceUtil
 	 */
 	public Serializable getId(Object pojo)
 	{
-		return getId(pojo, pojo.getClass());
+	return getId(pojo, getPersistentClass(pojo));
 	}
 	
 	/* (non-Javadoc)
@@ -201,20 +201,6 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 			throw new NullPointerException("No Hibernate Session Factory defined !");
 		}
-		
-	//	Unenhance Class<?> if needed
-	//
-		_log.debug("before unenhance : " + hibernateClass);
-		if ((pojo.getClass() == hibernateClass) &&
-			(pojo instanceof HibernateProxy))
-		{
-			hibernateClass = ((HibernateProxy)pojo).getHibernateLazyInitializer().getPersistentClass();
-		}
-		else
-		{
-			hibernateClass = UnEnhancer.unenhanceClass(hibernateClass);
-		}
-		_log.debug("after unenhance : " + hibernateClass);
 		
 	//	Persistence checking
 	//
@@ -244,15 +230,7 @@ public class HibernateUtil implements IPersistenceUtil
 	//	Retrieve ID
 	//
 		Serializable id = null;
-		Class<?> pojoClass = null;
-		if (pojo instanceof HibernateProxy)
-		{
-			pojoClass = ((HibernateProxy)pojo).getHibernateLazyInitializer().getPersistentClass();
-		}
-		else
-		{
-			pojoClass = UnEnhancer.unenhanceClass(pojo.getClass());
-		}
+		Class<?> pojoClass = getPersistentClass(pojo);
 		if (hibernateClass.equals(pojoClass))
 		{
 		//	Same class for pojo and hibernate class
@@ -1161,6 +1139,24 @@ public class HibernateUtil implements IPersistenceUtil
 		return idProperty.getUnsavedValue().isUnsaved(id);*/
 		return id.toString().equals("0");
 	}
+	
+	/**
+	 * Return the underlying persistent class
+	 * @param pojo
+	 * @return
+	 */
+	private Class<?> getPersistentClass(Object pojo)
+	{
+		if (pojo instanceof HibernateProxy)
+		{
+			return ((HibernateProxy)pojo).getHibernateLazyInitializer().getPersistentClass();
+		}
+		else
+		{
+			return pojo.getClass();
+		}
+	}
+	
 
 }
 
