@@ -6,6 +6,9 @@ package net.sf.gilead.core.beanlib.merge;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import net.sf.beanlib.hibernate3.Hibernate3MapReplicator;
 import net.sf.beanlib.spi.BeanTransformerSpi;
 import net.sf.beanlib.spi.replicator.MapReplicatorSpi;
@@ -40,13 +43,19 @@ public class MergeMapReplicator extends Hibernate3MapReplicator {
         return factory.newMapReplicatable(beanTransformer);
     }
     
-  //----
+    //----
     // Attributes
     //----
+    /**
+     * Log channel
+     */
+    private static Log _log = LogFactory.getLog(MergeMapReplicator.class);
+
     /**
      * The associated persistence util
      */
     private IPersistenceUtil _persistenceUtil;
+    
     
     //----
     // Properties
@@ -99,6 +108,10 @@ public class MergeMapReplicator extends Hibernate3MapReplicator {
 	@Override
 	public <K,V,T> T replicateMap(Map<K,V> from, Class<T> toClass)
     {
+		if (_log.isDebugEnabled())
+		{
+			_log.debug("Merge map from " + from + " to class " + toClass);
+		}
 	//	Get and reset persistent collection class if any
 	//
 		Map<String, Serializable> proxyInformations = BeanlibThreadLocal.getProxyInformations();
