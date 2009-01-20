@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 
 /**
  * Serialization manager singleton.
@@ -73,6 +74,8 @@ public class SerializationManager
 	protected SerializationManager()
 	{
 		_xstream = new XStream();
+		// _xstream.registerConverter(new SerializableIdConverter());
+		// _xstream.registerConverter(new JavaBeanConverter(_xstream.getMapper()));
 	}
 	
 	//-------------------------------------------------------------------------

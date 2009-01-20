@@ -222,6 +222,41 @@ public class UserDAO implements IUserDAO
 	}
     
     /**
+     * Load all the users
+     */
+    @SuppressWarnings("unchecked")
+    public List<IUser> loadAllUserAndMessages()
+	{
+    	Session session = null;
+		Transaction transaction = null;
+		try
+		{
+		//	Get session
+		//
+			session = HibernateContext.getSessionFactory().getCurrentSession();
+			transaction = session.beginTransaction();
+	
+		//	Create query
+		//
+			Query query = session.createQuery("from User user left join fetch user.messageList");
+			
+		//	Execute query
+		//
+			List<IUser> list = (List<IUser>) query.list();
+			transaction.commit();
+			
+			return list;
+		}
+		catch (RuntimeException e)
+		{
+		//	Rollback
+		//
+			transaction.rollback();
+			throw e;
+		}
+	}
+    
+    /**
      * Count all the users
      */
 	public int countAll()

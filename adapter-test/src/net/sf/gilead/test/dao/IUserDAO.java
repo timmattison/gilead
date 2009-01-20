@@ -37,6 +37,11 @@ public interface IUserDAO {
     public List<IUser> loadAll();
     
     /**
+     * Load all the users and associated messages
+     */
+    public List<IUser> loadAllUserAndMessages();
+    
+    /**
      * Count all the users
      */
     public int countAll();

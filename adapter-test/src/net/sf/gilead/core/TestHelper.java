@@ -47,6 +47,11 @@ public class TestHelper
 	public final static String EMPLOYEE_LOGIN = "employee";
 	
 	/**
+	 * The volumetry test login
+	 */
+	public final static String VOLUMETRY_LOGIN = "big";
+	
+	/**
 	 * The 'test' group
 	 */
 	public final static String TEST_GROUP = "test";
@@ -171,6 +176,55 @@ public class TestHelper
 		
 		// save user (message and group are cascaded)
 		DAOFactory.getUserDAO().saveUser(employee);
+	}
+	
+	/**
+	 * Check that the database has a lot of data
+	 * @return
+	 */
+	public static boolean isLotOfDataCreated()
+	{
+		return (DAOFactory.getUserDAO().loadUserByLogin(VOLUMETRY_LOGIN) != null);
+	}
+	
+	/**
+	 * Initialise DB with lot of data
+	 */
+	public static void initializeLotOfData()
+	{	
+	//	Create volumetry
+	//
+		IUser bigUser = createUser();
+		bigUser.setLogin(VOLUMETRY_LOGIN);
+		bigUser.setFirstName("Performance");
+		bigUser.setLastName("Test");
+		
+		// address
+		IAddress address = createAddress();
+		address.setStreet("Baker street");
+		address.setCity("Big City");
+		address.setCountry(createCountry());
+		address.getCountry().setName("Neverland");
+		bigUser.setAddress(address);
+		
+		for (int index = 0 ; index < 1000 ; index ++)
+		{
+			// create message
+			IMessage message = createMessage();
+			message.setMessage("Message " + index);
+			message.setDate(new Date());
+			computeKeywords(message);
+			bigUser.addMessage(message);
+			
+			// batch save
+			if (index % 10 == 0)
+			{
+				DAOFactory.getUserDAO().saveUser(bigUser);
+			}
+		}
+	
+		// save user
+		DAOFactory.getUserDAO().saveUser(bigUser);
 	}
 	
 	/**

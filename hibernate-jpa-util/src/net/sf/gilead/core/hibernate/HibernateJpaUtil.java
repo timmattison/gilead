@@ -11,13 +11,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import net.sf.beanlib.hibernate.UnEnhancer;
 import net.sf.gilead.core.IPersistenceUtil;
+import net.sf.gilead.core.serialization.SerializableId;
+import net.sf.gilead.exception.ComponentTypeException;
 import net.sf.gilead.exception.NotPersistentObjectException;
 import net.sf.gilead.exception.TransientObjectException;
 import net.sf.gilead.pojo.base.IUserType;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -33,6 +38,7 @@ import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.type.AbstractComponentType;
 import org.hibernate.type.CollectionType;
 import org.hibernate.type.Type;
 
@@ -82,6 +88,11 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	// Attributes
 	//----
 	/**
+	 * Log channel
+	 */
+	private static Log _log = LogFactory.getLog(HibernateJpaUtil.class);
+	
+	/**
 	 * The pseudo unique instance of the singleton
 	 */
 	private static HibernateJpaUtil _instance = null;
@@ -95,7 +106,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	 * The persistance map, with persistance status of all classes
 	 * including persistent component classes
 	 */
-	private Map<Class<?>, Boolean> _persistenceMap;
+	private Map<String, Boolean> _persistenceMap;
 	
 	/**
 	 * The current opened session
@@ -146,17 +157,17 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	public HibernateJpaUtil()
 	{
 		_session = new ThreadLocal<Session>();
-		_persistenceMap = new HashMap<Class<?>, Boolean>();
+		_persistenceMap = new HashMap<String, Boolean>();
 		
 		// Filling persistence map with primitive types
-		_persistenceMap.put(Byte.class, false);
-		_persistenceMap.put(Short.class, false);
-		_persistenceMap.put(Integer.class, false);
-		_persistenceMap.put(Long.class, false);
-		_persistenceMap.put(Float.class, false);
-		_persistenceMap.put(Double.class, false);
-		_persistenceMap.put(Boolean.class, false);
-		_persistenceMap.put(String.class, false);
+		_persistenceMap.put(Byte.class.getName(), false);
+		_persistenceMap.put(Short.class.getName(), false);
+		_persistenceMap.put(Integer.class.getName(), false);
+		_persistenceMap.put(Long.class.getName(), false);
+		_persistenceMap.put(Float.class.getName(), false);
+		_persistenceMap.put(Double.class.getName(), false);
+		_persistenceMap.put(Boolean.class.getName(), false);
+		_persistenceMap.put(String.class.getName(), false);
 	}
 	
 	//-------------------------------------------------------------------------
@@ -169,7 +180,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	 */
 	public Serializable getId(Object pojo)
 	{
-		return getId(pojo, pojo.getClass());
+	return getId(pojo, getPersistentClass(pojo));
 	}
 	
 	/* (non-Javadoc)
@@ -184,17 +195,18 @@ public class HibernateJpaUtil implements IPersistenceUtil
 			throw new NullPointerException("No Hibernate Session Factory defined !");
 		}
 		
-	//	Unenhance Class<?> if needed
-	//
-		hibernateClass = UnEnhancer.unenhanceClass(hibernateClass);
-		
 	//	Persistence checking
 	//
 		if (isPersistentClass(hibernateClass) == false)
 		{
 		//	Not an hibernate Class !
 		//
-			throw new NotPersistentObjectException(hibernateClass);			
+			if (_log.isDebugEnabled())
+			{
+				_log.debug(hibernateClass + " is not persistent");
+				dumpPersistenceMap();
+			}
+			throw new NotPersistentObjectException(pojo);			
 		}
 		
 	//	Retrieve Class<?> hibernate metadata
@@ -205,14 +217,13 @@ public class HibernateJpaUtil implements IPersistenceUtil
 		//	Component class (persistent but not metadata) : no associated id
 		//	So must be considered as transient
 		//
-			throw new TransientObjectException(pojo);
+			throw new ComponentTypeException(pojo);
 		}
 		
 	//	Retrieve ID
 	//
 		Serializable id = null;
-		
-		Class<?> pojoClass = UnEnhancer.unenhanceClass(pojo.getClass());
+		Class<?> pojoClass = getPersistentClass(pojo);
 		if (hibernateClass.equals(pojoClass))
 		{
 		//	Same class for pojo and hibernate class
@@ -259,8 +270,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 		
 	//	Post condition checking
 	//
-		if ((id == null) ||
-			(id.toString().equals("0") == true))
+		if (isUnsavedValue(id, hibernateClass))
 		{
 			throw new TransientObjectException(pojo);
 		}
@@ -317,7 +327,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	//
 		synchronized (_persistenceMap)
 		{
-			Boolean persistent = _persistenceMap.get(clazz);
+			Boolean persistent = _persistenceMap.get(clazz.getName());
 			if (persistent != null)
 			{
 				return persistent.booleanValue();
@@ -327,7 +337,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	//	First clall for this Class<?> : compute persistence class
 	//
 		computePersistenceForClass(clazz);
-		return _persistenceMap.get(clazz).booleanValue();
+		return _persistenceMap.get(clazz.getName()).booleanValue();
 	}
 	
 	/* (non-Javadoc)
@@ -675,7 +685,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	{
 		Hibernate.initialize(proxy);
 	}
-
+	
 	//-------------------------------------------------------------------------
 	//
 	// Internal methods
@@ -686,22 +696,48 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	 */
 	private void computePersistenceForClass(Class<?> clazz)
 	{
+	//	Precondition checking
+	//
+		synchronized (_persistenceMap)
+		{
+			if (_persistenceMap.get(clazz.getName()) != null)
+			{
+			//	already computed
+			//
+				return;
+			}
+		}
+		
+	//	Get associated metadata
+	//
 		ClassMetadata metadata = _sessionFactory.getClassMetadata(clazz);
 		if (metadata == null)
 		{
-		//	Not persistent !
+		//	Not persistent : check implemented interfaces (they can be declared as persistent !!)
 		//
-			synchronized (_persistenceMap) {
-				_persistenceMap.put(clazz, false);
+			Class<?>[] interfaces = clazz.getInterfaces();
+			if (interfaces != null)
+			{
+				for (int index = 0; index < interfaces.length ; index ++)
+				{
+					if (isPersistentClass(interfaces[index]))
+					{
+						markClassAsPersistent(clazz, true);
+						return;
+					}
+						
+				}
 			}
+			
+		//	Not persistent and no persistent interface!
+		//
+			markClassAsPersistent(clazz, false);
 			return;
 		}
 
 	//	Persistent class
 	//
-		synchronized (_persistenceMap) {
-			_persistenceMap.put(clazz, true);
-		}
+		markClassAsPersistent(clazz, true);
 		
 	//	Look for component classes
 	//
@@ -709,29 +745,127 @@ public class HibernateJpaUtil implements IPersistenceUtil
 		for (int index = 0; index < types.length; index++)
 		{
 			Type type = types[index];
-			if ((type.isComponentType()) ||
-				(IUserType.class.isAssignableFrom(type.getReturnedClass())))
+			if (_log.isDebugEnabled())
 			{
-			//	Add the Class to the persistent map
+				_log.debug("Scanning type " + type.getName() + " from " + clazz);
+			}
+			computePersistentForType(type);
+		}
+	}
+	
+	/**
+	 * Mark class as persistent or not
+	 * @param clazz
+	 * @param persistent
+	 */
+	private void markClassAsPersistent(Class<?> clazz, boolean persistent)
+	{
+		if (_log.isDebugEnabled())
+		{
+			if (persistent)
+			{
+				_log.debug("Marking " + clazz + " as persistent");
+			}
+			else
+			{
+				_log.debug("Marking " + clazz + " as not persistent");
+			}
+		}
+		synchronized (_persistenceMap)
+		{
+		//	Debug check
+		//
+			String className = clazz.getName();
+			if (_persistenceMap.get(className) == null)
+			{
+				_persistenceMap.put(className, persistent);
+			}
+			else
+			{
+			//	Check persistence information
 			//
-				synchronized (_persistenceMap)
+				if (persistent != _persistenceMap.get(className).booleanValue())
 				{
-					_persistenceMap.put(type.getReturnedClass(), true);
+					throw new RuntimeException("Invalid persistence state for " + clazz);
 				}
 			}
-			else if(type.isCollectionType()) 
+		}
+	}
+	
+	/**
+	 * Compute persistent for Hibernate type
+	 * @param type
+	 */
+	private void computePersistentForType(Type type)
+	{
+		if (_log.isDebugEnabled())
+		{
+			_log.debug("Scanning type " + type.getName());
+		}
+		
+		if (type.isComponentType())
+		{
+		//	Add the Class to the persistent map
+		//
+			if (_log.isDebugEnabled())
 			{
-			//	Check collection element type
-			//
-				Type elementType = ((CollectionType)type).getElementType(_sessionFactory); 
-				if(elementType.isComponentType()) 
-				{
-					synchronized (_persistenceMap)
-					{
-						_persistenceMap.put(elementType.getReturnedClass(), true);
-					}
-				} 
-			} 
+				_log.debug("Type " + type.getName() + " is component type");
+			}
+			
+			markClassAsPersistent(type.getReturnedClass(), true);
+			
+			Type[] subtypes = ((AbstractComponentType) type).getSubtypes();
+			for (int index = 0; index < subtypes.length; index++)
+			{
+				computePersistentForType(subtypes[index]);
+			}
+		}	
+		else if (IUserType.class.isAssignableFrom(type.getReturnedClass()))
+		{
+		//	Add the Class to the persistent map
+		//
+			if (_log.isDebugEnabled())
+			{
+				_log.debug("Type " + type.getName() + " is user type");
+			}
+			
+			markClassAsPersistent(type.getReturnedClass(), true);
+		}
+		else if (type.isCollectionType())
+		{
+		//	Collection handling
+		//
+			if (_log.isDebugEnabled())
+			{
+				_log.debug("Type " + type.getName() + " is collection type");
+			}
+			computePersistentForType(((CollectionType) type).getElementType(_sessionFactory));
+		}
+		else if (type.isEntityType())
+		{
+			if (_log.isDebugEnabled())
+			{
+				_log.debug("Type " + type.getName() + " is entity type");
+			}
+			computePersistenceForClass(type.getReturnedClass());
+ 		}
+	}
+	
+	/**
+	 * Debug method : dump persistence map for checking
+	 */
+	private void dumpPersistenceMap()
+	{
+		synchronized (_persistenceMap)
+		{
+		// 	Dump every entry
+		//
+			_log.debug("-- Start of persistence map --");
+			for (Entry<String, Boolean> persistenceEntry : _persistenceMap.entrySet())
+			{
+				_log.debug(persistenceEntry.getKey() + " persistence is " + persistenceEntry.getValue());
+			}
+			_log.debug("-- End of persistence map --");
 		}
 	}
 	
@@ -817,8 +951,8 @@ public class HibernateJpaUtil implements IPersistenceUtil
 			if (isPersistentPojo(item))
 			{
 				SerializableId id = new SerializableId();
-				id.id = getId(item);
-				id.className = item.getClass().getName();
+				id.setId(getId(item));
+				id.setClassName(item.getClass().getName());
 			
 				idList.add(id);
 			}
@@ -862,7 +996,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 			{
 				try
 				{
-					if (sid.id.equals(getId(iterator.next())))
+					if (sid.getId().equals(getId(iterator.next())))
 					{
 						found = true;
 						break;
@@ -880,9 +1014,9 @@ public class HibernateJpaUtil implements IPersistenceUtil
 			//
 				try
 				{
-					Class<?> itemClass = Thread.currentThread().getContextClassLoader().loadClass(sid.className);
+					Class<?> itemClass = Thread.currentThread().getContextClassLoader().loadClass(sid.getClassName());
 					itemClass = UnEnhancer.unenhanceClass(itemClass);
-					Object proxy = session.load(itemClass, sid.id);
+					Object proxy = session.load(itemClass, sid.getId());
 					deletedItems.add(proxy);
 				}
 				catch(Exception e)
@@ -974,15 +1108,45 @@ public class HibernateJpaUtil implements IPersistenceUtil
 		
 		return null;
 	}
-}
-
-/**
- * Id / Class structure for collection handling
- * @author bruno.marchesson
- *
- */
-class SerializableId implements Serializable
-{
-	public Serializable id;
-	public String className;
+	
+	/**
+	 * Check if the id equals the unsaved value or not
+	 * @param entity
+	 * @return
+	 */
+	private boolean isUnsavedValue(Serializable id, Class<?> persistentClass)
+	{
+	//	Precondition checking
+	//
+		if (id == null)
+		{
+			return true;
+		}
+		
+	//	Get unsaved value from entity metamodel
+	//
+		/*EntityPersister entityPersister = _sessionFactory.getEntityPersister(persistentClass.getName());
+		EntityMetamodel metamodel = entityPersister.getEntityMetamodel();
+		IdentifierProperty idProperty = metamodel.getIdentifierProperty();
+		
+		return idProperty.getUnsavedValue().isUnsaved(id);*/
+		return id.toString().equals("0");
+	}
+	
+	/**
+	 * Return the underlying persistent class
+	 * @param pojo
+	 * @return
+	 */
+	private Class<?> getPersistentClass(Object pojo)
+	{
+		if (pojo instanceof HibernateProxy)
+		{
+			return ((HibernateProxy)pojo).getHibernateLazyInitializer().getPersistentClass();
+		}
+		else
+		{
+			return pojo.getClass();
+		}
+	}
 }
