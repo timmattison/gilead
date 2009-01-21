@@ -56,9 +56,17 @@ public class StatelessProxyStore implements IProxyStore
 		
 	//	Store information in the POJO
 	//
-		((ILightEntity)cloneBean).addProxyInformation(property, 
-											  		  // convertSerializableToBytes(proxyInformations));
-													  convertSerializableToString(proxyInformations));
+		//if (cloneBean instanceof IStringProxyInformations)
+		{
+		//	Needs to convert Serializable to String
+		//
+			((ILightEntity)cloneBean).addProxyInformation(property, 
+			  		  									  (HashMap)convertSerializableToString(proxyInformations));
+		}
+//		else
+//		{
+//			((ILightEntity)cloneBean).addProxyInformation(property, proxyInformations);
+//		}
 	}
 	
 	/*
@@ -93,8 +101,16 @@ public class StatelessProxyStore implements IProxyStore
 		
 	//	Store information in the POJO
 	//
-		// return convertBytesToSerializable(((ILightEntity)pojo).getProxyInformation(property));
-		return convertStringToSerializable(((ILightEntity)pojo).getProxyInformation(property));
+		//if (pojo instanceof IStringProxyInformations)
+		{
+		//	Needs to convert String to Serializable
+		//
+			return convertStringToSerializable(((ILightEntity)pojo).getProxyInformation(property));
+		}
+//		else
+//		{
+//			return ((ILightEntity)pojo).getProxyInformation(property);
+//		}
 	}
 	
 	//-------------------------------------------------------------------------

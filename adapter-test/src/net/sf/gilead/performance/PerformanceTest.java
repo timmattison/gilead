@@ -57,7 +57,7 @@ public abstract class PerformanceTest extends TestCase
 		}
 		if (TestHelper.isLotOfDataCreated() == false)
 		{
-		//	TestHelper.initializeLotOfData();
+			TestHelper.initializeLotOfData(50);
 		}
 		
 	//	Init SerializationManager to create XStream instance
@@ -82,8 +82,8 @@ public abstract class PerformanceTest extends TestCase
 		
 	//	Load user
 	//
-		// IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.VOLUMETRY_LOGIN);
-		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
+		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.VOLUMETRY_LOGIN);
+		// IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
 		assertNotNull(user);
 		assertNotNull(user.getMessageList());
 		assertFalse(user.getMessageList().isEmpty());

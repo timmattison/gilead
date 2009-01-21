@@ -12,7 +12,7 @@
 <stringAttribute key="org.eclipse.hyades.trace.ui.ATTR_DESTINATION_MONITOR" value="DefaultMonitor"/>
 <stringAttribute key="org.eclipse.hyades.trace.ui.ATTR_DESTINATION_PROJECT" value="ProfileProject"/>
 <booleanAttribute key="org.eclipse.hyades.trace.ui.ATTR_PROFILE_TO_FILE" value="false"/>
-<stringAttribute key="org.eclipse.hyades.trace.ui.ATTR_PROFILING_SET" value="tptp-dummy-profiling-set-adapter-test"/>
+<stringAttribute key="org.eclipse.hyades.trace.ui.ATTR_PROFILING_SET" value="tptp-dummy-profiling-set-performance-test"/>
 <stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value="=adapter-test/src&lt;net.sf.gilead.performance"/>
 <booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
 <stringAttribute key="org.eclipse.jdt.junit.TESTNAME" value=""/>
@@ -35,4 +35,9 @@
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value=""/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="adapter-test"/>
+<booleanAttribute key="org.eclipse.tptp.platform.jvmti.client.ATTR_EXEC_AUTO_POLLING" value="false"/>
+<booleanAttribute key="org.eclipse.tptp.platform.jvmti.client.ATTR_EXEC_CPU_TIME" value="false"/>
+<booleanAttribute key="org.eclipse.tptp.platform.jvmti.client.ATTR_EXEC_FLOW" value="true"/>
+<booleanAttribute key="org.eclipse.tptp.platform.jvmti.client.ATTR_EXEC_MANUAL_POLLING" value="false"/>
+<intAttribute key="org.eclipse.tptp.platform.jvmti.client.ATTR_EXEC_POLLING_TIME" value="60"/>
 </launchConfiguration>

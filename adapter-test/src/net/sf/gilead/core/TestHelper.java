@@ -190,7 +190,7 @@ public class TestHelper
 	/**
 	 * Initialise DB with lot of data
 	 */
-	public static void initializeLotOfData()
+	public static void initializeLotOfData(int messageCount)
 	{	
 	//	Create volumetry
 	//
@@ -207,7 +207,7 @@ public class TestHelper
 		address.getCountry().setName("Neverland");
 		bigUser.setAddress(address);
 		
-		for (int index = 0 ; index < 1000 ; index ++)
+		for (int index = 0 ; index < messageCount ; index ++)
 		{
 			// create message
 			IMessage message = createMessage();

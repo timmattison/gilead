@@ -112,6 +112,7 @@ public class MergeMapReplicator extends Hibernate3MapReplicator {
 		{
 			_log.debug("Merge map from " + from + " to class " + toClass);
 		}
+		
 	//	Get and reset persistent collection class if any
 	//
 		Map<String, Serializable> proxyInformations = BeanlibThreadLocal.getProxyInformations();

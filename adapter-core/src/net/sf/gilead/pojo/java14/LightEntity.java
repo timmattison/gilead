@@ -43,7 +43,7 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	 * The key is the property name, the value is a map with
 	 * persistence informations filled by the persistence util
 	 * implementation.
-	 * @gwt.typeArgs <java.lang.String, java.util.Map<java.lang.String, java.lang.String>>
+	 * @gwt.typeArgs <java.lang.String, java.util.HashMap<java.lang.String, java.lang.String>>
 	 */
 	protected Map _proxyInformations;
 	
@@ -79,7 +79,6 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	public LightEntity()
 	{
 		super();
-		_proxyInformations = new HashMap();
 	}
 
 	//-------------------------------------------------------------------------
@@ -95,6 +94,10 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	public void addProxyInformation(String property,
 									Map proxyInformations)
 	{
+		if (_proxyInformations == null)
+		{
+			_proxyInformations = new HashMap();
+		}
 		_proxyInformations.put(property, proxyInformations);
 	}
 	
@@ -104,7 +107,10 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	 */
 	public void removeProxyInformation(String property)
 	{
-		_proxyInformations.remove(property);
+		if (_proxyInformations != null)
+		{
+			_proxyInformations.remove(property);
+		}
 	}
 
 	/*
@@ -114,7 +120,14 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	 */
 	public Map getProxyInformation(String property)
 	{
-		return (Map) _proxyInformations.get(property);
+		if (_proxyInformations != null)
+		{
+			return (Map) _proxyInformations.get(property);
+		}
+		else
+		{
+			return null;
+		}
 	}
 	
 	/*
@@ -123,6 +136,13 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	 */
 	public String getDebugString()
 	{
-		return _proxyInformations.toString();
+		if (_proxyInformations != null)
+		{
+			return _proxyInformations.toString();
+		}
+		else
+		{
+			return null;
+		}
 	}
 }
