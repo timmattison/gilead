@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,6 +19,7 @@ import net.sf.gilead.exception.ComponentTypeException;
 import net.sf.gilead.exception.NotPersistentObjectException;
 import net.sf.gilead.exception.TransientObjectException;
 import net.sf.gilead.pojo.base.IUserType;
+import net.sf.gilead.util.IntrospectionHelper;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -912,7 +912,7 @@ public class HibernateUtil implements IPersistenceUtil
 		}
 	//	Iterate over fields
 	//
-		Field[] fields = getRecursiveDeclaredFields(object.getClass());
+		Field[] fields = IntrospectionHelper.getRecursiveDeclaredFields(object.getClass());
 		for (Field field : fields)
 		{
 		//	Check current value 
@@ -945,27 +945,10 @@ public class HibernateUtil implements IPersistenceUtil
 	}
 	
 	/**
-	 * Recursively get declared fields
+	 * Create a list of serializable ID for the argument collection
+	 * @param collection
+	 * @return
 	 */
-	private static Field[] getRecursiveDeclaredFields(Class<?> clazz)
-	{
-	//	Create field list
-	//
-		List<Field> fieldList = new ArrayList<Field>();
-		
-	//	Recursive get superclass declared fields
-	//
-		while(clazz != null)
-		{
-			fieldList.addAll(Arrays.asList(clazz.getDeclaredFields()));
-			clazz = clazz.getSuperclass();
-		}
-	
-	//	Convert field list to array
-	//
-		return fieldList.toArray(new Field[fieldList.size()]);
-	}
-	
 	private ArrayList<SerializableId> createIdList(Collection collection)
 	{
 		int size = collection.size();

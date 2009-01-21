@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,6 +19,7 @@ import net.sf.gilead.exception.ComponentTypeException;
 import net.sf.gilead.exception.NotPersistentObjectException;
 import net.sf.gilead.exception.TransientObjectException;
 import net.sf.gilead.pojo.base.IUserType;
+import net.sf.gilead.util.IntrospectionHelper;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +33,7 @@ import org.hibernate.collection.PersistentCollection;
 import org.hibernate.collection.PersistentList;
 import org.hibernate.collection.PersistentMap;
 import org.hibernate.collection.PersistentSet;
+import org.hibernate.ejb.HibernateEntityManagerFactory;
 import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
@@ -142,7 +143,17 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	 */
 	public void setEntityManagerFactory(Object entityManagerFactory)
 	{
-		_sessionFactory = (SessionFactoryImpl)((org.hibernate.ejb.HibernateEntityManagerFactory) entityManagerFactory).getSessionFactory(); 
+		if (entityManagerFactory instanceof HibernateEntityManagerFactory == false)
+		{
+		//	Probably an injected session factory
+		//
+			entityManagerFactory = searchHibernateImplementation(entityManagerFactory);
+			if (entityManagerFactory == null)
+			{
+				throw new IllegalArgumentException("Cannot find Hibernate entity manager factory implementation !");
+			}
+		}
+		_sessionFactory = (SessionFactoryImpl)((HibernateEntityManagerFactory) entityManagerFactory).getSessionFactory(); 
 	}
 	
 	
@@ -870,11 +881,11 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	}
 	
 	/**
-	 * Seach the underlying Hibernate session factory implementation.
+	 * Seach the underlying Hibernate entity manager factory implementation.
 	 * @param object
-	 * @return the session factory if found, null otherwise
+	 * @return the entity manager factory if found, null otherwise
 	 */
-	private static SessionFactoryImpl searchHibernateImplementation(Object object)
+	private static HibernateEntityManagerFactory searchHibernateImplementation(Object object)
 	{
 	//	Precondition checking
 	//
@@ -885,7 +896,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 		}
 	//	Iterate over fields
 	//
-		Field[] fields = getRecursiveDeclaredFields(object.getClass());
+		Field[] fields = IntrospectionHelper.getRecursiveDeclaredFields(object.getClass());
 		for (Field field : fields)
 		{
 		//	Check current value 
@@ -894,14 +905,14 @@ public class HibernateJpaUtil implements IPersistenceUtil
 			try
 			{
 				Object value = field.get(object);
-				if (value instanceof SessionFactoryImpl)
+				if (value instanceof HibernateEntityManagerFactory)
 				{
-					return (SessionFactoryImpl) value;
+					return (HibernateEntityManagerFactory) value;
 				}
 				value = searchHibernateImplementation(value);
 				if (value != null)
 				{
-					return (SessionFactoryImpl) value;
+					return (HibernateEntityManagerFactory) value;
 				}
 			}
 			catch (Exception e)
@@ -912,33 +923,16 @@ public class HibernateJpaUtil implements IPersistenceUtil
 			}
 		}
 		
-	//	Session Factory not found
+	//	Entity Manager Factory not found
 	//
 		return null;
 	}
 	
 	/**
-	 * Recursively get declared fields
+	 * Create a list of serializable ID for the argument collection
+	 * @param collection
+	 * @return
 	 */
-	private static Field[] getRecursiveDeclaredFields(Class<?> clazz)
-	{
-	//	Create field list
-	//
-		List<Field> fieldList = new ArrayList<Field>();
-		
-	//	Recursive get superclass declared fields
-	//
-		while(clazz != null)
-		{
-			fieldList.addAll(Arrays.asList(clazz.getDeclaredFields()));
-			clazz = clazz.getSuperclass();
-		}
-	
-	//	Convert field list to array
-	//
-		return fieldList.toArray(new Field[fieldList.size()]);
-	}
-	
 	private ArrayList<SerializableId> createIdList(Collection collection)
 	{
 		int size = collection.size();
