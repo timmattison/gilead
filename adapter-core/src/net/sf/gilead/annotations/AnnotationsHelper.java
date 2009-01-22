@@ -5,6 +5,11 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import net.sf.gilead.util.IntrospectionHelper;
 
@@ -15,6 +20,21 @@ import net.sf.gilead.util.IntrospectionHelper;
  */
 public class AnnotationsHelper
 {
+	//----
+	// Attributes
+	//----
+	/**
+	 * Log channel
+	 */
+	private static Log _log = LogFactory.getLog(AnnotationsHelper.class);
+	
+	/**
+	 * Annotation map.
+	 * It is filled with associated Gilead annotation for all classes and properties 
+	 * for performance purpose (computing it each time is very expensive)
+	 */
+	private static Map<Class<?>, Map<String, Class<?>>> _annotationMap = new HashMap<Class<?>, Map<String,Class<?>>>();
+	
 	//-------------------------------------------------------------------------
 	//
 	// Static helpers
@@ -25,43 +45,23 @@ public class AnnotationsHelper
 	 */
 	public static boolean hasServerOnlyAnnotations(Class<?> clazz)
 	{
-	//	Search annotations on fields
+	//	Map checking
 	//
-		Field[] fields = IntrospectionHelper.getRecursiveDeclaredFields(clazz);
-		for (Field field : fields)
+		Map<String, Class<?>> propertyAnnotations = _annotationMap.get(clazz);
+		if (propertyAnnotations == null)
 		{
-			if (field.isAnnotationPresent(ServerOnly.class))
+		//	Compute property annotations
+		//
+			propertyAnnotations = getGileadAnnotations(clazz);
+			synchronized (_annotationMap)
 			{
-				return true;
+				_annotationMap.put(clazz, propertyAnnotations);
 			}
 		}
 		
-	//	Search annotation on getters
+	//	Does the map contains @ServerOnly annotation ?
 	//
-		try 
-		{
-			BeanInfo info = Introspector.getBeanInfo(clazz);
-			PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
-			for (int index = 0; index < descriptors.length; index++)
-			{
-				PropertyDescriptor descriptor = descriptors[index];
-				if ((descriptor != null) && (descriptor.getReadMethod() != null))
-				{
-					if (descriptor.getReadMethod().isAnnotationPresent(ServerOnly.class))
-					{
-						return true;
-					}
-				}
-			}
-		} 
-		catch (IntrospectionException e)
-		{
-			throw new RuntimeException("Cannot inspect class " + clazz, e);
-		}
-		
-	//	Annotation not found
-	//
-		return false;
+		return propertyAnnotations.containsValue(ServerOnly.class);
 	}
 	
 	/**
@@ -69,49 +69,24 @@ public class AnnotationsHelper
 	 */
 	public static boolean isServerOnly(Class<?> clazz, String propertyName)
 	{
-	//	Search annotations on fields
+	//	Map checking
 	//
-		try
+		Map<String, Class<?>> propertyAnnotations = _annotationMap.get(clazz);
+		if (propertyAnnotations == null)
 		{
-			Field field = clazz.getDeclaredField(propertyName);
-			if ((field != null) &&
-				(field.isAnnotationPresent(ServerOnly.class)))
+		//	Compute property annotations
+		//
+			propertyAnnotations = getGileadAnnotations(clazz);
+			synchronized (_annotationMap)
 			{
-				return true;
+				_annotationMap.put(clazz, propertyAnnotations);
 			}
 		}
-		catch (NoSuchFieldException e)
-		{
-			// search property instead
-		}
 		
-	//	Search annotation on getters
+	//	Does the map contains @ServerOnly annotation for the argument property ?
 	//
-		try 
-		{
-			BeanInfo info = Introspector.getBeanInfo(clazz);
-			PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
-			for (int index = 0; index < descriptors.length; index++)
-			{
-				PropertyDescriptor descriptor = descriptors[index];
-				if ((descriptor != null) && (descriptor.getReadMethod() != null))
-				{
-					if ((descriptor.getName().equals(propertyName)) &&
-						(descriptor.getReadMethod().isAnnotationPresent(ServerOnly.class)))
-					{
-						return true;
-					}
-				}
-			}
-		} 
-		catch (IntrospectionException e)
-		{
-			throw new RuntimeException("Cannot inspect class " + clazz, e);
-		}
-		
-	//	Annotation not found
-	//
-		return false;
+		Class<?> annotation  = propertyAnnotations.get(propertyName);
+		return ((annotation != null) && (ServerOnly.class.equals(annotation)));
 	}
 	
 	/**
@@ -119,45 +94,24 @@ public class AnnotationsHelper
 	 */
 	public static boolean hasServerOnlyOrReadOnlyAnnotations(Class<?> clazz)
 	{
-	//	Search annotations on fields
+	//	Map checking
 	//
-		Field[] fields = IntrospectionHelper.getRecursiveDeclaredFields(clazz);
-		for (Field field : fields)
+		Map<String, Class<?>> propertyAnnotations = _annotationMap.get(clazz);
+		if (propertyAnnotations == null)
 		{
-			if (field.isAnnotationPresent(ServerOnly.class) ||
-				field.isAnnotationPresent(ReadOnly.class))
+		//	Compute property annotations
+		//
+			propertyAnnotations = getGileadAnnotations(clazz);
+			synchronized (_annotationMap)
 			{
-				return true;
+				_annotationMap.put(clazz, propertyAnnotations);
 			}
 		}
 		
-	//	Search annotation on getters
+	//	Does the map contains @ServerOnly or @ReadOnly annotation ?
 	//
-		try 
-		{
-			BeanInfo info = Introspector.getBeanInfo(clazz);
-			PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
-			for (int index = 0; index < descriptors.length; index++)
-			{
-				PropertyDescriptor descriptor = descriptors[index];
-				if ((descriptor != null) && (descriptor.getReadMethod() != null))
-				{
-					if ((descriptor.getReadMethod().isAnnotationPresent(ServerOnly.class)) ||
-						(descriptor.getReadMethod().isAnnotationPresent(ReadOnly.class)))
-					{
-						return true;
-					}
-				}
-			}
-		} 
-		catch (IntrospectionException e)
-		{
-			throw new RuntimeException("Cannot inspect class " + clazz, e);
-		}
-		
-	//	Annotation not found
-	//
-		return false;
+		return ((propertyAnnotations.containsValue(ServerOnly.class)) ||
+				(propertyAnnotations.containsValue(ReadOnly.class)));
 	}
 	
 	/**
@@ -165,14 +119,97 @@ public class AnnotationsHelper
 	 */
 	public static boolean hasReadOnlyAnnotations(Class<?> clazz)
 	{
+	//	Map checking
+	//
+		Map<String, Class<?>> propertyAnnotations = _annotationMap.get(clazz);
+		if (propertyAnnotations == null)
+		{
+		//	Compute property annotations
+		//
+			propertyAnnotations = getGileadAnnotations(clazz);
+			synchronized (_annotationMap)
+			{
+				_annotationMap.put(clazz, propertyAnnotations);
+			}
+		}
+		
+	//	Does the map contains @ServerOnly annotation ?
+	//
+		return propertyAnnotations.containsValue(ReadOnly.class);
+	}
+	
+	/**
+	 * Indicated if the argument has "ReadOnly" annotation on the named field.
+	 */
+	public static boolean isReadOnly(Class<?> clazz, String propertyName)
+	{
+	//	Map checking
+	//
+		Map<String, Class<?>> propertyAnnotations = _annotationMap.get(clazz);
+		if (propertyAnnotations == null)
+		{
+		//	Compute property annotations
+		//
+			propertyAnnotations = getGileadAnnotations(clazz);
+			synchronized (_annotationMap)
+			{
+				_annotationMap.put(clazz, propertyAnnotations);
+			}
+		}
+		
+	//	Does the map contains @ReadOnly annotation for the argument property ?
+	//
+		Class<?> annotation  = propertyAnnotations.get(propertyName);
+		return ((annotation != null) && (ReadOnly.class.equals(annotation)));
+	}
+	
+	//-------------------------------------------------------------------------
+	//
+	// Internal methods
+	//
+	//--------------------------------------------------------------------------
+	/**
+	 * Indicated if the argument has "ReadOnly" annotation on one of its field.
+	 */
+	private static Map<String,Class<?>> getGileadAnnotations(Class<?> clazz)
+	{
+		if (_log.isDebugEnabled())
+		{
+			_log.debug("Looking for Gilead annotations for " + clazz);
+		}
+		
+		Map<String, Class<?>> result = new HashMap<String, Class<?>>();
+		
 	//	Search annotations on fields
 	//
 		Field[] fields = IntrospectionHelper.getRecursiveDeclaredFields(clazz);
 		for (Field field : fields)
 		{
+			String propertyName = field.getName();
 			if (field.isAnnotationPresent(ReadOnly.class))
 			{
-				return true;
+				if (_log.isDebugEnabled())
+				{
+					_log.debug(propertyName + " member has @ReadOnly");
+				}
+				result.put(propertyName, ReadOnly.class);
+			}
+			else if (field.isAnnotationPresent(ServerOnly.class))
+			{
+				if (_log.isDebugEnabled())
+				{
+					_log.debug(propertyName + " member has @ServerOnly");
+				}
+				result.put(propertyName, ServerOnly.class);
+			}
+			else
+			{
+				if (_log.isTraceEnabled())
+				{
+					_log.trace(propertyName + " member has no Gilead annotation");
+				}
+				
+				result.put(propertyName, null);
 			}
 		}
 		
@@ -187,9 +224,22 @@ public class AnnotationsHelper
 				PropertyDescriptor descriptor = descriptors[index];
 				if ((descriptor != null) && (descriptor.getReadMethod() != null))
 				{
+					String propertyName = descriptor.getName();
 					if (descriptor.getReadMethod().isAnnotationPresent(ReadOnly.class))
 					{
-						return true;
+						if (_log.isDebugEnabled())
+						{
+							_log.debug(propertyName + " getter has @ReadOnly");
+						}
+						result.put(propertyName, ReadOnly.class);
+					}
+					else if (descriptor.getReadMethod().isAnnotationPresent(ServerOnly.class))
+					{
+						if (_log.isDebugEnabled())
+						{
+							_log.debug(propertyName + " getter has @ServerOnly");
+						}
+						result.put(propertyName, ServerOnly.class);
 					}
 				}
 			}
@@ -199,58 +249,9 @@ public class AnnotationsHelper
 			throw new RuntimeException("Cannot inspect class " + clazz, e);
 		}
 		
-	//	Annotation not found
+	//	Return annotation map
 	//
-		return false;
+		return result;
 	}
 	
-	/**
-	 * Indicated if the argument has "ReadOnly" annotation on the named field.
-	 */
-	public static boolean isReadOnly(Class<?> clazz, String propertyName)
-	{
-	//	Search annotations on fields
-	//
-		try
-		{
-			Field field = clazz.getDeclaredField(propertyName);
-			if ((field != null) &&
-				(field.isAnnotationPresent(ReadOnly.class)))
-			{
-				return true;
-			}
-		}
-		catch (NoSuchFieldException e)
-		{
-			// search property instead
-		}
-		
-	//	Search annotation on getters
-	//
-		try 
-		{
-			BeanInfo info = Introspector.getBeanInfo(clazz);
-			PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
-			for (int index = 0; index < descriptors.length; index++)
-			{
-				PropertyDescriptor descriptor = descriptors[index];
-				if ((descriptor != null) && (descriptor.getReadMethod() != null))
-				{		
-					if ((descriptor.getName().equals(propertyName)) &&
-						(descriptor.getReadMethod().isAnnotationPresent(ReadOnly.class)))
-					{
-						return true;
-					}
-				}
-			}
-		} 
-		catch (IntrospectionException e)
-		{
-			throw new RuntimeException("Cannot inspect class " + clazz, e);
-		}
-		
-	//	Annotation not found
-	//
-		return false;
-	}
 }
