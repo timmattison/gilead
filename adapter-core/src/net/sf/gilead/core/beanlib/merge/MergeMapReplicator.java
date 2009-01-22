@@ -118,6 +118,15 @@ public class MergeMapReplicator extends Hibernate3MapReplicator {
 		Map<String, Serializable> proxyInformations = BeanlibThreadLocal.getProxyInformations();
 		BeanlibThreadLocal.setProxyInformations(null);
 		
+	//	AS Object BlazeDS map handling
+	//
+		if (from.getClass().getName().endsWith(".ASObject"))
+		{
+		//	Turn it into regular hash map
+		//
+			toClass = (Class<T>)java.util.HashMap.class;
+		}
+		
 	//	Clone map
 	//
 		T map = super.replicateMap(from, toClass);
