@@ -124,6 +124,16 @@ public class MergeMapReplicator extends Hibernate3MapReplicator {
 		{
 		//	Turn it into regular hash map
 		//
+			String type = null;
+			try
+			{
+				type = (String) from.getClass().getMethod("getType", (Class<?>[])null).invoke(from, (Object[])null);
+			}
+			catch(Exception e)
+			{
+				type = e.getMessage();
+			}
+			_log.warn("Invalid map : " + from.toString() + " for type " + type);
 			toClass = (Class<T>)java.util.HashMap.class;
 		}
 		

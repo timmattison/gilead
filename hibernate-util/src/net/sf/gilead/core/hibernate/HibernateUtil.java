@@ -188,7 +188,7 @@ public class HibernateUtil implements IPersistenceUtil
 	 */
 	public Serializable getId(Object pojo)
 	{
-	return getId(pojo, getPersistentClass(pojo));
+		return getId(pojo, getPersistentClass(pojo));
 	}
 	
 	/* (non-Javadoc)
@@ -209,9 +209,9 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 		//	Not an hibernate Class !
 		//
-			if (_log.isDebugEnabled())
+			if (_log.isTraceEnabled())
 			{
-				_log.debug(hibernateClass + " is not persistent");
+				_log.trace(hibernateClass + " is not persistent");
 				dumpPersistenceMap();
 			}
 			throw new NotPersistentObjectException(pojo);			
@@ -887,12 +887,12 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 		// 	Dump every entry
 		//
-			_log.debug("-- Start of persistence map --");
+			_log.trace("-- Start of persistence map --");
 			for (Entry<String, Boolean> persistenceEntry : _persistenceMap.entrySet())
 			{
-				_log.debug(persistenceEntry.getKey() + " persistence is " + persistenceEntry.getValue());
+				_log.trace(persistenceEntry.getKey() + " persistence is " + persistenceEntry.getValue());
 			}
-			_log.debug("-- End of persistence map --");
+			_log.trace("-- End of persistence map --");
 		}
 	}
 	
