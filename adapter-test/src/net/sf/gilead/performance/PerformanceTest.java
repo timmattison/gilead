@@ -3,6 +3,7 @@
  */
 package net.sf.gilead.performance;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -10,7 +11,7 @@ import org.apache.commons.logging.LogFactory;
 
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.TestHelper;
-import net.sf.gilead.core.serialization.SerializationManager;
+import net.sf.gilead.core.serialization.BytesProxySerialization;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.dao.IUserDAO;
 import net.sf.gilead.test.domain.IUser;
@@ -57,12 +58,8 @@ public abstract class PerformanceTest extends TestCase
 		}
 		if (TestHelper.isLotOfDataCreated() == false)
 		{
-			TestHelper.initializeLotOfData(50);
+			TestHelper.initializeLotOfData(100);
 		}
-		
-	//	Init SerializationManager to create XStream instance
-	//
-		SerializationManager.getInstance();
 	}
 	
 	//-------------------------------------------------------------------------
@@ -92,7 +89,7 @@ public abstract class PerformanceTest extends TestCase
 	//
 		long start = System.currentTimeMillis();
 		IUser cloneUser = (IUser) _beanManager.clone(user);
-		_log.info("Clone took " + (System.currentTimeMillis() - start) + " ms.");
+		_log.info("Clone user took " + (System.currentTimeMillis() - start) + " ms.");
 		
 	//	Test cloned user
 	//
@@ -102,7 +99,7 @@ public abstract class PerformanceTest extends TestCase
 	//
 		start = System.currentTimeMillis();
 		IUser mergeUser = (IUser) _beanManager.merge(cloneUser);
-		_log.info("Merge took " + (System.currentTimeMillis() - start) + " ms.");
+		_log.info("Merge user took " + (System.currentTimeMillis() - start) + " ms.");
 		
 	//	Test merged user
 	//
@@ -127,7 +124,7 @@ public abstract class PerformanceTest extends TestCase
 	//
 		long start = System.currentTimeMillis();
 		List<IUser> cloneUserList = (List<IUser>) _beanManager.clone(userList);
-		_log.info("Clone took " + (System.currentTimeMillis() - start) + " ms.");
+		_log.info("Clone user list took " + (System.currentTimeMillis() - start) + " ms.");
 		
 	//	Test cloned user
 	//
@@ -137,7 +134,7 @@ public abstract class PerformanceTest extends TestCase
 	//
 		start = System.currentTimeMillis();
 		List<IUser> mergeUserList = (List<IUser>) _beanManager.merge(cloneUserList);
-		_log.info("Merge took " + (System.currentTimeMillis() - start) + " ms.");
+		_log.info("Merge user list took " + (System.currentTimeMillis() - start) + " ms.");
 		
 	//	Test merged user
 	//

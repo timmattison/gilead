@@ -36,9 +36,9 @@ public class PersistentAdapter extends JavaAdapter
 	private PersistentBeanManager _beanManager;
 	
 	/**
-	 * Stateless store flag
+	 * Stateless store flag (true by default)
 	 */
-	private boolean _stateless;
+	private boolean _stateless = true;
 	
 	//-------------------------------------------------------------------------
 	//

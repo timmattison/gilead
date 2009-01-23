@@ -16,9 +16,6 @@ import net.sf.gilead.exception.ConvertorException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
-
 /**
  * Serialization manager singleton.
  * It serializes Serializable instances to simple byte array and
@@ -28,40 +25,15 @@ import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
  * @author bruno.marchesson
  *
  */
-public class SerializationManager
+public class BytesProxySerialization implements IProxySerialization
 {	
-	//----
-	// Singleton
-	//----
-	/**
-	 * The unique instance of manager
-	 */
-	private static SerializationManager _instance = null;
-
-	/**
-	 * @return the unique instance of the manager
-	 */
-	public static SerializationManager getInstance()
-	{
-		if (_instance == null)
-		{
-			_instance = new SerializationManager();
-		}
-		return _instance;
-	}
-	
 	//----
 	// Attributes
 	//----
 	/**
 	 * Log channel.
 	 */
-	private static Log _log = LogFactory.getLog(SerializationManager.class);
-	
-	/**
-	 * The XStream facade
-	 */
-	private XStream _xstream;
+	private static Log _log = LogFactory.getLog(BytesProxySerialization.class);
 	
 	//-------------------------------------------------------------------------
 	//
@@ -69,13 +41,10 @@ public class SerializationManager
 	//
 	//-------------------------------------------------------------------------
 	/**
-	 * Private constructor.
+	 * Constructor.
 	 */
-	protected SerializationManager()
+	public BytesProxySerialization()
 	{
-		_xstream = new XStream();
-		// _xstream.registerConverter(new SerializableIdConverter());
-		// _xstream.registerConverter(new JavaBeanConverter(_xstream.getMapper()));
 	}
 	
 	//-------------------------------------------------------------------------
@@ -83,10 +52,10 @@ public class SerializationManager
 	// Public interface
 	//
 	//-------------------------------------------------------------------------
-	/**
-	 * Convert Serializable to bytes.
+	/* (non-Javadoc)
+	 * @see net.sf.gilead.core.serialization.IProxySerialization#serializeToBytes(java.io.Serializable)
 	 */
-	public byte[] serializeToBytes(Serializable serializable)
+	public byte[] serialize(Serializable serializable)
 	{
 		if (_log.isDebugEnabled())
 		{
@@ -116,40 +85,12 @@ public class SerializationManager
 		}
 	}
 	
-	/**
-	 * Convert Serializable to bytes.
+	/* (non-Javadoc)
+	 * @see net.sf.gilead.core.serialization.IProxySerialization#unserializeFromBytes(byte[])
 	 */
-	public String serializeToString(Serializable serializable)
+	public Serializable unserialize(Object object)
 	{
-		if (_log.isDebugEnabled())
-		{
-			_log.debug("Serialization of " + serializable);
-		}
-	//	Precondition checking
-	//
-		if (serializable == null)
-		{
-			return null;
-		}
-		
-	//	Serialize to bytes and encapsulate into string
-	//
-		/*try
-		{
-			return new BASE64Encoder().encode(serializeToBytes(serializable));
-		}
-		catch (Exception e)
-		{
-			throw new ConvertorException("Error converting Serializable", e);
-		}*/
-		return _xstream.toXML(serializable);
-	}
-	
-	/**
-	 * Regenerate Serializable from bytes.
-	 */
-	public Serializable unserializeFromBytes(byte[] bytes)
-	{
+		byte[] bytes = (byte[]) object;
 		if (_log.isDebugEnabled())
 		{
 			_log.debug("Unserialization of " + Arrays.toString(bytes));
@@ -176,36 +117,5 @@ public class SerializationManager
 			throw new ConvertorException("Error converting Serializable", e);
 		}
 
-	}
-	
-	/**
-	 * Regenerate Serializable from String.
-	 */
-	public Serializable unserializeFromString(String string)
-	{
-		if (_log.isDebugEnabled())
-		{
-			_log.debug("Unserialization of " + string);
-		}
-		
-	//	Precondition checking
-	//
-		if ((string == null) ||
-			(string.length() == 0))
-		{
-			return null;
-		}
-		
-	//	Convert back to bytes and Serializable
-	//
-		/*try
-		{
-			return unserializeFromBytes(new BASE64Decoder().decodeBuffer(string));
-		}
-		catch (Exception e)
-		{
-			throw new ConvertorException("Error converting Serializable", e);
-		}*/
-		return (Serializable) _xstream.fromXML(string);
 	}
 }

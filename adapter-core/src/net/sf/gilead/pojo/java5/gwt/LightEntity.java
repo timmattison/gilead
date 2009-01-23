@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package net.sf.gilead.pojo.java5;
+package net.sf.gilead.pojo.java5.gwt;
 
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.gilead.pojo.base.IConvertProxyMap;
 import net.sf.gilead.pojo.base.ILightEntity;
 
 /**
@@ -28,7 +29,7 @@ import net.sf.gilead.pojo.base.ILightEntity;
  * @author bruno.marchesson
  *
  */
-public abstract class LightEntity implements ILightEntity, Serializable
+public abstract class LightEntity implements ILightEntity, IConvertProxyMap, Serializable
 {
 	//-----
 	// Attributes
@@ -44,7 +45,7 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	 * persistence informations filled by the persistence util
 	 * implementation
 	 */
-	protected Map<String, Map<String, Serializable>> _proxyInformations;
+	protected Map<String, Map<String, String>> _proxyInformations;
 	
 	//----
 	// Properties
@@ -52,7 +53,7 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	/**
 	 * @return the proxy informations
 	 */
-	public Map<String, Map<String, Serializable>> getProxyInformations()
+	public Map<String, Map<String, String>> getProxyInformations()
 	{
 		return _proxyInformations;
 	}
@@ -93,7 +94,7 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	{
 		if (_proxyInformations == null)
 		{
-			_proxyInformations = new HashMap<String, Map<String, Serializable>>();
+			_proxyInformations = new HashMap<String, Map<String, String>>();
 		}
 		_proxyInformations.put(property, proxyInfo);
 	}

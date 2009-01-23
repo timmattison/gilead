@@ -41,30 +41,6 @@ public class AnnotationsHelper
 	//
 	//-------------------------------------------------------------------------
 	/**
-	 * Indicated if the argument has "ServerOnly" annotation on one of its field.
-	 */
-	public static boolean hasServerOnlyAnnotations(Class<?> clazz)
-	{
-	//	Map checking
-	//
-		Map<String, Class<?>> propertyAnnotations = _annotationMap.get(clazz);
-		if (propertyAnnotations == null)
-		{
-		//	Compute property annotations
-		//
-			propertyAnnotations = getGileadAnnotations(clazz);
-			synchronized (_annotationMap)
-			{
-				_annotationMap.put(clazz, propertyAnnotations);
-			}
-		}
-		
-	//	Does the map contains @ServerOnly annotation ?
-	//
-		return propertyAnnotations.containsValue(ServerOnly.class);
-	}
-	
-	/**
 	 * Indicated if the argument has "ServerOnly" annotation on the named field.
 	 */
 	public static boolean isServerOnly(Class<?> clazz, String propertyName)
@@ -88,6 +64,83 @@ public class AnnotationsHelper
 		Class<?> annotation  = propertyAnnotations.get(propertyName);
 		return ((annotation != null) && (ServerOnly.class.equals(annotation)));
 	}
+	
+	/**
+	 * Indicated if the argument has "ReadOnly" annotation on the named field.
+	 */
+	public static boolean isReadOnly(Class<?> clazz, String propertyName)
+	{
+	//	Map checking
+	//
+		Map<String, Class<?>> propertyAnnotations = _annotationMap.get(clazz);
+		if (propertyAnnotations == null)
+		{
+		//	Compute property annotations
+		//
+			propertyAnnotations = getGileadAnnotations(clazz);
+			synchronized (_annotationMap)
+			{
+				_annotationMap.put(clazz, propertyAnnotations);
+			}
+		}
+		
+	//	Does the map contains @ReadOnly annotation for the argument property ?
+	//
+		Class<?> annotation  = propertyAnnotations.get(propertyName);
+		return ((annotation != null) && (ReadOnly.class.equals(annotation)));
+	}
+	
+	/**
+	 * Indicated if the argument has "ReadOnly" annotation on the named field.
+	 */
+	public static boolean isServerOrReadOnly(Class<?> clazz, String propertyName)
+	{
+	//	Map checking
+	//
+		Map<String, Class<?>> propertyAnnotations = _annotationMap.get(clazz);
+		if (propertyAnnotations == null)
+		{
+		//	Compute property annotations
+		//
+			propertyAnnotations = getGileadAnnotations(clazz);
+			synchronized (_annotationMap)
+			{
+				_annotationMap.put(clazz, propertyAnnotations);
+			}
+		}
+		
+	//	Does the map contains @ReadOnly annotation for the argument property ?
+	//
+		Class<?> annotation  = propertyAnnotations.get(propertyName);
+		return ((annotation != null) && (
+				(ReadOnly.class.equals(annotation) || ServerOnly.class.equals(annotation))));
+	}
+	
+	/**
+	 * Indicated if the argument has "ServerOnly" annotation on one of its field.
+	 */
+	public static boolean hasServerOnlyAnnotations(Class<?> clazz)
+	{
+	//	Map checking
+	//
+		Map<String, Class<?>> propertyAnnotations = _annotationMap.get(clazz);
+		if (propertyAnnotations == null)
+		{
+		//	Compute property annotations
+		//
+			propertyAnnotations = getGileadAnnotations(clazz);
+			synchronized (_annotationMap)
+			{
+				_annotationMap.put(clazz, propertyAnnotations);
+			}
+		}
+		
+	//	Does the map contains @ServerOnly annotation ?
+	//
+		return propertyAnnotations.containsValue(ServerOnly.class);
+	}
+	
+	
 	
 	/**
 	 * Indicated if the argument has "ServerOnly" annotation on one of its field.
@@ -136,31 +189,6 @@ public class AnnotationsHelper
 	//	Does the map contains @ServerOnly annotation ?
 	//
 		return propertyAnnotations.containsValue(ReadOnly.class);
-	}
-	
-	/**
-	 * Indicated if the argument has "ReadOnly" annotation on the named field.
-	 */
-	public static boolean isReadOnly(Class<?> clazz, String propertyName)
-	{
-	//	Map checking
-	//
-		Map<String, Class<?>> propertyAnnotations = _annotationMap.get(clazz);
-		if (propertyAnnotations == null)
-		{
-		//	Compute property annotations
-		//
-			propertyAnnotations = getGileadAnnotations(clazz);
-			synchronized (_annotationMap)
-			{
-				_annotationMap.put(clazz, propertyAnnotations);
-			}
-		}
-		
-	//	Does the map contains @ReadOnly annotation for the argument property ?
-	//
-		Class<?> annotation  = propertyAnnotations.get(propertyName);
-		return ((annotation != null) && (ReadOnly.class.equals(annotation)));
 	}
 	
 	//-------------------------------------------------------------------------

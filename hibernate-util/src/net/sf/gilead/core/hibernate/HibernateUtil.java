@@ -105,7 +105,12 @@ public class HibernateUtil implements IPersistenceUtil
 	 * The persistance map, with persistance status of all classes
 	 * including persistent component classes
 	 */
-	private Map<String, Boolean> _persistenceMap;
+	private Map<Class<?>, Boolean> _persistenceMap;
+	
+	/**
+	 * The unenhancement map, used for performance purpose
+	 */
+	private Map<Class<?>, Class<?>> _unehancementMap;
 	
 	/**
 	 * The current opened session
@@ -165,17 +170,18 @@ public class HibernateUtil implements IPersistenceUtil
 	public HibernateUtil()
 	{
 		_session = new ThreadLocal<Session>();
-		_persistenceMap = new HashMap<String, Boolean>();
+		_persistenceMap = new HashMap<Class<?>, Boolean>();
+		_unehancementMap = new HashMap<Class<?>, Class<?>>();
 		
 		// Filling persistence map with primitive types
-		_persistenceMap.put(Byte.class.getName(), false);
-		_persistenceMap.put(Short.class.getName(), false);
-		_persistenceMap.put(Integer.class.getName(), false);
-		_persistenceMap.put(Long.class.getName(), false);
-		_persistenceMap.put(Float.class.getName(), false);
-		_persistenceMap.put(Double.class.getName(), false);
-		_persistenceMap.put(Boolean.class.getName(), false);
-		_persistenceMap.put(String.class.getName(), false);
+		_persistenceMap.put(Byte.class, false);
+		_persistenceMap.put(Short.class, false);
+		_persistenceMap.put(Integer.class, false);
+		_persistenceMap.put(Long.class, false);
+		_persistenceMap.put(Float.class, false);
+		_persistenceMap.put(Double.class, false);
+		_persistenceMap.put(Boolean.class, false);
+		_persistenceMap.put(String.class, false);
 	}
 	
 	//-------------------------------------------------------------------------
@@ -335,7 +341,7 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		synchronized (_persistenceMap)
 		{
-			Boolean persistent = _persistenceMap.get(clazz.getName());
+			Boolean persistent = _persistenceMap.get(clazz);
 			if (persistent != null)
 			{
 				return persistent.booleanValue();
@@ -345,7 +351,7 @@ public class HibernateUtil implements IPersistenceUtil
 	//	First clall for this Class<?> : compute persistence class
 	//
 		computePersistenceForClass(clazz);
-		return _persistenceMap.get(clazz.getName()).booleanValue();
+		return _persistenceMap.get(clazz).booleanValue();
 	}
 	
 	/* (non-Javadoc)
@@ -353,21 +359,17 @@ public class HibernateUtil implements IPersistenceUtil
 	 */
 	public Class<?> getUnenhancedClass(Class<?> clazz)
 	{
-	//	Precondition checking
+	//	Map checking
 	//
-		if (_sessionFactory == null)
+		Class<?> unenhancedClass = _unehancementMap.get(clazz);
+		if (unenhancedClass == null)
 		{
-			throw new NullPointerException("No Hibernate Session Factory defined !");
+		//	Based on beanlib unEnhancer class
+		//
+			unenhancedClass = UnEnhancer.unenhanceClass(clazz);
+			_unehancementMap.put(clazz, unenhancedClass);
 		}
-		
-	//	Check proxy (based on beanlib Enhancer class)
-	//
-		if (isEnhanced(clazz))
-		{
-			clazz = clazz.getSuperclass();
-		}
-		
-		return clazz;
+		return unenhancedClass;
 	}
 	
 	/* (non-Javadoc)
@@ -375,9 +377,9 @@ public class HibernateUtil implements IPersistenceUtil
 	 */
 	public boolean isEnhanced(Class<?> clazz)
 	{
-	//	Check proxy (based on beanlib unEnhancer class)
+	//	Compare class to unenhanced class
 	//
-		return (clazz != UnEnhancer.unenhanceClass(clazz));
+		return (clazz != getUnenhancedClass(clazz));
 	}
 	
 	/* (non-Javadoc)
@@ -727,7 +729,7 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		synchronized (_persistenceMap)
 		{
-			if (_persistenceMap.get(clazz.getName()) != null)
+			if (_persistenceMap.get(clazz) != null)
 			{
 			//	already computed
 			//
@@ -802,16 +804,15 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 		//	Debug check
 		//
-			String className = clazz.getName();
-			if (_persistenceMap.get(className) == null)
+			if (_persistenceMap.get(clazz) == null)
 			{
-				_persistenceMap.put(className, persistent);
+				_persistenceMap.put(clazz, persistent);
 			}
 			else
 			{
 			//	Check persistence information
 			//
-				if (persistent != _persistenceMap.get(className).booleanValue())
+				if (persistent != _persistenceMap.get(clazz).booleanValue())
 				{
 					throw new RuntimeException("Invalid persistence state for " + clazz);
 				}
@@ -888,7 +889,7 @@ public class HibernateUtil implements IPersistenceUtil
 		// 	Dump every entry
 		//
 			_log.trace("-- Start of persistence map --");
-			for (Entry<String, Boolean> persistenceEntry : _persistenceMap.entrySet())
+			for (Entry<Class<?>, Boolean> persistenceEntry : _persistenceMap.entrySet())
 			{
 				_log.trace(persistenceEntry.getKey() + " persistence is " + persistenceEntry.getValue());
 			}

@@ -20,9 +20,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.gilead.core.serialization.SerializationManager;
+import net.sf.gilead.core.serialization.IProxySerialization;
+import net.sf.gilead.core.serialization.XStreamProxySerialization;
 import net.sf.gilead.core.store.IProxyStore;
 import net.sf.gilead.exception.ProxyStoreException;
+import net.sf.gilead.pojo.base.IConvertProxyMap;
 import net.sf.gilead.pojo.base.ILightEntity;
 
 /**
@@ -34,6 +36,45 @@ import net.sf.gilead.pojo.base.ILightEntity;
  */
 public class StatelessProxyStore implements IProxyStore
 {
+	//----
+	// Attribute
+	//-----
+	/**
+	 * Serializer for proxy informations
+	 */
+	private IProxySerialization _proxySerializer;
+	
+	/**
+	 * @return the proxy serializer
+	 */
+	public IProxySerialization getProxySerializer()
+	{
+		return _proxySerializer;
+	}
+
+	/**
+	 * @param serializer the serializer to set
+	 */
+	public void setProxySerializer(IProxySerialization serializer)
+	{
+		_proxySerializer = serializer;
+	}
+	
+	//-------------------------------------------------------------------------
+	//
+	// Constructor
+	//
+	//-------------------------------------------------------------------------
+	/**
+	 * Constructor
+	 */
+	public StatelessProxyStore()
+	{
+		// default value
+		_proxySerializer = new XStreamProxySerialization();
+	}
+	
+	
 	//-------------------------------------------------------------------------
 	//
 	// IProxyStore implementation
@@ -56,17 +97,17 @@ public class StatelessProxyStore implements IProxyStore
 		
 	//	Store information in the POJO
 	//
-		//if (cloneBean instanceof IStringProxyInformations)
+		if (cloneBean instanceof IConvertProxyMap)
 		{
-		//	Needs to convert Serializable to String
+		//	Needs to convert Serializable map
 		//
 			((ILightEntity)cloneBean).addProxyInformation(property, 
-			  		  									  (HashMap)convertSerializableToString(proxyInformations));
+			  		  									  convertSerializable(proxyInformations));
 		}
-//		else
-//		{
-//			((ILightEntity)cloneBean).addProxyInformation(property, proxyInformations);
-//		}
+		else
+		{
+			((ILightEntity)cloneBean).addProxyInformation(property, proxyInformations);
+		}
 	}
 	
 	/*
@@ -101,16 +142,16 @@ public class StatelessProxyStore implements IProxyStore
 		
 	//	Store information in the POJO
 	//
-		//if (pojo instanceof IStringProxyInformations)
+		if (pojo instanceof IConvertProxyMap)
 		{
-		//	Needs to convert String to Serializable
+		//	Needs to convert back to Serializable
 		//
-			return convertStringToSerializable(((ILightEntity)pojo).getProxyInformation(property));
+			return convertToSerializable(((ILightEntity)pojo).getProxyInformation(property));
 		}
-//		else
-//		{
-//			return ((ILightEntity)pojo).getProxyInformation(property);
-//		}
+		else
+		{
+			return ((ILightEntity)pojo).getProxyInformation(property);
+		}
 	}
 	
 	//-------------------------------------------------------------------------
@@ -119,9 +160,9 @@ public class StatelessProxyStore implements IProxyStore
 	//
 	//-------------------------------------------------------------------------
 	/**
-	 * Convert Map<String,Serializable> to Map<String, bytes>
+	 * Convert Map<String,Serializable> to Map<String, Object>
 	 */
-	protected Map<String, byte[]> convertSerializableToBytes(Map<String, Serializable> map)
+	protected Map<String,Object> convertSerializable(Map<String, Serializable> map)
 	{
 	//	Precondition checking
 	//
@@ -132,46 +173,22 @@ public class StatelessProxyStore implements IProxyStore
 		
 	//	Convert map
 	//
-		Map<String, byte[]> result = new HashMap<String, byte[]>();
+		Map<String,Object> result = new HashMap<String,Object>();
 		
 		for (Map.Entry<String, Serializable> entry : map.entrySet())
 		{
 			result.put(entry.getKey(),
-					   SerializationManager.getInstance().serializeToBytes(entry.getValue()));
+					   _proxySerializer.serialize(entry.getValue()));
 		}
 		
 		return result;
 	}
 	
-	/**
-	 * Convert Map<String,Serializable> to Map<String, String>
-	 */
-	protected Map<String, String> convertSerializableToString(Map<String, Serializable> map)
-	{
-	//	Precondition checking
-	//
-		if (map == null)
-		{
-			return null;
-		}
-		
-	//	Convert map
-	//
-		Map<String, String> result = new HashMap<String, String>();
-		
-		for (Map.Entry<String, Serializable> entry : map.entrySet())
-		{
-			result.put(entry.getKey(),
-					   SerializationManager.getInstance().serializeToString(entry.getValue()));
-		}
-		
-		return result;
-	}
-	
+
 	/**
 	 * Convert Map<String,bytes> to Map<String, Serializable>
 	 */
-	protected Map<String, Serializable> convertBytesToSerializable(Map<String, byte[]> map)
+	protected Map<String, Serializable> convertToSerializable(Map<String, Object> map)
 	{
 	//	Precondition checking
 	//
@@ -184,35 +201,10 @@ public class StatelessProxyStore implements IProxyStore
 	//
 		Map<String, Serializable> result = new HashMap<String, Serializable>();
 		
-		for (Map.Entry<String, byte[]> entry : map.entrySet())
+		for (Map.Entry<String, Object> entry : map.entrySet())
 		{
 			result.put(entry.getKey(),
-					   SerializationManager.getInstance().unserializeFromBytes(entry.getValue()));
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * Convert Map<String,String> to Map<String, Serializable>
-	 */
-	protected Map<String, Serializable> convertStringToSerializable(Map<String, String> map)
-	{
-	//	Precondition checking
-	//
-		if (map == null)
-		{
-			return null;
-		}
-		
-	//	Convert map
-	//
-		Map<String, Serializable> result = new HashMap<String, Serializable>();
-		
-		for (Map.Entry<String, String> entry : map.entrySet())
-		{
-			result.put(entry.getKey(),
-					   SerializationManager.getInstance().unserializeFromString(entry.getValue()));
+					   _proxySerializer.unserialize(entry.getValue()));
 		}
 		
 		return result;

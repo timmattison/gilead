@@ -130,10 +130,8 @@ public class MergeBeanPopulatable implements DetailedBeanPopulatable
 		
 		//	'ReadOnly' or 'ServerOnly' annotation : original info was loaded, do not copy
 		//
-			if ((AnnotationsHelper.isReadOnly(cloneBean.getClass(), propertyName)) ||
-				(AnnotationsHelper.isReadOnly(persistentBean.getClass(), propertyName)) ||
-				(AnnotationsHelper.isServerOnly(cloneBean.getClass(), propertyName)) ||
-				(AnnotationsHelper.isServerOnly(persistentBean.getClass(), propertyName)))
+			if ((AnnotationsHelper.isServerOrReadOnly(cloneBean.getClass(), propertyName)) ||
+				(AnnotationsHelper.isServerOrReadOnly(persistentBean.getClass(), propertyName)))
 			{
 			//	If the proxy was initialized before clone
 			//	force the merge value initialization now
