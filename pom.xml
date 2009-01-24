@@ -38,6 +38,10 @@
 	</developers>
 	<repositories>
 		<repository>
+			<id>ibiblio</id>
+			<url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
+		</repository>
+		<repository>
 			<id>gwt-maven</id>
 			<url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
 		</repository>
@@ -77,6 +81,11 @@
 				<groupId>${project.groupId}</groupId>
 				<artifactId>adapter-core</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+			        <groupId>org.springframework</groupId>
+			        <artifactId>spring</artifactId>
+			        <version>2.5.1</version>
 			</dependency>
 			<dependency>
 				<groupId>antlr</groupId>
@@ -140,9 +149,9 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.jboss</groupId>
+				<groupId>jboss</groupId>
 				<artifactId>javassist</artifactId>
-				<version>3.5.GA</version>
+				<version>3.4.GA</version>
 			</dependency>
 			<dependency>
 				<groupId>com.thoughtworks.xstream</groupId>
@@ -173,7 +182,7 @@
 				<groupId>com.google.gwt</groupId>
 				<artifactId>gwt-user</artifactId>
 				<version>1.4.62</version>
-			</dependency>
+			</dependency>  
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -229,7 +238,7 @@
                 <snapshotRepository>
                         <id>snapshots</id>
                         <name>snapshots</name>
-                        <url>svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo</url>
+                        <url>svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-snapshots-repo</url>
                 </snapshotRepository>
      </distributionManagement>
 </project>
