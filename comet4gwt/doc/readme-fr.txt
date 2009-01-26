@@ -29,6 +29,7 @@ pour l'utiliser:
 - coté client relancer l'appel rpc dès reception de la réponse.
 
 note:
-Du a la limitation de 2 requettes http pour le client, vous devez vous assurez de n'avoir qu'un seul service en attente sous peine de bloquer le reste de votre application.
+- Du a la limitation de 2 requettes http pour le client, vous devez vous assurez de n'avoir qu'un seul service en attente sous peine de bloquer le reste de votre application.
+- pour les utilisateurs de mac, lancez la JVM serveur avec l'option -Djava.net.preferIPv4Stack=true (cf: http://lists.apple.com/archives/java-dev/2006/Jun/msg00414.html)
 
 
