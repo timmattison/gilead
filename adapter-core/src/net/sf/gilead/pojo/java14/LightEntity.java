@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.gilead.pojo.base.ILightEntity;
+import net.sf.gilead.proxy.IServerProxyGenerator;
 
 /**
  * Abstract POJO for lazy property handling.
@@ -28,7 +29,7 @@ import net.sf.gilead.pojo.base.ILightEntity;
  * @author bruno.marchesson
  *
  */
-public abstract class LightEntity implements ILightEntity, Serializable
+public abstract class LightEntity implements ILightEntity, IServerProxyGenerator, Serializable
 {
 	//-----
 	// Attributes

@@ -3,6 +3,7 @@ package net.sf.gilead.core.hibernate;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.collection.AbstractPersistentCollection;
@@ -397,6 +399,16 @@ public class HibernateUtil implements IPersistenceUtil
 	//	Open a new session
 	//
 		Session session = _sessionFactory.openSession();
+		
+		// turn auto-commit to false
+		try
+		{
+			session.connection().setAutoCommit(false);
+		} 
+		catch (Exception e)
+		{
+			throw new RuntimeException("Unable to turn session auto-commit to false !", e);
+		}
 		
 	//	Store the session in ThreadLocal
 	//
@@ -995,31 +1007,19 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 			throw new NullPointerException("Cannot load : no session opened !");
 		}
-	
+		
+	//	Compute current collection ID 
+	//	(performance issue : better than computing collection item ID for each iteration)
+	//
+		ArrayList<SerializableId> collectionID = createIdList(collection);
+		
 		ArrayList<Object> deletedItems = new ArrayList<Object>();
 		for (SerializableId sid : idList)
 		{
-			boolean found = false;
 		//	Search item
 		//
-			Iterator iterator = collection.iterator();
-			while (iterator.hasNext())
-			{
-				try
-				{
-					if (sid.getId().equals(getId(iterator.next())))
-					{
-						found = true;
-						break;
-					}
-				}
-				catch(TransientObjectException ex)
-				{
-					// Transient objet, go to next one
-				}
-			}
-			
-			if (found == false)
+			if ((collectionID == null) ||
+				(collectionID.contains(sid) == false))
 			{
 			//	Create associated proxy
 			//
@@ -1072,7 +1072,7 @@ public class HibernateUtil implements IPersistenceUtil
             throw new NullPointerException("Cannot load : no session opened !");
         }
    
-    //    Iterate over collection elements
+    //  Iterate over collection elements
     //
         ArrayList<Object> addedItems = new ArrayList<Object>();
         Iterator iterator = collection.iterator();
@@ -1083,7 +1083,7 @@ public class HibernateUtil implements IPersistenceUtil
             {
                 Serializable id = getId(currentItem);
            
-            //    Search this id in id list
+            //  Search this id in id list
             //
                 boolean found = false;
                 for (SerializableId sid : idList)

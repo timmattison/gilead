@@ -58,5 +58,31 @@ public class SerializableId implements Serializable
 		this.className = className;
 	}
 	
-	
+	//-------------------------------------------------------------------------
+	//
+	// Public interface
+	//
+	//-------------------------------------------------------------------------
+	@Override
+	public boolean equals(Object other)
+	{
+		if ((other == null) ||
+			(other instanceof SerializableId == false))
+		{
+			return false;
+		}
+		
+		if (className.equals(((SerializableId)other).className) == false)
+		{
+			return false;
+		}
+		if (id == null)
+		{
+			return (((SerializableId)other).id == null);
+		}
+		else 
+		{
+			return id.equals(((SerializableId)other).id);
+		}
+	}
 }

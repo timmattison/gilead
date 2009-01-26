@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 
 /**
  * XStream Serialization strategy.
@@ -45,7 +46,7 @@ public class XStreamProxySerialization implements IProxySerialization
 	public XStreamProxySerialization()
 	{
 		_xstream = new XStream();
-		// _xstream.registerConverter(new SerializableIdConverter());
+		_xstream.registerConverter(new SerializableIdConverter(_xstream));
 		// _xstream.registerConverter(new JavaBeanConverter(_xstream.getMapper()));
 	}
 	
