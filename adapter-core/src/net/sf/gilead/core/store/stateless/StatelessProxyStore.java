@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.gilead.core.serialization.ByteStringProxySerialization;
 import net.sf.gilead.core.serialization.IProxySerialization;
 import net.sf.gilead.core.serialization.XStreamProxySerialization;
 import net.sf.gilead.core.store.IProxyStore;
@@ -71,7 +72,8 @@ public class StatelessProxyStore implements IProxyStore
 	public StatelessProxyStore()
 	{
 		// default value
-		_proxySerializer = new XStreamProxySerialization();
+		//_proxySerializer = new XStreamProxySerialization();
+		_proxySerializer = new ByteStringProxySerialization();
 	}
 	
 	
