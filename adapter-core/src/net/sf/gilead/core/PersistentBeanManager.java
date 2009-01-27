@@ -594,10 +594,13 @@ public class PersistentBeanManager
 	{
 		Class<? extends Collection> collectionClass = pojoCollection.getClass(); 
 		
+	//	Exclusion case : persistent collection, base collection or BlazeDS ones
+	//
 		if (_persistenceUtil.isPersistentCollection(collectionClass) ||
 			collectionClass.isAnonymousClass() ||
 			collectionClass.isMemberClass() ||
-			collectionClass.isLocalClass())
+			collectionClass.isLocalClass() ||
+			collectionClass.getName().equals("flex.messaging.io.ArrayCollection"))
 		{
 		//	Create a basic collection
 		//
