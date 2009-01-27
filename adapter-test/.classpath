@@ -12,5 +12,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/hibernate-util"/>
 	<classpathentry kind="lib" path="/adapter4gwt/lib/gwt-dev-windows.jar"/>
 	<classpathentry kind="lib" path="/adapter4gwt/lib/gwt-user.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/adapter4gwt"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

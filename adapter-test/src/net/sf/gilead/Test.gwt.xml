@@ -9,4 +9,6 @@
 	<source path="test/domain/interfaces"/>
 	<source path="performance/gwt"/>
   
+  	<!-- Servlets -->
+  	<servlet path="/PerformanceService" class="net.sf.gilead.performance.PerformanceServiceImpl"/>
 </module>
