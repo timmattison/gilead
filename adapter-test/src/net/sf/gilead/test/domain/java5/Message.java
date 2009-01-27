@@ -17,7 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import net.sf.gilead.test.domain.IMessage;
+import net.sf.gilead.test.domain.interfaces.IMessage;
 
 import org.hibernate.annotations.CollectionOfElements;
 
@@ -120,7 +120,7 @@ public class Message implements Serializable, IMessage
 	}
 	
 	/**
-	 * @see net.sf.gilead.test.domain.IMessage#getKeywords()
+	 * @see net.sf.gilead.test.domain.interfaces.IMessage#getKeywords()
 	 */
 	@CollectionOfElements(fetch = FetchType.LAZY)
 	@org.hibernate.annotations.MapKey(columns={@Column(name="word", nullable=false)})
@@ -133,7 +133,7 @@ public class Message implements Serializable, IMessage
 	}
 	
 	/**
-	 * @see net.sf.gilead.test.domain.IMessage#setKeywords(java.util.Map)
+	 * @see net.sf.gilead.test.domain.interfaces.IMessage#setKeywords(java.util.Map)
 	 */
 	private void setKeywords(Map<String, Integer> keywords)
 	{

@@ -1,8 +1,8 @@
 package net.sf.gilead.test.domain.dto;
 
 import net.sf.gilead.pojo.java5.LightEntity;
-import net.sf.gilead.test.domain.IAddress;
-import net.sf.gilead.test.domain.ICountry;
+import net.sf.gilead.test.domain.interfaces.IAddress;
+import net.sf.gilead.test.domain.interfaces.ICountry;
 
 /**
  * Embedded test class for address (depends on User)

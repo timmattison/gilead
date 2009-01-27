@@ -1,6 +1,6 @@
 package net.sf.gilead.test.dao;
 
-import net.sf.gilead.test.domain.IEmployee;
+import net.sf.gilead.test.domain.interfaces.IEmployee;
 
 /**
  * Interface for employee DAO

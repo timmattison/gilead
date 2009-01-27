@@ -4,10 +4,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.sf.gilead.pojo.java5.LightEntity;
-import net.sf.gilead.test.domain.IAddress;
-import net.sf.gilead.test.domain.IGroup;
-import net.sf.gilead.test.domain.IMessage;
-import net.sf.gilead.test.domain.IUser;
+import net.sf.gilead.test.domain.interfaces.IAddress;
+import net.sf.gilead.test.domain.interfaces.IGroup;
+import net.sf.gilead.test.domain.interfaces.IMessage;
+import net.sf.gilead.test.domain.interfaces.IUser;
 
 /**
  * DTO User class for Java5 support

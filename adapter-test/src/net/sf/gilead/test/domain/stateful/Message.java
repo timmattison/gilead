@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.gilead.test.domain.IMessage;
-import net.sf.gilead.test.domain.IUser;
+import net.sf.gilead.test.domain.interfaces.IMessage;
+import net.sf.gilead.test.domain.interfaces.IUser;
 
 /**
  * Message Java 1.4 domain class for stateful pojo store
@@ -95,7 +95,7 @@ public class Message implements Serializable, IMessage
 	}
 	
 	/**
-	 * @see net.sf.gilead.test.domain.IMessage#getKeywords()
+	 * @see net.sf.gilead.test.domain.interfaces.IMessage#getKeywords()
 	 */
 	private Map<String, Integer> getKeywords()
 	{
@@ -103,7 +103,7 @@ public class Message implements Serializable, IMessage
 	}
 	
 	/**
-	 * @see net.sf.gilead.test.domain.IMessage#setKeywords(java.util.Map)
+	 * @see net.sf.gilead.test.domain.interfaces.IMessage#setKeywords(java.util.Map)
 	 */
 	private void setKeywords(Map<String, Integer> keywords)
 	{

@@ -3,8 +3,8 @@
  */
 package net.sf.gilead.core;
 
-import net.sf.gilead.test.domain.IMessage;
-import net.sf.gilead.test.domain.IUser;
+import net.sf.gilead.test.domain.interfaces.IMessage;
+import net.sf.gilead.test.domain.interfaces.IUser;
 
 /**
  * Clone test for stateless mode

@@ -6,7 +6,7 @@ import java.util.Date;
 import junit.framework.TestCase;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.dao.IMessageDAO;
-import net.sf.gilead.test.domain.IMessage;
+import net.sf.gilead.test.domain.interfaces.IMessage;
 
 public class TimestampTest extends TestCase
 {

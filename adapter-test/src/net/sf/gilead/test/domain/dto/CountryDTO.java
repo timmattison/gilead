@@ -1,7 +1,7 @@
 package net.sf.gilead.test.domain.dto;
 
 import net.sf.gilead.pojo.java5.LightEntity;
-import net.sf.gilead.test.domain.ICountry;
+import net.sf.gilead.test.domain.interfaces.ICountry;
 
 /**
  * Country domain class

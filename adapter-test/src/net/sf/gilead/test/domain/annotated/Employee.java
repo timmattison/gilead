@@ -4,7 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import net.sf.gilead.test.domain.IEmployee;
+import net.sf.gilead.test.domain.interfaces.IEmployee;
 
 /**
  * Employee class.

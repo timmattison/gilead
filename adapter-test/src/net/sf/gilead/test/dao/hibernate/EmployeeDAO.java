@@ -5,7 +5,7 @@ package net.sf.gilead.test.dao.hibernate;
 
 import net.sf.gilead.test.HibernateContext;
 import net.sf.gilead.test.dao.IEmployeeDAO;
-import net.sf.gilead.test.domain.IEmployee;
+import net.sf.gilead.test.domain.interfaces.IEmployee;
 
 import org.hibernate.Query;
 import org.hibernate.Session;

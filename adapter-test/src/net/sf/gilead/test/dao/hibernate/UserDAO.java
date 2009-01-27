@@ -7,7 +7,7 @@ import java.util.List;
 
 import net.sf.gilead.test.HibernateContext;
 import net.sf.gilead.test.dao.IUserDAO;
-import net.sf.gilead.test.domain.IUser;
+import net.sf.gilead.test.domain.interfaces.IUser;
 
 import org.hibernate.Query;
 import org.hibernate.Session;

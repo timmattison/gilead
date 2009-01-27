@@ -14,12 +14,12 @@ import net.sf.gilead.core.store.stateless.StatelessProxyStore;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.HibernateContext;
 import net.sf.gilead.test.HibernateContext.Context;
-import net.sf.gilead.test.domain.IAddress;
-import net.sf.gilead.test.domain.ICountry;
-import net.sf.gilead.test.domain.IEmployee;
-import net.sf.gilead.test.domain.IGroup;
-import net.sf.gilead.test.domain.IMessage;
-import net.sf.gilead.test.domain.IUser;
+import net.sf.gilead.test.domain.interfaces.IAddress;
+import net.sf.gilead.test.domain.interfaces.ICountry;
+import net.sf.gilead.test.domain.interfaces.IEmployee;
+import net.sf.gilead.test.domain.interfaces.IGroup;
+import net.sf.gilead.test.domain.interfaces.IMessage;
+import net.sf.gilead.test.domain.interfaces.IUser;
 
 /**
  * Static helper class for test

@@ -14,8 +14,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Version;
 
 import net.sf.gilead.pojo.java5.LightEntity;
-import net.sf.gilead.test.domain.IGroup;
-import net.sf.gilead.test.domain.IUser;
+import net.sf.gilead.test.domain.interfaces.IGroup;
+import net.sf.gilead.test.domain.interfaces.IUser;
 
 /**
  * GroupDTO class.

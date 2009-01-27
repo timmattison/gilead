@@ -2,8 +2,8 @@ package net.sf.gilead.test.domain.proxy;
 
 import java.io.Serializable;
 
-import net.sf.gilead.test.domain.IAddress;
-import net.sf.gilead.test.domain.ICountry;
+import net.sf.gilead.test.domain.interfaces.IAddress;
+import net.sf.gilead.test.domain.interfaces.ICountry;
 
 /**
  * Embedded test class for address (depends on User)

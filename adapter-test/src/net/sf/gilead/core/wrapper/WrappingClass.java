@@ -5,8 +5,8 @@ package net.sf.gilead.core.wrapper;
 
 import java.util.List;
 
-import net.sf.gilead.test.domain.IMessage;
-import net.sf.gilead.test.domain.IUser;
+import net.sf.gilead.test.domain.interfaces.IMessage;
+import net.sf.gilead.test.domain.interfaces.IUser;
 
 /**
  * Wrapping (non persistent) class containing persistent classes.

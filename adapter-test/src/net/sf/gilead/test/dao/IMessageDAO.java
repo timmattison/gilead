@@ -2,7 +2,7 @@ package net.sf.gilead.test.dao;
 
 import java.util.List;
 
-import net.sf.gilead.test.domain.IMessage;
+import net.sf.gilead.test.domain.interfaces.IMessage;
 
 public interface IMessageDAO
 {

@@ -7,7 +7,7 @@ import java.util.List;
 
 import net.sf.gilead.test.HibernateContext;
 import net.sf.gilead.test.dao.IMessageDAO;
-import net.sf.gilead.test.domain.IMessage;
+import net.sf.gilead.test.domain.interfaces.IMessage;
 
 import org.hibernate.LockMode;
 import org.hibernate.Query;

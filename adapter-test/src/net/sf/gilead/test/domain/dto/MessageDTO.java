@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.gilead.pojo.java5.LightEntity;
-import net.sf.gilead.test.domain.IMessage;
-import net.sf.gilead.test.domain.IUser;
+import net.sf.gilead.test.domain.interfaces.IMessage;
+import net.sf.gilead.test.domain.interfaces.IUser;
 
 /**
  * DTO Message class for Java5 support
@@ -102,7 +102,7 @@ public class MessageDTO extends LightEntity implements IMessage
 	}
 	
 	/**
-	 * @see net.sf.gilead.test.domain.IMessage#setKeywords(java.util.Map)
+	 * @see net.sf.gilead.test.domain.interfaces.IMessage#setKeywords(java.util.Map)
 	 */
 	private void setKeywords(Map<String, Integer> keywords)
 	{

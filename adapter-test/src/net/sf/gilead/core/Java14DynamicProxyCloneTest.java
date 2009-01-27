@@ -6,8 +6,8 @@ package net.sf.gilead.core;
 import net.sf.gilead.proxy.ProxyManager;
 import net.sf.gilead.proxy.xml.AdditionalCode;
 import net.sf.gilead.proxy.xml.AdditionalCodeReader;
-import net.sf.gilead.test.domain.IMessage;
-import net.sf.gilead.test.domain.IUser;
+import net.sf.gilead.test.domain.interfaces.IMessage;
+import net.sf.gilead.test.domain.interfaces.IUser;
 
 /**
  * Clone test for dynamic proxy mode (Java 1.4)

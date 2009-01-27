@@ -14,7 +14,7 @@ import net.sf.gilead.core.TestHelper;
 import net.sf.gilead.core.serialization.BytesProxySerialization;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.dao.IUserDAO;
-import net.sf.gilead.test.domain.IUser;
+import net.sf.gilead.test.domain.interfaces.IUser;
 import junit.framework.TestCase;
 
 /**

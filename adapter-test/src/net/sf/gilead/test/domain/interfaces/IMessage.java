@@ -1,4 +1,4 @@
-package net.sf.gilead.test.domain;
+package net.sf.gilead.test.domain.interfaces;
 
 import java.util.Date;
 import java.util.HashMap;

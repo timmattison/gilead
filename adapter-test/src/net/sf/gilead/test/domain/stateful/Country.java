@@ -2,7 +2,7 @@ package net.sf.gilead.test.domain.stateful;
 
 import java.io.Serializable;
 
-import net.sf.gilead.test.domain.ICountry;
+import net.sf.gilead.test.domain.interfaces.ICountry;
 
 /**
  * Country domain class

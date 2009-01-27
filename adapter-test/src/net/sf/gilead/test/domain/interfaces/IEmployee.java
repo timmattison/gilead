@@ -1,4 +1,4 @@
-package net.sf.gilead.test.domain;
+package net.sf.gilead.test.domain.interfaces;
 
 /**
  * Interface of subclass Employee

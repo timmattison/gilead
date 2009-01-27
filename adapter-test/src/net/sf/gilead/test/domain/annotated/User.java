@@ -21,10 +21,10 @@ import javax.persistence.Version;
 import net.sf.gilead.annotations.ReadOnly;
 import net.sf.gilead.annotations.ServerOnly;
 import net.sf.gilead.pojo.java5.LightEntity;
-import net.sf.gilead.test.domain.IAddress;
-import net.sf.gilead.test.domain.IGroup;
-import net.sf.gilead.test.domain.IMessage;
-import net.sf.gilead.test.domain.IUser;
+import net.sf.gilead.test.domain.interfaces.IAddress;
+import net.sf.gilead.test.domain.interfaces.IGroup;
+import net.sf.gilead.test.domain.interfaces.IMessage;
+import net.sf.gilead.test.domain.interfaces.IUser;
 
 /**
  * User Domain class for JAVA5 server

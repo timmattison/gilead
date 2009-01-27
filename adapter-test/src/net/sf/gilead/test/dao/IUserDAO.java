@@ -2,7 +2,7 @@ package net.sf.gilead.test.dao;
 
 import java.util.List;
 
-import net.sf.gilead.test.domain.IUser;
+import net.sf.gilead.test.domain.interfaces.IUser;
 
 public interface IUserDAO {
 

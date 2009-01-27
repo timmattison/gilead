@@ -2,9 +2,11 @@
 
 	<!-- Inherit the core Web Toolkit stuff.                  -->
 	<inherits name='com.google.gwt.user.User'/>
+	<inherits name='net.sf.gilead.Adapter4Gwt15'/>
 
 	<!-- Source path -->
 	<source path="test/domain/stateless"/>
+	<source path="test/domain/interfaces"/>
 	<source path="performance/gwt"/>
   
 </module>
