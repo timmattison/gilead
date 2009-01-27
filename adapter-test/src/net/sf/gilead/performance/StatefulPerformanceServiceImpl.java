@@ -14,7 +14,7 @@ import net.sf.gilead.test.domain.interfaces.IUser;
  * @author bruno.marchesson
  *
  */
-public class PerformanceServiceImpl extends PersistentRemoteService
+public class StatefulPerformanceServiceImpl extends PersistentRemoteService
 									implements PerformanceService
 {
 	/**
@@ -34,7 +34,7 @@ public class PerformanceServiceImpl extends PersistentRemoteService
 		
 	//	Init Hibernate context
 	//
-		setBeanManager(TestHelper.initStatelessBeanManager());
+		setBeanManager(TestHelper.initStatefulBeanManager());
 		
 	//	Init DB if needed
 	//

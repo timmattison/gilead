@@ -6,9 +6,11 @@
 
 	<!-- Source path -->
 	<source path="test/domain/stateless"/>
+	<source path="test/domain/stateful"/>
 	<source path="test/domain/interfaces"/>
 	<source path="performance/gwt"/>
   
   	<!-- Servlets -->
-  	<servlet path="/PerformanceService" class="net.sf.gilead.performance.PerformanceServiceImpl"/>
+  	<servlet path="/StatelessPerformanceService" class="net.sf.gilead.performance.StatelessPerformanceServiceImpl"/>
+  	<servlet path="/StatefulPerformanceService" class="net.sf.gilead.performance.StatefulPerformanceServiceImpl"/>
 </module>
