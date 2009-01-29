@@ -3,7 +3,6 @@ package net.sf.gilead.core.hibernate;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.collection.AbstractPersistentCollection;
@@ -400,16 +398,6 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		Session session = _sessionFactory.openSession();
 		
-		// turn auto-commit to false
-		try
-		{
-			session.connection().setAutoCommit(false);
-		} 
-		catch (Exception e)
-		{
-			throw new RuntimeException("Unable to turn session auto-commit to false !", e);
-		}
-		
 	//	Store the session in ThreadLocal
 	//
 		_session.set(session);
@@ -580,7 +568,7 @@ public class HibernateUtil implements IPersistenceUtil
 	//	Get added and deleted items
 	//
 		Collection<?> deletedItems = addDeletedItems(proxyInformations, underlyingCollection);
-		Object addedItems = removeNewItems(proxyInformations, underlyingCollection);
+		Map addedItems = removeNewItems(proxyInformations, underlyingCollection);
 		
 	//	Create collection for the class name
 	//
@@ -687,13 +675,25 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		if (addedItems != null)
 		{
-			if (collection instanceof Collection)
+			if (collection instanceof List)
 			{
-				((Collection)collection).addAll((Collection) addedItems);
+			//	Keep insert order
+			//
+				List<Object> collectionList = (List<Object>) collection;
+				for (Object key : addedItems.keySet())
+				{
+					collectionList.add((Integer) addedItems.get(key), key);
+				}
+			}
+			else if (collection instanceof Collection)
+			{
+			//	No order
+			//
+				((Collection)collection).addAll(addedItems.keySet());
 			}
 			else if (collection instanceof Map)
 			{
-				((Map)collection).putAll((Map) addedItems);
+				((Map)collection).putAll(addedItems);
 			}
 		}
 		
@@ -1059,10 +1059,10 @@ public class HibernateUtil implements IPersistenceUtil
      * Compute added items for collection recreation
      * @param collection
      * @param idList
-     * @return
+     * @return a map with new items and index (for list)
      */
-    private List<Object> getNewItemsForCollection(Collection collection,
-                                                  ArrayList<SerializableId> idList)
+    private Map<Object, Integer> getNewItemsForCollection(Collection collection,
+                                                  		  ArrayList<SerializableId> idList)
     {
     //    Get current opened session
     //
@@ -1074,7 +1074,7 @@ public class HibernateUtil implements IPersistenceUtil
    
     //  Iterate over collection elements
     //
-        ArrayList<Object> addedItems = new ArrayList<Object>();
+        Map<Object, Integer> addedItems = new HashMap<Object, Integer>();
         Iterator iterator = collection.iterator();
         while (iterator.hasNext())
         {
@@ -1103,7 +1103,12 @@ public class HibernateUtil implements IPersistenceUtil
     				{
     					_log.debug("New item " + currentItem);
     				}
-                    addedItems.add(currentItem);
+                	Integer position = null;
+                	if (collection instanceof List)
+                	{
+                		position = ((List)collection).indexOf(currentItem);
+                	}
+                	addedItems.put(currentItem, position);
                 }
             }
             catch(TransientObjectException ex)
@@ -1113,7 +1118,12 @@ public class HibernateUtil implements IPersistenceUtil
 				{
             		_log.debug("New item " + currentItem);
 				}
-                addedItems.add(currentItem);
+            	Integer position = null;
+            	if (collection instanceof List)
+            	{
+            		position = ((List)collection).indexOf(currentItem);
+            	}
+                addedItems.put(currentItem, position);
             }
         }
        
@@ -1211,8 +1221,8 @@ public class HibernateUtil implements IPersistenceUtil
 	 * @param underlyingCollection
 	 * @return the new items list or map
 	 */
-	private Object removeNewItems(Map<String, Serializable> proxyInformations,
-								  Object underlyingCollection)
+	private Map removeNewItems(Map<String, Serializable> proxyInformations,
+							   Object underlyingCollection)
 	{
 		if (underlyingCollection instanceof Collection)
 		{
@@ -1220,7 +1230,7 @@ public class HibernateUtil implements IPersistenceUtil
 			ArrayList<SerializableId> idList = (ArrayList<SerializableId>) proxyInformations.get(ID_LIST);
 			if (idList != null)
 			{
-				Collection newItemList = getNewItemsForCollection(collection, idList);
+				Map<Object, Integer> newItemList = getNewItemsForCollection(collection, idList);
 				
 				if (newItemList != null)
 				{
@@ -1228,7 +1238,7 @@ public class HibernateUtil implements IPersistenceUtil
 				//	snapshot is created properly, then marked as dirty
 				//	and new items will be added to db
 				//
-					collection.removeAll(newItemList);
+					collection.removeAll(newItemList.keySet());
 				}
 				
 				return newItemList;
@@ -1242,13 +1252,13 @@ public class HibernateUtil implements IPersistenceUtil
 			{
 			//	Find new keys
 			//
-				List<Object> newKeyList = getNewItemsForCollection(map.keySet(), idList);
+				Map<Object, Integer> newKeyList = getNewItemsForCollection(map.keySet(), idList);
 				Map newItemMap = new HashMap();
 				if (newKeyList != null)
 				{
 				//	Remove new keys
 				//
-					for (Object key : newKeyList)
+					for (Object key : newKeyList.keySet())
 					{
 						newItemMap.put(key, map.get(key));
 						map.remove(key);
