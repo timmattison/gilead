@@ -3,19 +3,17 @@
  */
 package net.sf.gilead.performance;
 
-import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import junit.framework.TestCase;
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.TestHelper;
-import net.sf.gilead.core.serialization.BytesProxySerialization;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.dao.IUserDAO;
 import net.sf.gilead.test.domain.interfaces.IUser;
-import junit.framework.TestCase;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Abstract class for performance test
@@ -80,7 +78,6 @@ public abstract class PerformanceTest extends TestCase
 	//	Load user
 	//
 		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.VOLUMETRY_LOGIN);
-		// IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
 		assertNotNull(user);
 		assertNotNull(user.getMessageList());
 		assertFalse(user.getMessageList().isEmpty());
@@ -89,11 +86,10 @@ public abstract class PerformanceTest extends TestCase
 	//
 		long start = System.currentTimeMillis();
 		IUser cloneUser = (IUser) _beanManager.clone(user);
-		_log.info("Clone user took " + (System.currentTimeMillis() - start) + " ms.");
-		
-	//	Test cloned user
-	//
+		long end = System.currentTimeMillis();
 		assertNotNull(cloneUser);
+		
+		_log.info("Clone user took " + (end - start) + " ms.");
 		
 	//	Merge user
 	//
@@ -124,11 +120,10 @@ public abstract class PerformanceTest extends TestCase
 	//
 		long start = System.currentTimeMillis();
 		List<IUser> cloneUserList = (List<IUser>) _beanManager.clone(userList);
-		_log.info("Clone user list took " + (System.currentTimeMillis() - start) + " ms.");
-		
-	//	Test cloned user
-	//
+		long end = System.currentTimeMillis();
 		assertNotNull(cloneUserList);
+		
+		_log.info("Clone user list took " + (end - start) + " ms.");
 		
 	//	Merge user
 	//

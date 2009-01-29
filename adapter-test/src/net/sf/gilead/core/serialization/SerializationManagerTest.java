@@ -33,9 +33,9 @@ public class SerializationManagerTest extends TestCase
 	/**
 	 * Test bytes serialization
 	 */
-	public void testBytesProxySerialization()
+	public void testByteStringProxySerialization()
 	{
-		IProxySerialization proxySerialization = new BytesProxySerialization();
+		IProxySerialization proxySerialization = new ByteStringProxySerialization();
 		testIntegerToBytesConversion(proxySerialization);
 		testLongToBytesConversion(proxySerialization);
 	}
