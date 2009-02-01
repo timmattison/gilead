@@ -36,7 +36,14 @@ public class GwtPerformanceTest extends GWTTestCase
 	// Test methods
 	//
 	//-------------------------------------------------------------------------
-
+	/**
+	 * Test clone user and messages in stateful mode
+	 */
+	public void testStatefulCloneUserAndMessage()
+	{
+		testLoadUserAndMessages("/StatefulPerformanceService");
+	}
+	
 	/**
 	 * Test clone user and messages in stateless mode
 	 */
@@ -45,13 +52,6 @@ public class GwtPerformanceTest extends GWTTestCase
 		testLoadUserAndMessages("/StatelessPerformanceService");
 	}
 	
-	/**
-	 * Test clone user and messages in stateful mode
-	 */
-	public void testStatefulCloneUserAndMessage()
-	{
-		testLoadUserAndMessages("/StatefulPerformanceService");
-	}
 	
 	//-------------------------------------------------------------------------
 	//

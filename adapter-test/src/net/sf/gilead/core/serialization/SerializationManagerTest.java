@@ -3,6 +3,10 @@
  */
 package net.sf.gilead.core.serialization;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
@@ -23,8 +27,6 @@ public class SerializationManagerTest extends TestCase
 	 */
 	private static Log _log = LogFactory.getLog(SerializationManagerTest.class);
 	
-
-	
 	//-------------------------------------------------------------------------
 	//
 	// Public test methods
@@ -36,8 +38,9 @@ public class SerializationManagerTest extends TestCase
 	public void testByteStringProxySerialization()
 	{
 		IProxySerialization proxySerialization = new ByteStringProxySerialization();
-		testIntegerToBytesConversion(proxySerialization);
-		testLongToBytesConversion(proxySerialization);
+		testIntegerConversion(proxySerialization);
+		testLongConversion(proxySerialization);
+		testMapConversion(proxySerialization);
 	}
 	
 	/**
@@ -46,8 +49,9 @@ public class SerializationManagerTest extends TestCase
 	public void testXStreamProxySerialization()
 	{
 		IProxySerialization proxySerialization = new XStreamProxySerialization();
-		testIntegerToBytesConversion(proxySerialization);
-		testLongToBytesConversion(proxySerialization);
+		testIntegerConversion(proxySerialization);
+		testLongConversion(proxySerialization);
+		testMapConversion(proxySerialization);
 	}
 	
 	//-------------------------------------------------------------------------
@@ -58,7 +62,7 @@ public class SerializationManagerTest extends TestCase
 	/**
 	 * Test Integer convertor
 	 */
-	protected void testIntegerToBytesConversion(IProxySerialization proxySerialization)
+	protected void testIntegerConversion(IProxySerialization proxySerialization)
 	{
 	//	Integer conversion
 	//
@@ -90,7 +94,7 @@ public class SerializationManagerTest extends TestCase
 	/**
 	 * Test Long convertor
 	 */
-	protected void testLongToBytesConversion(IProxySerialization proxySerialization)
+	protected void testLongConversion(IProxySerialization proxySerialization)
 	{
 	//	Long conversion
 	//
@@ -117,5 +121,42 @@ public class SerializationManagerTest extends TestCase
 		end = System.currentTimeMillis();
 		
 		_log.info("long serialization took [" + (serialization-start) + ", " + (end-serialization) + "] ms");
+	}
+	
+	/**
+	 * Test Map conversion
+	 */
+	protected void testMapConversion(IProxySerialization proxySerialization)
+	{
+	//	Map creation
+	//
+		HashMap<String, Serializable> map = new HashMap<String, Serializable>();
+		map.put("id", 1);
+		map.put("initialized", true);
+		ArrayList<Integer> idList = new ArrayList<Integer>();
+		idList.add(2);
+		idList.add(3);
+		idList.add(4);
+		map.put("idList", idList);
+		
+	//	Test conversion
+	//
+		long start = System.currentTimeMillis();
+		Object serialized = proxySerialization.serialize(map);
+		long serialization = System.currentTimeMillis();
+		
+		assertNotNull(serialized);
+		HashMap<String, Serializable> unserialized = (HashMap<String, Serializable>)
+													 proxySerialization.unserialize(serialized);
+		long end = System.currentTimeMillis();
+		
+		_log.info("Map serialization took [" + (serialization-start) + ", " + (end-serialization) + "] ms");
+		
+	//	Map checking
+	//
+		assertNotNull(unserialized);
+		assertEquals(map.size(), unserialized.size());
+		assertNotNull(unserialized.get("idList"));
+		assertEquals(3, ((ArrayList<Integer>)unserialized.get("idList")).size());
 	}
 }

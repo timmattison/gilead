@@ -99,17 +99,8 @@ public class StatelessProxyStore implements IProxyStore
 		
 	//	Store information in the POJO
 	//
-		if (cloneBean instanceof IConvertProxyMap)
-		{
-		//	Needs to convert Serializable map
-		//
-			((ILightEntity)cloneBean).addProxyInformation(property, 
-			  		  									  convertSerializable(proxyInformations));
-		}
-		else
-		{
-			((ILightEntity)cloneBean).addProxyInformation(property, proxyInformations);
-		}
+		((ILightEntity)cloneBean).addProxyInformation(property, 
+			  		  								  convertMap(proxyInformations));
 	}
 	
 	/*
@@ -142,18 +133,7 @@ public class StatelessProxyStore implements IProxyStore
 			return null;
 		}
 		
-	//	Store information in the POJO
-	//
-		if (pojo instanceof IConvertProxyMap)
-		{
-		//	Needs to convert back to Serializable
-		//
-			return convertToSerializable(((ILightEntity)pojo).getProxyInformation(property));
-		}
-		else
-		{
-			return ((ILightEntity)pojo).getProxyInformation(property);
-		}
+		return convertToSerializable(((ILightEntity)pojo).getProxyInformation(property));
 	}
 	
 	//-------------------------------------------------------------------------
@@ -164,7 +144,7 @@ public class StatelessProxyStore implements IProxyStore
 	/**
 	 * Convert Map<String,Serializable> to Map<String, Object>
 	 */
-	protected Map<String,Object> convertSerializable(Map<String, Serializable> map)
+	protected String convertMap(Map<String, Serializable> map)
 	{
 	//	Precondition checking
 	//
@@ -175,40 +155,24 @@ public class StatelessProxyStore implements IProxyStore
 		
 	//	Convert map
 	//
-		Map<String,Object> result = new HashMap<String,Object>();
-		
-		for (Map.Entry<String, Serializable> entry : map.entrySet())
-		{
-			result.put(entry.getKey(),
-					   _proxySerializer.serialize(entry.getValue()));
-		}
-		
-		return result;
+		return (String) _proxySerializer.serialize((Serializable)map);
 	}
 	
 
 	/**
 	 * Convert Map<String,bytes> to Map<String, Serializable>
 	 */
-	protected Map<String, Serializable> convertToSerializable(Map<String, Object> map)
+	protected Map<String, Serializable> convertToSerializable(String serialized)
 	{
 	//	Precondition checking
 	//
-		if (map == null)
+		if (serialized == null)
 		{
 			return null;
 		}
 		
 	//	Convert map
 	//
-		Map<String, Serializable> result = new HashMap<String, Serializable>();
-		
-		for (Map.Entry<String, Object> entry : map.entrySet())
-		{
-			result.put(entry.getKey(),
-					   _proxySerializer.unserialize(entry.getValue()));
-		}
-		
-		return result;
+		return (Map<String, Serializable>) _proxySerializer.unserialize(serialized);
 	}
 }

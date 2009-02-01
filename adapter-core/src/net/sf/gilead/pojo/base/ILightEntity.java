@@ -41,23 +41,22 @@ public interface ILightEntity
 	/**
 	 * Add proxy information for the argument property.
 	 * @param property the property name
-	 * @param proxyInformation map of proxy informations
+	 * @param proxyInformation map of proxy informations (string serialized form)
 	 */
 	public abstract void addProxyInformation(String property, 
-										 	 Map proxyInfo);
+										 	 String proxyInfo);
 	
 	/**
 	 * Remove a property proxy information
 	 */
 	public abstract void removeProxyInformation(String property);
-	
 
 	/**
 	 * Get proxy information for the argument property
 	 * @param property the property name
-	 * @return the proxy informations for the property (can be null)
+	 * @return the proxy informations for the property _ string serialized form(can be null)
 	 */
-	public Map getProxyInformation(String property);
+	public String getProxyInformation(String property);
 
 	/**
 	 * Debug method : write the declared proxy information

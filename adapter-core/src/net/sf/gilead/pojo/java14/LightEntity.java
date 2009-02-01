@@ -44,7 +44,7 @@ public abstract class LightEntity implements ILightEntity, IServerProxyGenerator
 	 * The key is the property name, the value is a map with
 	 * persistence informations filled by the persistence util
 	 * implementation.
-	 * @gwt.typeArgs <java.lang.String, java.util.HashMap<java.lang.String, java.lang.String>>
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
 	 */
 	protected Map _proxyInformations;
 	
@@ -53,7 +53,7 @@ public abstract class LightEntity implements ILightEntity, IServerProxyGenerator
 	//----
 	/**
 	 * @return the persistent collections properties
-	 * @gwt.typeArgs <java.lang.String, java.util.Map<java.lang.String, java.lang.String>>
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
 	 */
 	public Map getProxyInformations()
 	{
@@ -62,7 +62,7 @@ public abstract class LightEntity implements ILightEntity, IServerProxyGenerator
 
 	/**
 	 * @param properties the persistent collection properties to set
-	 * @gwt.typeArgs properties <java.lang.String, java.util.Map<java.lang.String, java.lang.String>>
+	 * @gwt.typeArgs properties <java.lang.String, java.lang.String>
 	 */
 	public void setProxyInformations(Map properties)
 	{
@@ -90,10 +90,9 @@ public abstract class LightEntity implements ILightEntity, IServerProxyGenerator
 	/*
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.pojo.base.ILightEntity#addProxyInformations(java.lang.String, java.lang.Class)
-	 * @gwt.typeArgs proxuInformations <java.lang.String, java.lang.Byte>
 	 */
 	public void addProxyInformation(String property,
-									Map proxyInformations)
+									String proxyInformations)
 	{
 		if (_proxyInformations == null)
 		{
@@ -117,13 +116,12 @@ public abstract class LightEntity implements ILightEntity, IServerProxyGenerator
 	/*
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.pojo.base.ILightEntity#getProxyInformations(java.lang.String)
-	 * @gwt.typeArgs <java.lang.String, java.lang.Byte>
 	 */
-	public Map getProxyInformation(String property)
+	public String getProxyInformation(String property)
 	{
 		if (_proxyInformations != null)
 		{
-			return (Map) _proxyInformations.get(property);
+			return (String) _proxyInformations.get(property);
 		}
 		else
 		{

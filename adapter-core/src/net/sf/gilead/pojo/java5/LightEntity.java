@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.gilead.pojo.base.IConvertProxyMap;
 import net.sf.gilead.pojo.base.ILightEntity;
 
 /**
@@ -29,7 +28,7 @@ import net.sf.gilead.pojo.base.ILightEntity;
  * @author bruno.marchesson
  *
  */
-public abstract class LightEntity implements ILightEntity, IConvertProxyMap, Serializable
+public abstract class LightEntity implements ILightEntity, Serializable
 {
 	//-----
 	// Attributes
@@ -45,7 +44,7 @@ public abstract class LightEntity implements ILightEntity, IConvertProxyMap, Ser
 	 * persistence informations filled by the persistence util
 	 * implementation
 	 */
-	protected Map<String, Map<String, String>> _proxyInformations;
+	protected Map<String, String> _proxyInformations;
 	
 	//----
 	// Properties
@@ -53,7 +52,7 @@ public abstract class LightEntity implements ILightEntity, IConvertProxyMap, Ser
 	/**
 	 * @return the proxy informations
 	 */
-	public Map<String, Map<String, String>> getProxyInformations()
+	public Map<String, String> getProxyInformations()
 	{
 		return _proxyInformations;
 	}
@@ -85,16 +84,15 @@ public abstract class LightEntity implements ILightEntity, IConvertProxyMap, Ser
 	// Public interface
 	//
 	//-------------------------------------------------------------------------
-	/*
-	 * 
+	/**
+	 * Add proxy information
 	 */
-	@SuppressWarnings("unchecked")
 	public void addProxyInformation(String property,
-									Map	proxyInfo)
+									String proxyInfo)
 	{
 		if (_proxyInformations == null)
 		{
-			_proxyInformations = new HashMap<String, Map<String, String>>();
+			_proxyInformations = new HashMap<String, String>();
 		}
 		_proxyInformations.put(property, proxyInfo);
 	}
@@ -115,8 +113,7 @@ public abstract class LightEntity implements ILightEntity, IConvertProxyMap, Ser
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.pojo.base.ILightEntity#getProxyInformation(java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
-	public Map getProxyInformation(String property)
+	public String getProxyInformation(String property)
 	{
 		if (_proxyInformations != null)
 		{

@@ -9,7 +9,7 @@
     			   defaultValue="new java.util.HashMap()">
     		<collectionType>
     		<![CDATA[
-    			java.lang.String, java.util.Map<java.lang.String, java.lang.String>
+    			java.lang.String, java.lang.String
     		]]>
     		</collectionType>
     	</attribute>
@@ -23,9 +23,7 @@
     	<method visibility="public" returnType="void" name="addProxyInformation">
     		<parameters>
     			<parameter type="String" name="property" />
-    			<parameter type="java.util.Map" name="proxyInformation"
-    					   collectionType="java.lang.String, java.lang.String" >
-    			</parameter>
+    			<parameter type="String" name="proxyInformation" />
     		</parameters>
     		<code>
     			{ _proxyInformations.put(property, proxyInformation); }
@@ -43,14 +41,12 @@
     	</method>
     	
     	<!-- getProxyInformation -->
-    	<method visibility="public" returnType="java.util.Map"
-    			returnCollectionType="java.lang.String, java.lang.String" 
-    			name="getProxyInformation">
+    	<method visibility="public" returnType="String" name="getProxyInformation">
     		<parameters>
     			<parameter type="String" name="property" />
     		</parameters>
     		<code>
-    			{ return _proxyInformations.get(property); }
+    			{ return (String) _proxyInformations.get(property); }
     		</code>
     	</method>
     	
@@ -65,7 +61,7 @@
     	<method visibility="public" returnType="java.util.Map" name="getProxyInformations">
     		<returnCollectionType>
 	    		<![CDATA[
-	    			java.lang.String, java.util.Map<java.lang.String, java.lang.String>
+	    			java.lang.String, java.lang.String
 	    		]]>
     		</returnCollectionType>
     		<code>
