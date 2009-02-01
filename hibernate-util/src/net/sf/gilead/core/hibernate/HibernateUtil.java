@@ -1000,8 +1000,8 @@ public class HibernateUtil implements IPersistenceUtil
 	 * @param idList
 	 * @return
 	 */
-	private List<Object> getDeletedItemsForCollection(Collection collection,
-										 			  ArrayList<SerializableId> idList)
+	private List<NewItem> getDeletedItemsForCollection(Collection collection,
+										 			   ArrayList<SerializableId> idList)
 	{
 	//	Get current opened session
 	//
@@ -1016,7 +1016,7 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		ArrayList<SerializableId> collectionID = createIdList(collection);
 		
-		ArrayList<Object> deletedItems = new ArrayList<Object>();
+		ArrayList<NewItem> deletedItems = new ArrayList<NewItem>();
 		for (SerializableId sid : idList)
 		{
 		//	Search item
@@ -1024,6 +1024,7 @@ public class HibernateUtil implements IPersistenceUtil
 			if ((collectionID == null) ||
 				(collectionID.contains(sid) == false))
 			{
+				NewItem deleted = new NewItem();
 			//	Create associated proxy
 			//
 				if (_log.isDebugEnabled())
@@ -1031,11 +1032,13 @@ public class HibernateUtil implements IPersistenceUtil
 					_log.debug("Deleted item " + sid.getClassName() + "[" + sid.getId() + "]");
 				}
 				try
-				{
+				{	
 					Class<?> itemClass = Thread.currentThread().getContextClassLoader().loadClass(sid.getClassName());
 					itemClass = UnEnhancer.unenhanceClass(itemClass);
-					Object proxy = session.load(itemClass, sid.getId());
-					deletedItems.add(proxy);
+					
+					deleted.object = session.load(itemClass, sid.getId());
+					deleted.index = idList.indexOf(sid);
+					deletedItems.add(deleted);
 				}
 				catch(Exception e)
 				{
@@ -1164,7 +1167,8 @@ public class HibernateUtil implements IPersistenceUtil
 			ArrayList<SerializableId> idList = (ArrayList<SerializableId>) proxyInformations.get(ID_LIST);
 			if (idList != null)
 			{
-				Collection deletedItemList = getDeletedItemsForCollection(collection, idList);
+				List<NewItem> deletedItemList = getDeletedItemsForCollection(collection, idList);
+				ArrayList<Object> deletedList = null;
 				
 				if (deletedItemList != null)
 				{
@@ -1172,10 +1176,27 @@ public class HibernateUtil implements IPersistenceUtil
 				//	snapshot is created properly and deleted items can be removed from db
 				//	if delete-orphan option is enabled
 				//
-					collection.addAll(deletedItemList);
+					deletedList = new ArrayList<Object>(deletedItemList.size());
+					
+					if (collection instanceof List)
+					{
+						for (NewItem deletedItem : deletedItemList)
+						{
+							((List)collection).add(deletedItem.index, deletedItem.object);
+							deletedList.add(deletedItem.object);
+						}
+					}
+					else
+					{
+						for (NewItem deletedItem : deletedItemList)
+						{
+							((Collection)collection).add(deletedItem.object);
+							deletedList.add(deletedItem.object);
+						}
+					}
 				}
 				
-				return deletedItemList;
+				return deletedList;
 			}
 		}
 		else if (underlyingCollection instanceof Map)
@@ -1186,13 +1207,13 @@ public class HibernateUtil implements IPersistenceUtil
 			{
 			//	Find delete keys
 			//
-				List deletedKeyList = getDeletedItemsForCollection(map.keySet(), idList);
+				List<NewItem> deletedKeyList = getDeletedItemsForCollection(map.keySet(), idList);
 				
 				if (deletedKeyList != null)
 				{
 				//	Is there any persistent value ?
 				//
-					List deletedValueList = null;
+					List<NewItem> deletedValueList = null;
 					ArrayList<SerializableId> valueList = (ArrayList<SerializableId>) proxyInformations.get(VALUE_LIST);
 					if (valueList != null)
 					{
@@ -1204,14 +1225,14 @@ public class HibernateUtil implements IPersistenceUtil
 					int deleteCount = deletedKeyList.size();
 					for (int index = 0 ; index < deleteCount ; index ++)
 					{
-						Object key = deletedKeyList.get(index);
-						Object value = null;
+						NewItem key = deletedKeyList.get(index);
+						NewItem value = null;
 						if ((deletedValueList != null) &&
 							(index < deletedValueList.size()))
 						{
 							value = deletedValueList.get(index);
 						}
-						map.put(key, value);
+						map.put(key.object, value.object);
 					}
 				}
 				return deletedKeyList;
