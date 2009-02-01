@@ -17,15 +17,12 @@
 package net.sf.gilead.core.store.stateless;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.gilead.core.serialization.ByteStringProxySerialization;
 import net.sf.gilead.core.serialization.IProxySerialization;
-import net.sf.gilead.core.serialization.XStreamProxySerialization;
 import net.sf.gilead.core.store.IProxyStore;
 import net.sf.gilead.exception.ProxyStoreException;
-import net.sf.gilead.pojo.base.IConvertProxyMap;
 import net.sf.gilead.pojo.base.ILightEntity;
 
 /**
@@ -123,7 +120,6 @@ public class StatelessProxyStore implements IProxyStore
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.core.store.IProxyStore#getProxyInformations(java.lang.Object, java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
 	public Map<String, Serializable> getProxyInformations(Object pojo, String property)
 	{
 	//	ILightEntity checking
