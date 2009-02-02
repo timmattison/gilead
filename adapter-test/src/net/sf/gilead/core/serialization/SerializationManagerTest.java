@@ -33,7 +33,7 @@ public class SerializationManagerTest extends TestCase
 	//
 	//-------------------------------------------------------------------------
 	/**
-	 * Test bytes serialization
+	 * Test Java serialization
 	 */
 	public void testByteStringProxySerialization()
 	{
@@ -44,11 +44,22 @@ public class SerializationManagerTest extends TestCase
 	}
 	
 	/**
-	 * Test bytes serialization
+	 * Test XStream serialization
 	 */
 	public void testXStreamProxySerialization()
 	{
 		IProxySerialization proxySerialization = new XStreamProxySerialization();
+		testIntegerConversion(proxySerialization);
+		testLongConversion(proxySerialization);
+		testMapConversion(proxySerialization);
+	}
+	
+	/**
+	 * Test JBoss serialization
+	 */
+	public void testJBossProxySerialization()
+	{
+		IProxySerialization proxySerialization = new JBossProxySerialization();
 		testIntegerConversion(proxySerialization);
 		testLongConversion(proxySerialization);
 		testMapConversion(proxySerialization);
@@ -68,7 +79,7 @@ public class SerializationManagerTest extends TestCase
 	//
 		Integer value = new Integer(1);
 		long start = System.currentTimeMillis();
-		Object serialized = proxySerialization.serialize(value);
+		String serialized = proxySerialization.serialize(value);
 		long serialization = System.currentTimeMillis();
 		
 		assertNotNull(serialized);
@@ -100,7 +111,7 @@ public class SerializationManagerTest extends TestCase
 	//
 		Long value = new Long(1);
 		long start = System.currentTimeMillis();
-		Object serialized = proxySerialization.serialize(value);
+		String serialized = proxySerialization.serialize(value);
 		long serialization = System.currentTimeMillis();
 		
 		assertNotNull(serialized);
@@ -142,7 +153,7 @@ public class SerializationManagerTest extends TestCase
 	//	Test conversion
 	//
 		long start = System.currentTimeMillis();
-		Object serialized = proxySerialization.serialize(map);
+		String serialized = proxySerialization.serialize(map);
 		long serialization = System.currentTimeMillis();
 		
 		assertNotNull(serialized);

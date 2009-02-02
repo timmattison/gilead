@@ -79,7 +79,7 @@ public class XStreamProxySerialization implements IProxySerialization
 	/**
 	 * Regenerate Serializable from String.
 	 */
-	public Serializable unserialize(Object object)
+	public Serializable unserialize(String object)
 	{
 		String string = (String) object;
 		if (_log.isDebugEnabled())

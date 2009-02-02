@@ -34,7 +34,7 @@ public class ByteStringProxySerialization implements IProxySerialization
 	 * Log channel.
 	 */
 	private static Log _log = LogFactory.getLog(ByteStringProxySerialization.class);
-	
+
 	//-------------------------------------------------------------------------
 	//
 	// Constructor
@@ -88,14 +88,14 @@ public class ByteStringProxySerialization implements IProxySerialization
 	/* (non-Javadoc)
 	 * @see net.sf.gilead.core.serialization.IProxySerialization#unserializeFromBytes(byte[])
 	 */
-	public Serializable unserialize(Object object)
+	public Serializable unserialize(String object)
 	{
 		if (object == null)
 		{
 			return null;
 		}
 		
-		byte[] bytes = Base64.decodeFast((String) object);
+		byte[] bytes = Base64.decodeFast(object);
 		if (_log.isDebugEnabled())
 		{
 			_log.debug("Unserialization of " + Arrays.toString(bytes));

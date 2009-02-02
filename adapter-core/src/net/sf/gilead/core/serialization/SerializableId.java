@@ -1,5 +1,9 @@
 package net.sf.gilead.core.serialization;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 
 /**
@@ -85,4 +89,26 @@ public class SerializableId implements Serializable
 			return id.equals(((SerializableId)other).id);
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
+	 */
+//	public void writeExternal(ObjectOutput out) throws IOException
+//	{
+//		out.writeUTF(className);
+//		out.writeObject(id);
+//		
+//	}
+//	
+//	/*
+//	 * (non-Javadoc)
+//	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
+//	 */
+//	public void readExternal(ObjectInput in) throws IOException,
+//													ClassNotFoundException
+//	{
+//		className = in.readUTF();
+//		id = (Serializable) in.readObject();
+//	}	
 }

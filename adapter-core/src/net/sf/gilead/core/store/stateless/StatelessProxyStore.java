@@ -19,8 +19,8 @@ package net.sf.gilead.core.store.stateless;
 import java.io.Serializable;
 import java.util.Map;
 
-import net.sf.gilead.core.serialization.ByteStringProxySerialization;
 import net.sf.gilead.core.serialization.IProxySerialization;
+import net.sf.gilead.core.serialization.JBossProxySerialization;
 import net.sf.gilead.core.store.IProxyStore;
 import net.sf.gilead.exception.ProxyStoreException;
 import net.sf.gilead.pojo.base.ILightEntity;
@@ -70,7 +70,8 @@ public class StatelessProxyStore implements IProxyStore
 	{
 		// default value
 		//_proxySerializer = new XStreamProxySerialization();
-		_proxySerializer = new ByteStringProxySerialization();
+		// _proxySerializer = new ByteStringProxySerialization();
+		_proxySerializer = new JBossProxySerialization();
 	}
 	
 	

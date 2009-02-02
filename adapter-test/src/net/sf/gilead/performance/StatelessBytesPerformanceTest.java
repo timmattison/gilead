@@ -4,13 +4,15 @@
 package net.sf.gilead.performance;
 
 import net.sf.gilead.core.TestHelper;
+import net.sf.gilead.core.serialization.ByteStringProxySerialization;
+import net.sf.gilead.core.store.stateless.StatelessProxyStore;
 
 /**
  * Performance test for stateless mode
  * @author bruno.marchesson
  *
  */
-public class StatelessPerformanceTest extends PerformanceTest
+public class StatelessBytesPerformanceTest extends PerformanceTest
 {
 	/**
 	 * Test setup
@@ -21,6 +23,8 @@ public class StatelessPerformanceTest extends PerformanceTest
 	//	Init bean manager
 	//
 		_beanManager = TestHelper.initStatelessBeanManager();
+		
+		((StatelessProxyStore)_beanManager.getProxyStore()).setProxySerializer(new ByteStringProxySerialization());
 	
 	//	Call base setup
 	//
