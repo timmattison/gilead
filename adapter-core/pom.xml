@@ -38,6 +38,10 @@
 			<artifactId>javassist</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-serialization</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
 		</dependency>

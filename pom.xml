@@ -15,7 +15,6 @@
 		<module>adapter-test</module>
 		<module>adapter4blazeds</module>
 		<module>adapter4gwt</module>
-		<module>distribution</module>
 		<module>hibernate-jpa-util</module>
 		<module>hibernate-util</module>
 		<module>comet4gwt</module>
@@ -151,7 +150,12 @@
 			<dependency>
 				<groupId>jboss</groupId>
 				<artifactId>javassist</artifactId>
-				<version>3.4.GA</version>
+				<version>3.4.ga</version>
+			</dependency>
+			<dependency>
+				<groupId>jboss</groupId>
+				<artifactId>jboss-serialization</artifactId>
+				<version>1.0.3.GA</version>
 			</dependency>
 			<dependency>
 				<groupId>com.thoughtworks.xstream</groupId>
