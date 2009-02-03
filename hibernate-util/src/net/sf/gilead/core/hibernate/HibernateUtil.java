@@ -37,7 +37,10 @@ import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
+import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.tuple.IdentifierProperty;
+import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.type.AbstractComponentType;
 import org.hibernate.type.CollectionType;
 import org.hibernate.type.Type;
@@ -1318,12 +1321,12 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Get unsaved value from entity metamodel
 	//
-		/*EntityPersister entityPersister = _sessionFactory.getEntityPersister(persistentClass.getName());
+		EntityPersister entityPersister = _sessionFactory.getEntityPersister(persistentClass.getName());
 		EntityMetamodel metamodel = entityPersister.getEntityMetamodel();
 		IdentifierProperty idProperty = metamodel.getIdentifierProperty();
 		
-		return idProperty.getUnsavedValue().isUnsaved(id);*/
-		return id.toString().equals("0");
+		return idProperty.getUnsavedValue().isUnsaved(id);
+		// return id.toString().equals("0");
 	}
 	
 	/**

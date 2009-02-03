@@ -1,1 +1,42 @@
-to do
+Release 1.2.1 (02/2009)
+-----------------------
+
+Bug fixed :
+    - NullPointerException on AnnotationHelper
+    - Unenhancement class handling fixes
+    - holdPersistentObject 
+    	* stack overflow (cyclic dependency)
+    	* Object property handling
+    - Java5 proxy generation error (bad type for Map)
+    - Various FindBugs error fixes
+    - Component types support (including subclasses, collections...)
+    - Fixed snapshot creation for added items in collection
+    - Fixed snapshot creation for ordered collection
+    - adapter4blazeds : 
+        * PersistentAdapter fix for HttpSessionStore (stateful mode)
+        * NullPointerException when incoming parameter is null
+        * Lazy initialization exception on logging call result
+          
+Improvements : 
+	- Collection extending base classes (such as PagingList extending ArrayList) support
+	- Add support for collection with private constructor (such as BaseListLoadResult)
+	- Online doc improvement
+	- Checking persistenceUtil on clone and merge (send a clean exception instead of NullPointerException)
+	- Persistent class detection improvement
+		* support for interface declaration
+		* deep search for component type
+	- Unsaved value improvement (was 0 by default)
+	- Performance improvements 
+		* removed nested map for GWT serialization
+		* convert bytes to String (GWT convert bytes to double leading to OutOfMemoryException)
+		* use of jboss serialization instead of Java serialization
+		* do not create proxyInformation map until necessary
+		* added cache for annotations handling and unenhanced classes
+	
+New features :
+	- Full Maven support
+	- comet4gwt module : add comet support, including when used with persistent entities
+	- UnionCustomBeanTransformer : allow user to add their beanlib custombeantransformer
+
+Other : 
+    - This release was developed listening to "Riot!" (Paramore), "Rendez-vous" (Manu) and "Tandoori" (Eiffel) albums :)
