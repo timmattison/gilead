@@ -64,33 +64,8 @@ public class CustomTransformersFactory
 		
 	//	Timestamp transformer is needed for Gilead
 	//
-		try
-		{
-			addCustomBeanTransformer(TimestampCustomTransformer.class.getName());
-		}
-		catch (ClassNotFoundException e)
-		{
-			// Should not happen
-			_log.error("Unexpected error", e);
-		}
-		
-	//	Read additional transformers from XML file
-	//
-		List<String> transfomerClassList = CustomTransformerXmlReader.readTransformersFromXml();
-		if (transfomerClassList != null)
-		{
-			for (String transformerClass : transfomerClassList)
-			{
-				try 
-				{
-					addCustomBeanTransformer(transformerClass);
-				}
-				catch (ClassNotFoundException e)
-				{
-					throw new RuntimeException("Unable to load transformer class " + transformerClass, e);
-				}
-			}
-		}
+		addCustomBeanTransformer(TimestampCustomTransformer.class);
+
 	}
 	
 	//-------------------------------------------------------------------------
@@ -98,24 +73,12 @@ public class CustomTransformersFactory
 	// Public interface
 	//
 	//-------------------------------------------------------------------------
-	/**
-	 * Add a custom bean transformer
-	 * @throws ClassNotFoundException 
-	 */
-	@SuppressWarnings("unchecked")
-	public void addCustomBeanTransformer(String transformerClassName) throws ClassNotFoundException
-	{
-	//	Load class
-	//
-		Class<CustomBeanTransformerSpi> transformerClass = (Class<CustomBeanTransformerSpi>)Thread.currentThread().getContextClassLoader().loadClass(transformerClassName);
-		
-		addCustomBeanTransformer(transformerClass);
-	}
 	
 	/**
 	 * Add a custom bean transformer
 	 */
-	public void addCustomBeanTransformer(Class<CustomBeanTransformerSpi> transformerClass)
+	@SuppressWarnings("unchecked")
+	public void addCustomBeanTransformer(Class transformerClass)
 	{
 		_constructorList.add(getConstructorFor(transformerClass));
 	}
