@@ -15,7 +15,6 @@ public class StatefulPerformanceTest extends PerformanceTest
 	/**
 	 * Test setup
 	 */
-	@Override
 	protected void setUp() throws Exception
 	{
 	//	Init bean manager
