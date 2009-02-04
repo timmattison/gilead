@@ -192,9 +192,12 @@ public abstract class CometRemoteService extends RemoteServiceServlet
 
 	//	Store pending request in HTTP session
 	//
+    if( getCurrentSession() != null )
+    {
 		getCurrentSession().setAttribute(PENDING_REQUEST_ATTRIBUTE,
 										 p_request);
 	}
+  }
 
 	/**
 	 * @return the pending request (null if none)
@@ -400,14 +403,21 @@ public abstract class CometRemoteService extends RemoteServiceServlet
 			throw new RuntimeException("Cannot get 'perThreadResponse' member (bad GWT version ?) !", e);
 		}
 	}
-	
-	/**
-	 * Get current HTTP session
-	 * @return
-	 */
+
+  /**
+   * Get current HTTP session
+   * @return may return null if session can't be created
+   */
 	protected HttpSession getCurrentSession()
 	{
-		return getThreadLocalRequest().getSession();
+      try
+      {
+        return getThreadLocalRequest().getSession();
+      } catch( IllegalStateException e )
+      {
+        // e.printStackTrace();
+    }
+    return null;
 	}
 	
 	/**
