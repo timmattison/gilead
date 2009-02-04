@@ -14,7 +14,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>${parent.groupId}</groupId>
-			<artifactId>adapter-core</artifactId>
+			<artifactId>adapter4gwt</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>${parent.groupId}</groupId>
