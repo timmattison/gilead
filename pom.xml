@@ -64,7 +64,7 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<scm>
-	        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/components/releases/gilead-1.2.1</developerConnection>
+	        <developerConnection>scm:svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/trunk/</developerConnection>
 	</scm>
 	<dependencyManagement>
 		<dependencies>
@@ -217,9 +217,6 @@
 			        <groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.0-beta-7</version>
-				<configuration>
-			  	        <tagBase>https://svn.apache.org/repos/asf/maven/components/releases</tagBase>
-				</configuration>
 			</plugin>
 
 			<plugin>
