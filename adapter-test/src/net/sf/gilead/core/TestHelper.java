@@ -158,7 +158,7 @@ public class TestHelper
 		
 		// address
 		address = createAddress();
-		address.setStreet("Champs Elysée");
+		address.setStreet("Champs Elysee");
 		address.setCity("Paris");
 		address.setCountry(createCountry());
 		address.getCountry().setName("France");

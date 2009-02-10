@@ -1421,6 +1421,35 @@ public abstract class CloneTest extends TestCase
 	
 	}
 	
+	/**
+	 * Test merge a new entity object graph (created on client side)
+	 */
+	public void testMergeOnNewEntities() throws Exception
+	{
+	//	Create clone user
+	//
+		IUser cloneUser = createNewCloneUser();
+		
+	//	Create associated messages
+	//
+		IMessage message1 = createNewCloneMessage(cloneUser);
+		cloneUser.addMessage(message1);
+		
+		IMessage message2 = createNewCloneMessage(cloneUser);
+		cloneUser.addMessage(message2);
+		
+	//	Merge user
+	//
+		IUser mergeUser = (IUser) _beanManager.merge(cloneUser);
+		
+	//	Test merged user
+	//
+		assertNotNull(mergeUser);
+		assertNotNull(mergeUser.getMessageList());
+		assertEquals(cloneUser.getMessageList().size(), mergeUser.getMessageList().size());
+	
+	}
+	
 	//-------------------------------------------------------------------------
 	//
 	// Internal methods
