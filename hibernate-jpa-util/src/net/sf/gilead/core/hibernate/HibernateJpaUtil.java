@@ -38,7 +38,10 @@ import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
+import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.tuple.IdentifierProperty;
+import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.type.AbstractComponentType;
 import org.hibernate.type.CollectionType;
 import org.hibernate.type.Type;
@@ -107,7 +110,12 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	 * The persistance map, with persistance status of all classes
 	 * including persistent component classes
 	 */
-	private Map<String, Boolean> _persistenceMap;
+	private Map<Class<?>, Boolean> _persistenceMap;
+	
+	/**
+	 * The unenhancement map, used for performance purpose
+	 */
+	private Map<Class<?>, Class<?>> _unehancementMap;
 	
 	/**
 	 * The current opened session
@@ -168,17 +176,18 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	public HibernateJpaUtil()
 	{
 		_session = new ThreadLocal<Session>();
-		_persistenceMap = new HashMap<String, Boolean>();
+		_persistenceMap = new HashMap<Class<?>, Boolean>();
+		_unehancementMap = new HashMap<Class<?>, Class<?>>();
 		
 		// Filling persistence map with primitive types
-		_persistenceMap.put(Byte.class.getName(), false);
-		_persistenceMap.put(Short.class.getName(), false);
-		_persistenceMap.put(Integer.class.getName(), false);
-		_persistenceMap.put(Long.class.getName(), false);
-		_persistenceMap.put(Float.class.getName(), false);
-		_persistenceMap.put(Double.class.getName(), false);
-		_persistenceMap.put(Boolean.class.getName(), false);
-		_persistenceMap.put(String.class.getName(), false);
+		_persistenceMap.put(Byte.class, false);
+		_persistenceMap.put(Short.class, false);
+		_persistenceMap.put(Integer.class, false);
+		_persistenceMap.put(Long.class, false);
+		_persistenceMap.put(Float.class, false);
+		_persistenceMap.put(Double.class, false);
+		_persistenceMap.put(Boolean.class, false);
+		_persistenceMap.put(String.class, false);
 	}
 	
 	//-------------------------------------------------------------------------
@@ -191,7 +200,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	 */
 	public Serializable getId(Object pojo)
 	{
-	return getId(pojo, getPersistentClass(pojo));
+		return getId(pojo, getPersistentClass(pojo));
 	}
 	
 	/* (non-Javadoc)
@@ -212,9 +221,9 @@ public class HibernateJpaUtil implements IPersistenceUtil
 		{
 		//	Not an hibernate Class !
 		//
-			if (_log.isDebugEnabled())
+			if (_log.isTraceEnabled())
 			{
-				_log.debug(hibernateClass + " is not persistent");
+				_log.trace(hibernateClass + " is not persistent");
 				dumpPersistenceMap();
 			}
 			throw new NotPersistentObjectException(pojo);			
@@ -338,7 +347,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	//
 		synchronized (_persistenceMap)
 		{
-			Boolean persistent = _persistenceMap.get(clazz.getName());
+			Boolean persistent = _persistenceMap.get(clazz);
 			if (persistent != null)
 			{
 				return persistent.booleanValue();
@@ -348,7 +357,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	//	First clall for this Class<?> : compute persistence class
 	//
 		computePersistenceForClass(clazz);
-		return _persistenceMap.get(clazz.getName()).booleanValue();
+		return _persistenceMap.get(clazz).booleanValue();
 	}
 	
 	/* (non-Javadoc)
@@ -356,21 +365,17 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	 */
 	public Class<?> getUnenhancedClass(Class<?> clazz)
 	{
-	//	Precondition checking
+	//	Map checking
 	//
-		if (_sessionFactory == null)
+		Class<?> unenhancedClass = _unehancementMap.get(clazz);
+		if (unenhancedClass == null)
 		{
-			throw new NullPointerException("No Hibernate Session Factory defined !");
+		//	Based on beanlib unEnhancer class
+		//
+			unenhancedClass = UnEnhancer.unenhanceClass(clazz);
+			_unehancementMap.put(clazz, unenhancedClass);
 		}
-		
-	//	Check proxy (based on beanlib Enhancer class)
-	//
-		if (isEnhanced(clazz))
-		{
-			clazz = clazz.getSuperclass();
-		}
-		
-		return clazz;
+		return unenhancedClass;
 	}
 	
 	/* (non-Javadoc)
@@ -378,9 +383,9 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	 */
 	public boolean isEnhanced(Class<?> clazz)
 	{
-	//	Check proxy (based on beanlib unEnhancer class)
+	//	Compare class to unenhanced class
 	//
-		return (clazz != UnEnhancer.unenhanceClass(clazz));
+		return (clazz != getUnenhancedClass(clazz));
 	}
 	
 	/* (non-Javadoc)
@@ -566,9 +571,10 @@ public class HibernateJpaUtil implements IPersistenceUtil
 			throw new NullPointerException("Cannot load : no session opened !");
 		}
 		
-	//	Get deleted items
+	//	Get added and deleted items
 	//
 		Collection<?> deletedItems = addDeletedItems(proxyInformations, underlyingCollection);
+		Object addedItems = removeNewItems(proxyInformations, underlyingCollection);
 		
 	//	Create collection for the class name
 	//
@@ -657,7 +663,10 @@ public class HibernateJpaUtil implements IPersistenceUtil
 		{
 			if (collection instanceof Collection)
 			{
-				((Collection)collection).removeAll(deletedItems);
+				for (Object key : deletedItems)
+				{
+					((Collection)collection).remove(key);
+				}
 			}
 			else if (collection instanceof Map)
 			{
@@ -667,6 +676,36 @@ public class HibernateJpaUtil implements IPersistenceUtil
 				}
 			}
 		}
+		
+	//	Insert added items
+	//
+		if (addedItems != null)
+		{
+			if (collection instanceof List)
+			{
+			//	Keep insert order
+			//
+				List<Object> collectionList = (List<Object>) collection;
+				for (NewItem key : (List<NewItem>)addedItems)
+				{
+					collectionList.add(key.index, key.object);
+				}
+			}
+			else if (collection instanceof Collection)
+			{
+			//	No order
+			//
+				for (NewItem key : (List<NewItem>)addedItems)
+				{
+					((Collection)collection).add(key.object);
+				}
+			}
+			else if (collection instanceof Map)
+			{
+				((Map)collection).putAll((Map)addedItems);
+			}
+		}
+		
 		return collection;
 	}
 
@@ -711,7 +750,7 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	//
 		synchronized (_persistenceMap)
 		{
-			if (_persistenceMap.get(clazz.getName()) != null)
+			if (_persistenceMap.get(clazz) != null)
 			{
 			//	already computed
 			//
@@ -786,16 +825,15 @@ public class HibernateJpaUtil implements IPersistenceUtil
 		{
 		//	Debug check
 		//
-			String className = clazz.getName();
-			if (_persistenceMap.get(className) == null)
+			if (_persistenceMap.get(clazz) == null)
 			{
-				_persistenceMap.put(className, persistent);
+				_persistenceMap.put(clazz, persistent);
 			}
 			else
 			{
 			//	Check persistence information
 			//
-				if (persistent != _persistenceMap.get(className).booleanValue())
+				if (persistent != _persistenceMap.get(clazz).booleanValue())
 				{
 					throw new RuntimeException("Invalid persistence state for " + clazz);
 				}
@@ -871,12 +909,402 @@ public class HibernateJpaUtil implements IPersistenceUtil
 		{
 		// 	Dump every entry
 		//
-			_log.debug("-- Start of persistence map --");
-			for (Entry<String, Boolean> persistenceEntry : _persistenceMap.entrySet())
+			_log.trace("-- Start of persistence map --");
+			for (Entry<Class<?>, Boolean> persistenceEntry : _persistenceMap.entrySet())
 			{
-				_log.debug(persistenceEntry.getKey() + " persistence is " + persistenceEntry.getValue());
+				_log.trace(persistenceEntry.getKey() + " persistence is " + persistenceEntry.getValue());
 			}
-			_log.debug("-- End of persistence map --");
+			_log.trace("-- End of persistence map --");
+		}
+	}
+	
+	/**
+	 * Create a list of serializable ID for the argument collection
+	 * @param collection
+	 * @return
+	 */
+	private ArrayList<SerializableId> createIdList(Collection collection)
+	{
+		int size = collection.size();
+		ArrayList<SerializableId> idList = new ArrayList<SerializableId>(size);
+		
+		Iterator<Object> iterator = ((Collection) collection).iterator();
+		while(iterator.hasNext())
+		{
+			Object item = iterator.next();
+			if (isPersistentPojo(item))
+			{
+				SerializableId id = new SerializableId();
+				id.setId(getId(item));
+				id.setClassName(item.getClass().getName());
+			
+				idList.add(id);
+			}
+		}
+		
+		if (idList.isEmpty())
+		{
+			return null;
+		}
+		else
+		{
+			return idList;
+		}
+	}
+	
+	/**
+	 * Compute deleted items for collection recreation
+	 * @param collection
+	 * @param idList
+	 * @return
+	 */
+	private List<NewItem> getDeletedItemsForCollection(Collection collection,
+										 			   ArrayList<SerializableId> idList)
+	{
+	//	Get current opened session
+	//
+		Session session = _session.get();
+		if (session == null)
+		{
+			throw new NullPointerException("Cannot load : no session opened !");
+		}
+		
+	//	Compute current collection ID 
+	//	(performance issue : better than computing collection item ID for each iteration)
+	//
+		ArrayList<SerializableId> collectionID = createIdList(collection);
+		
+		ArrayList<NewItem> deletedItems = new ArrayList<NewItem>();
+		for (SerializableId sid : idList)
+		{
+		//	Search item
+		//
+			if ((collectionID == null) ||
+				(collectionID.contains(sid) == false))
+			{
+				NewItem deleted = new NewItem();
+			//	Create associated proxy
+			//
+				if (_log.isDebugEnabled())
+				{
+					_log.debug("Deleted item " + sid.getClassName() + "[" + sid.getId() + "]");
+				}
+				try
+				{	
+					Class<?> itemClass = Thread.currentThread().getContextClassLoader().loadClass(sid.getClassName());
+					itemClass = UnEnhancer.unenhanceClass(itemClass);
+					
+					deleted.object = session.load(itemClass, sid.getId());
+					deleted.index = idList.indexOf(sid);
+					deletedItems.add(deleted);
+				}
+				catch(Exception e)
+				{
+					throw new RuntimeException(e);
+				}
+			}
+		}
+		
+		if (deletedItems.isEmpty())
+		{
+			return null;
+		}
+		else
+		{
+			if (_log.isDebugEnabled())
+			{
+				_log.debug("Found " + deletedItems.size() + " deleted item(s) ");
+			}
+			return deletedItems;
+		}
+	}
+	
+	/**
+     * Compute added items for collection recreation
+     * @param collection
+     * @param idList
+     * @return a map with new items and index (for list)
+     */
+    private List<NewItem> getNewItemsForCollection(Collection collection,
+                                                   ArrayList<SerializableId> idList)
+    {
+    //    Get current opened session
+    //
+        Session session = _session.get();
+        if (session == null)
+        {
+            throw new NullPointerException("Cannot load : no session opened !");
+        }
+   
+    //  Iterate over collection elements
+    //
+        List<NewItem> addedItems = new ArrayList<NewItem>();
+        Iterator iterator = collection.iterator();
+        while (iterator.hasNext())
+        {
+            Object currentItem = iterator.next();
+            try
+            {
+                Serializable id = getId(currentItem);
+           
+            //  Search this id in id list
+            //
+                boolean found = false;
+                for (SerializableId sid : idList)
+                {
+                    if (sid.getId().equals(id))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+               
+                if (found == false)
+                {
+                //    New item
+                //
+                	if (_log.isDebugEnabled())
+    				{
+    					_log.debug("New item " + currentItem);
+    				}
+                	NewItem newItem = new NewItem();
+                	newItem.object = currentItem;
+                	
+                	if (collection instanceof List)
+                	{
+                		newItem.index = ((List)collection).indexOf(currentItem);
+                	}
+                	addedItems.add(newItem);
+                }
+            }
+            catch(TransientObjectException ex)
+            {
+                // Transient objet, must have been added
+            	if (_log.isDebugEnabled())
+				{
+            		_log.debug("New item " + currentItem);
+				}
+            	NewItem newItem = new NewItem();
+            	newItem.object = currentItem;
+            	
+            	if (collection instanceof List)
+            	{
+            		newItem.index = ((List)collection).indexOf(currentItem);
+            	}
+            	addedItems.add(newItem);
+            }
+        }
+       
+        if (addedItems.isEmpty())
+        {
+            return null;
+        }
+        else
+        {
+        	if (_log.isDebugEnabled())
+			{
+				_log.debug("Found " + addedItems.size() + " new item(s)");
+			}
+            return addedItems;
+        }
+    }
+
+	/**
+	 * Add deleted items to the underlying collection, so the Hibernate PersistentCollection
+	 * snapshot will take care of deleted items
+	 * @param proxyInformations
+	 * @param underlyingCollection
+	 * @return the deleted items list
+	 */
+	private Collection<?> addDeletedItems(Map<String, Serializable> proxyInformations,
+										  Object underlyingCollection)
+	{
+		if (underlyingCollection instanceof Collection)
+		{
+			Collection<?> collection = (Collection<?>) underlyingCollection;
+			ArrayList<SerializableId> idList = (ArrayList<SerializableId>) proxyInformations.get(ID_LIST);
+			if (idList != null)
+			{
+				List<NewItem> deletedItemList = getDeletedItemsForCollection(collection, idList);
+				ArrayList<Object> deletedList = null;
+				
+				if (deletedItemList != null)
+				{
+				//	Add deleted items to the underlying collection so the persistent collection
+				//	snapshot is created properly and deleted items can be removed from db
+				//	if delete-orphan option is enabled
+				//
+					deletedList = new ArrayList<Object>(deletedItemList.size());
+					
+					if (collection instanceof List)
+					{
+						for (NewItem deletedItem : deletedItemList)
+						{
+							((List)collection).add(deletedItem.index, deletedItem.object);
+							deletedList.add(deletedItem.object);
+						}
+					}
+					else
+					{
+						for (NewItem deletedItem : deletedItemList)
+						{
+							((Collection)collection).add(deletedItem.object);
+							deletedList.add(deletedItem.object);
+						}
+					}
+				}
+				
+				return deletedList;
+			}
+		}
+		else if (underlyingCollection instanceof Map)
+		{
+			Map map = (Map) underlyingCollection;
+			ArrayList<SerializableId> idList = (ArrayList<SerializableId>) proxyInformations.get(ID_LIST);
+			if (idList != null)
+			{
+			//	Find delete keys
+			//
+				List<NewItem> deletedKeyList = getDeletedItemsForCollection(map.keySet(), idList);
+				
+				if (deletedKeyList != null)
+				{
+				//	Is there any persistent value ?
+				//
+					List<NewItem> deletedValueList = null;
+					ArrayList<SerializableId> valueList = (ArrayList<SerializableId>) proxyInformations.get(VALUE_LIST);
+					if (valueList != null)
+					{
+						deletedValueList = getDeletedItemsForCollection(map.values(), idList);
+					}
+					
+				//	Add deleted keys and values
+				//
+					int deleteCount = deletedKeyList.size();
+					for (int index = 0 ; index < deleteCount ; index ++)
+					{
+						NewItem key = deletedKeyList.get(index);
+						NewItem value = null;
+						if ((deletedValueList != null) &&
+							(index < deletedValueList.size()))
+						{
+							value = deletedValueList.get(index);
+						}
+						map.put(key.object, value.object);
+					}
+				}
+				return deletedKeyList;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Remove new items from the underlying collection, so the Hibernate PersistentCollection
+	 * snapshot will take care of new items
+	 * @param proxyInformations
+	 * @param underlyingCollection
+	 * @return the new items list or map
+	 */
+	private Object removeNewItems(Map<String, Serializable> proxyInformations,
+							   			 Object underlyingCollection)
+	{
+		if (underlyingCollection instanceof Collection)
+		{
+			Collection<?> collection = (Collection<?>) underlyingCollection;
+			ArrayList<SerializableId> idList = (ArrayList<SerializableId>) proxyInformations.get(ID_LIST);
+			if (idList != null)
+			{
+				List<NewItem> newItemList = getNewItemsForCollection(collection, idList);
+				
+				if (newItemList != null)
+				{
+				//	Remove new items from the underlying collection so the persistent collection
+				//	snapshot is created properly, then marked as dirty
+				//	and new items will be added to db
+				//
+					for (NewItem item : newItemList)
+					{
+						collection.remove(item.object);
+					}
+				}
+				
+				return newItemList;
+			}
+		}
+		else if (underlyingCollection instanceof Map)
+		{
+			Map map = (Map) underlyingCollection;
+			ArrayList<SerializableId> idList = (ArrayList<SerializableId>) proxyInformations.get(ID_LIST);
+			if (idList != null)
+			{
+			//	Find new keys
+			//
+				List<NewItem> newKeyList = getNewItemsForCollection(map.keySet(), idList);
+				Map newItemMap = new HashMap();
+				if (newKeyList != null)
+				{
+				//	Remove new keys
+				//
+					for (NewItem key : newKeyList)
+					{
+						newItemMap.put(key.object, map.get(key.object));
+						map.remove(key);
+					}
+				}
+				return newItemMap;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Check if the id equals the unsaved value or not
+	 * @param entity
+	 * @return
+	 */
+	private boolean isUnsavedValue(Serializable id, Class<?> persistentClass)
+	{
+	//	Precondition checking
+	//
+		if (id == null)
+		{
+			return true;
+		}
+		
+	//	Get unsaved value from entity metamodel
+	//
+		EntityPersister entityPersister = _sessionFactory.getEntityPersister(persistentClass.getName());
+		EntityMetamodel metamodel = entityPersister.getEntityMetamodel();
+		IdentifierProperty idProperty = metamodel.getIdentifierProperty();
+		
+		if (idProperty != null)
+		{
+			return idProperty.getUnsavedValue().isUnsaved(id);
+		}
+		else
+		{
+			// do not know what to do...
+			return id.toString().equals("0");
+		}
+	}
+	
+	/**
+	 * Return the underlying persistent class
+	 * @param pojo
+	 * @return
+	 */
+	private Class<?> getPersistentClass(Object pojo)
+	{
+		if (pojo instanceof HibernateProxy)
+		{
+			return ((HibernateProxy)pojo).getHibernateLazyInitializer().getPersistentClass();
+		}
+		else
+		{
+			return pojo.getClass();
 		}
 	}
 	
@@ -926,221 +1354,16 @@ public class HibernateJpaUtil implements IPersistenceUtil
 	//	Entity Manager Factory not found
 	//
 		return null;
-	}
-	
-	/**
-	 * Create a list of serializable ID for the argument collection
-	 * @param collection
-	 * @return
-	 */
-	private ArrayList<SerializableId> createIdList(Collection collection)
-	{
-		int size = collection.size();
-		ArrayList<SerializableId> idList = new ArrayList<SerializableId>(size);
-		
-		Iterator<Object> iterator = ((Collection) collection).iterator();
-		while(iterator.hasNext())
-		{
-			Object item = iterator.next();
-			if (isPersistentPojo(item))
-			{
-				SerializableId id = new SerializableId();
-				id.setId(getId(item));
-				id.setClassName(item.getClass().getName());
-			
-				idList.add(id);
-			}
-		}
-		
-		if (idList.isEmpty())
-		{
-			return null;
-		}
-		else
-		{
-			return idList;
-		}
-	}
-	
-	/**
-	 * Compute deleted items for collection recreation
-	 * @param collection
-	 * @param idList
-	 * @return
-	 */
-	private List<Object> getDeletedItemsForCollection(Collection collection,
-										 			  ArrayList<SerializableId> idList)
-	{
-	//	Get current opened session
-	//
-		Session session = _session.get();
-		if (session == null)
-		{
-			throw new NullPointerException("Cannot load : no session opened !");
-		}
-	
-		ArrayList<Object> deletedItems = new ArrayList<Object>();
-		for (SerializableId sid : idList)
-		{
-			boolean found = false;
-		//	Search item
-		//
-			Iterator iterator = collection.iterator();
-			while (iterator.hasNext())
-			{
-				try
-				{
-					if (sid.getId().equals(getId(iterator.next())))
-					{
-						found = true;
-						break;
-					}
-				}
-				catch(TransientObjectException ex)
-				{
-					// Transient objet, go to next one
-				}
-			}
-			
-			if (found == false)
-			{
-			//	Create associated proxy
-			//
-				try
-				{
-					Class<?> itemClass = Thread.currentThread().getContextClassLoader().loadClass(sid.getClassName());
-					itemClass = UnEnhancer.unenhanceClass(itemClass);
-					Object proxy = session.load(itemClass, sid.getId());
-					deletedItems.add(proxy);
-				}
-				catch(Exception e)
-				{
-					throw new RuntimeException(e);
-				}
-			}
-		}
-		
-		if (deletedItems.isEmpty())
-		{
-			return null;
-		}
-		else
-		{
-			return deletedItems;
-		}
-	}
-
-	/**
-	 * Add deleted items to the underlying collection, so the Hibernate PersistentCollection
-	 * snapshot will take care of deleted items
-	 * @param proxyInformations
-	 * @param underlyingCollection
-	 * @return the deleted items list
-	 */
-	private Collection<?> addDeletedItems(Map<String, Serializable> proxyInformations,
-										  Object underlyingCollection)
-	{
-		if (underlyingCollection instanceof Collection)
-		{
-			Collection<?> collection = (Collection<?>) underlyingCollection;
-			ArrayList<SerializableId> idList = (ArrayList<SerializableId>) proxyInformations.get(ID_LIST);
-			if (idList != null)
-			{
-				Collection deletedItemList = getDeletedItemsForCollection(collection, idList);
-				
-				if (deletedItemList != null)
-				{
-				//	Add deleted items to the underlying collection so the persistent collection
-				//	snapshot is created properly and deleted items can be removed from db
-				//	if delete-orphan option is enabled
-				//
-					collection.addAll(deletedItemList);
-				}
-				
-				return deletedItemList;
-			}
-		}
-		else if (underlyingCollection instanceof Map)
-		{
-			Map map = (Map) underlyingCollection;
-			ArrayList<SerializableId> idList = (ArrayList<SerializableId>) proxyInformations.get(ID_LIST);
-			if (idList != null)
-			{
-			//	Find delete keys
-			//
-				List deletedKeyList = getDeletedItemsForCollection(map.keySet(), idList);
-				
-				if (deletedKeyList != null)
-				{
-				//	Is there any persistent value ?
-				//
-					List deletedValueList = null;
-					ArrayList<SerializableId> valueList = (ArrayList<SerializableId>) proxyInformations.get(VALUE_LIST);
-					if (valueList != null)
-					{
-						deletedValueList = getDeletedItemsForCollection(map.values(), idList);
-					}
-					
-				//	Add deleted keys and values
-				//
-					int deleteCount = deletedKeyList.size();
-					for (int index = 0 ; index < deleteCount ; index ++)
-					{
-						Object key = deletedKeyList.get(index);
-						Object value = null;
-						if ((deletedValueList != null) &&
-							(index < deletedValueList.size()))
-						{
-							value = deletedValueList.get(index);
-						}
-						map.put(key, value);
-					}
-				}
-				return deletedKeyList;
-			}
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * Check if the id equals the unsaved value or not
-	 * @param entity
-	 * @return
-	 */
-	private boolean isUnsavedValue(Serializable id, Class<?> persistentClass)
-	{
-	//	Precondition checking
-	//
-		if (id == null)
-		{
-			return true;
-		}
-		
-	//	Get unsaved value from entity metamodel
-	//
-		/*EntityPersister entityPersister = _sessionFactory.getEntityPersister(persistentClass.getName());
-		EntityMetamodel metamodel = entityPersister.getEntityMetamodel();
-		IdentifierProperty idProperty = metamodel.getIdentifierProperty();
-		
-		return idProperty.getUnsavedValue().isUnsaved(id);*/
-		return id.toString().equals("0");
-	}
-	
-	/**
-	 * Return the underlying persistent class
-	 * @param pojo
-	 * @return
-	 */
-	private Class<?> getPersistentClass(Object pojo)
-	{
-		if (pojo instanceof HibernateProxy)
-		{
-			return ((HibernateProxy)pojo).getHibernateLazyInitializer().getPersistentClass();
-		}
-		else
-		{
-			return pojo.getClass();
-		}
-	}
+	}	
 }
+
+/**
+ * Structure for new items (needs ordering)
+ * @author bruno.marchesson
+ *
+ */
+class NewItem
+{
+	public Object object;
+	public int index;
+}	

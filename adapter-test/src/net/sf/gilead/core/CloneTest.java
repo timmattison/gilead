@@ -1450,6 +1450,58 @@ public abstract class CloneTest extends TestCase
 	
 	}
 	
+	/**
+	 * Test clone and merge of a persistent map, containing only basic types
+	 */
+	public void testCloneAndMergeOnPersistentMap()
+	{
+	//	Get UserDAO
+	//
+		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
+		assertNotNull(messageDAO);
+		
+	//	Load test message
+	//
+		IMessage message = messageDAO.loadDetailedMessage(TestHelper.getExistingMessageId());
+		assertNotNull(message);
+		assertTrue(message.countKeywords() > 0);
+		
+	//	Clone message
+	//
+		IMessage cloneMessage = (IMessage) _beanManager.clone(message);
+		
+	//	Test cloned user
+	//
+		assertNotNull(cloneMessage);
+		assertEquals(_cloneMessageClass, cloneMessage.getClass());
+				
+		//	Keywords cloning verification
+		assertEquals(message.countKeywords(), cloneMessage.countKeywords());
+		
+		// Add keyword
+		cloneMessage.addKeyword("testKeyword", 12);
+		
+	//	Merge message
+	//
+		IMessage mergeMessage = (IMessage) _beanManager.merge(cloneMessage);
+		
+	//	Test merged message
+	//
+		assertNotNull(mergeMessage);
+		assertEquals(_domainMessageClass, 
+					 _beanManager.getPersistenceUtil().getUnenhancedClass(mergeMessage.getClass()));
+		
+		//	Keywords merging verification
+		assertEquals(message.countKeywords() +1, mergeMessage.countKeywords());
+		
+	//	Save message
+	//
+		messageDAO.saveMessage(mergeMessage);
+		IMessage loadedMessage = messageDAO.loadDetailedMessage(mergeMessage.getId());
+		assertNotNull(loadedMessage);
+		assertEquals(mergeMessage.countKeywords(), loadedMessage.countKeywords());
+	}
+	
 	//-------------------------------------------------------------------------
 	//
 	// Internal methods
