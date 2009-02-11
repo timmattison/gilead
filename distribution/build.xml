@@ -18,6 +18,7 @@
 	<property name="adapter4gwt.dir" value="../adapter4gwt"/>
 	<property name="adapter-actionscript.dir" value="../adapter-actionscript"/>
 	<property name="adapter4blazeds.dir" value="../adapter4blazeds"/>
+	<property name="comet4gwt.dir" value="../comet4gwt"/>
 
 	<!-- Targets -->
 	<target name="svn.version">
@@ -42,7 +43,7 @@
 	</target>
 
 	<target name="init" depends="svn.version">
-		<property name="version" value="1.2.0.${svn.version}"/>
+		<property name="version" value="1.3.0.${svn.version}"/>
 		<property name="output.dir" value="../../../distributions/${project}-${version}" />
 		
 		<mkdir dir="${output.dir}"/>
@@ -61,6 +62,8 @@
 			dir="${adapter-actionscript.dir}"/>
 		<ant antfile="${adapter4blazeds.dir}/build.xml" target="clean" 
 			dir="${adapter4blazeds.dir}"/>
+		<ant antfile="${comet4gwt.dir}/build.xml" target="clean" 
+			dir="${comet4gwt.dir}"/>
 		<ant antfile="${core.test.dir}/build.xml" target="clean" 
 			dir="${core.test.dir}"/>
 		<delete dir="${output.dir}"/>
@@ -79,6 +82,8 @@
 			dir="${adapter-actionscript.dir}"/>
 		<ant antfile="${adapter4blazeds.dir}/build.xml" target="jar" 
 			dir="${adapter4blazeds.dir}"/>
+		<ant antfile="${comet4gwt.dir}/build.xml" target="jar" 
+			dir="${comet4gwt.dir}"/>
 	</target>
 
 	<target name="test" depends="init">
@@ -105,6 +110,9 @@
 				<include name="*.swc"/>
 			</fileset>
 			<fileset dir="${adapter4blazeds.dir}/${jar.dir}">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${comet4gwt.dir}/${jar.dir}">
 				<include name="*.jar"/>
 			</fileset>
 		</copy>
@@ -169,6 +177,17 @@
 				<exclude name="**/${jar.dir}/**/*"/>
 			</fileset>
 		</copy>
+		
+		<copy todir="${output.dir}/comet4gwt"
+			  includeemptydirs="false">
+			<fileset dir="${comet4gwt.dir}">
+				<include name="**/*"/>
+				<exclude name="**/bin/**/*"/>
+				<exclude name="**/${build.dir}/**/*"/>
+				<exclude name="**/${jar.dir}/**/*"/>
+			</fileset>
+		</copy>
+		
 		<copy todir="${output.dir}/adapter-test"
 			  includeemptydirs="false">
 			<fileset dir="${core.test.dir}">
@@ -197,7 +216,9 @@
 			</fileset>
 			<fileset dir="${adapter4blazeds.dir}/${src.dir}">
 				<include name="**/*.java"/>
-				<exclude name="**/emul/**/*.java"/>
+			</fileset>
+			<fileset dir="${comet4gwt.dir}/${src.dir}">
+				<include name="**/*.java"/>
 			</fileset>
 		</copy>
 
