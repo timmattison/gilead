@@ -1,10 +1,12 @@
-package net.sf.gilead.performance;
+package net.sf.gilead.performance.gwt.server;
+
+import java.io.FileNotFoundException;
 
 import javax.servlet.ServletException;
 
 import net.sf.gilead.core.TestHelper;
 import net.sf.gilead.gwt.PersistentRemoteService;
-import net.sf.gilead.performance.gwt.PerformanceService;
+import net.sf.gilead.performance.gwt.client.PerformanceService;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.dao.IUserDAO;
 import net.sf.gilead.test.domain.interfaces.IUser;
@@ -14,7 +16,7 @@ import net.sf.gilead.test.domain.interfaces.IUser;
  * @author bruno.marchesson
  *
  */
-public class StatefulPerformanceServiceImpl extends PersistentRemoteService
+public class Java5PerformanceServiceImpl extends PersistentRemoteService
 									implements PerformanceService
 {
 	/**
@@ -34,7 +36,15 @@ public class StatefulPerformanceServiceImpl extends PersistentRemoteService
 		
 	//	Init Hibernate context
 	//
-		setBeanManager(TestHelper.initStatefulBeanManager());
+		
+		try
+		{
+			setBeanManager(TestHelper.initJava5AnnotatedBeanManager());
+		} 
+		catch (FileNotFoundException e)
+		{
+			throw new ServletException("File not found !", e);
+		}
 		
 	//	Init DB if needed
 	//

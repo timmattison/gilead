@@ -1,10 +1,10 @@
-package net.sf.gilead.performance;
+package net.sf.gilead.performance.gwt.server;
 
 import javax.servlet.ServletException;
 
 import net.sf.gilead.core.TestHelper;
 import net.sf.gilead.gwt.PersistentRemoteService;
-import net.sf.gilead.performance.gwt.PerformanceService;
+import net.sf.gilead.performance.gwt.client.PerformanceService;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.dao.IUserDAO;
 import net.sf.gilead.test.domain.interfaces.IUser;

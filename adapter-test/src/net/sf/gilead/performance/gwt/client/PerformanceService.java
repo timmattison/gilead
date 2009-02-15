@@ -1,4 +1,4 @@
-package net.sf.gilead.performance.gwt;
+package net.sf.gilead.performance.gwt.client;
 
 import net.sf.gilead.test.domain.interfaces.IUser;
 
