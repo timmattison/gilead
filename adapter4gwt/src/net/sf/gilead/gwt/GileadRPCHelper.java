@@ -47,18 +47,12 @@ public class GileadRPCHelper
 	{
 	// 	Set Proxy class loader (privileged code needed)
 	//
-		 AccessController.doPrivileged(new PrivilegedAction()
+		 ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+		 if (contextClassLoader instanceof ProxyClassLoader == false)
 		 {
-			 public Object run()
-	         {
-				 ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-				 if (contextClassLoader instanceof ProxyClassLoader == false)
-				 {
-					 Thread.currentThread().setContextClassLoader(new ProxyClassLoader(contextClassLoader));
-	        	 }
-	             return null; // nothing to return
-	         }
-	     });
+			 log.info("Setting proxy class loader for thread " + Thread.currentThread());
+			 Thread.currentThread().setContextClassLoader(new ProxyClassLoader(contextClassLoader));
+    	 }
 	}
 	
 	/**
