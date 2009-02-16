@@ -1,7 +1,6 @@
 package net.sf.gilead.core.hibernate;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -152,7 +151,7 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 		//	Probably a Spring injected session factory
 		//
-			sessionFactory = searchHibernateImplementation(sessionFactory);
+			sessionFactory = (SessionFactory) IntrospectionHelper.searchMember(SessionFactoryImpl.class, sessionFactory);
 			if (sessionFactory == null)
 			{
 				throw new IllegalArgumentException("Cannot find Hibernate session factory implementation !");
@@ -913,54 +912,6 @@ public class HibernateUtil implements IPersistenceUtil
 			}
 			_log.trace("-- End of persistence map --");
 		}
-	}
-	
-	/**
-	 * Seach the underlying Hibernate session factory implementation.
-	 * @param object
-	 * @return the session factory if found, null otherwise
-	 */
-	private static SessionFactoryImpl searchHibernateImplementation(Object object)
-	{
-	//	Precondition checking
-	//
-		if ((object == null) ||
-			(object.getClass().getName().startsWith("java.")))
-		{
-			return null;
-		}
-	//	Iterate over fields
-	//
-		Field[] fields = IntrospectionHelper.getRecursiveDeclaredFields(object.getClass());
-		for (Field field : fields)
-		{
-		//	Check current value 
-		//
-			field.setAccessible(true);
-			try
-			{
-				Object value = field.get(object);
-				if (value instanceof SessionFactoryImpl)
-				{
-					return (SessionFactoryImpl) value;
-				}
-				value = searchHibernateImplementation(value);
-				if (value != null)
-				{
-					return (SessionFactoryImpl) value;
-				}
-			}
-			catch (Exception e)
-			{
-			//	Should not happen
-			//
-				e.printStackTrace();
-			}
-		}
-		
-	//	Session Factory not found
-	//
-		return null;
 	}
 	
 	/**

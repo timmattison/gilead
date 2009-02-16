@@ -1,7 +1,6 @@
 package net.sf.gilead.core.hibernate;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -155,7 +154,8 @@ public class HibernateJpaUtil implements IPersistenceUtil
 		{
 		//	Probably an injected session factory
 		//
-			entityManagerFactory = searchHibernateImplementation(entityManagerFactory);
+			entityManagerFactory = IntrospectionHelper.searchMember(HibernateEntityManagerFactory.class, 
+																	entityManagerFactory);
 			if (entityManagerFactory == null)
 			{
 				throw new IllegalArgumentException("Cannot find Hibernate entity manager factory implementation !");
@@ -1307,54 +1307,6 @@ public class HibernateJpaUtil implements IPersistenceUtil
 			return pojo.getClass();
 		}
 	}
-	
-	/**
-	 * Seach the underlying Hibernate entity manager factory implementation.
-	 * @param object
-	 * @return the entity manager factory if found, null otherwise
-	 */
-	private static HibernateEntityManagerFactory searchHibernateImplementation(Object object)
-	{
-	//	Precondition checking
-	//
-		if ((object == null) ||
-			(object.getClass().getName().startsWith("java.")))
-		{
-			return null;
-		}
-	//	Iterate over fields
-	//
-		Field[] fields = IntrospectionHelper.getRecursiveDeclaredFields(object.getClass());
-		for (Field field : fields)
-		{
-		//	Check current value 
-		//
-			field.setAccessible(true);
-			try
-			{
-				Object value = field.get(object);
-				if (value instanceof HibernateEntityManagerFactory)
-				{
-					return (HibernateEntityManagerFactory) value;
-				}
-				value = searchHibernateImplementation(value);
-				if (value != null)
-				{
-					return (HibernateEntityManagerFactory) value;
-				}
-			}
-			catch (Exception e)
-			{
-			//	Should not happen
-			//
-				e.printStackTrace();
-			}
-		}
-		
-	//	Entity Manager Factory not found
-	//
-		return null;
-	}	
 }
 
 /**
