@@ -24,7 +24,7 @@ public class Java14DynamicProxyCloneTest extends CloneTest
 	{
 	//	Init bean manager and domain classes
 	//
-		_beanManager = TestHelper.initProxyBeanManager();
+		_beanManager = TestHelper.initProxy14BeanManager();
 		
 		_domainMessageClass = net.sf.gilead.test.domain.proxy.Message.class;
 		_domainUserClass = net.sf.gilead.test.domain.proxy.User.class;

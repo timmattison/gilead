@@ -1305,6 +1305,35 @@ public abstract class CloneTest extends TestCase
 	}
 	
 	/**
+	 * Test clone of Project item
+	 */
+//	public void testCloneAndMergeProject()
+//	{
+//	//	Create BaseListLoadResult
+//	//
+//		Project project = new Project();
+//		project.setTgStatus(5);
+//		
+//	//	Clone user list
+//	//
+//		Project cloneProject = (Project) _beanManager.clone(project);
+//		
+//	//	Test cloned user list
+//	//
+//		assertNotNull(cloneProject);
+//		assertEquals(project.getTgStatus(), cloneProject.getTgStatus());
+//		
+//	//	Merge user list
+//	//
+//		Project mergeProject = (Project) _beanManager.merge(cloneProject);
+//		
+//	//	Test merged user list
+//	//
+//		assertNotNull(mergeProject);
+//		assertEquals(project.getTgStatus(), mergeProject.getTgStatus());
+//	}
+	
+	/**
 	 * Test delete property on client side
 	 */
 	/*public void testDeleteManyToManyAfterClone()

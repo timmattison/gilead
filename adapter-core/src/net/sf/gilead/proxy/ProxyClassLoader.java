@@ -21,11 +21,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 import net.sf.gilead.proxy.xml.AdditionalCode;
-import net.sf.gilead.proxy.xml.AdditionalCodeReader;
 
 
 /**
@@ -49,11 +46,6 @@ public class ProxyClassLoader extends URLClassLoader
 	 */
 	private boolean _isUrlClassLoader;
 	
-	/**
-	 * Map of additional code
-	 */
-	private Map<String, AdditionalCode> _additionalCodeMap;
-	
 	//-------------------------------------------------------------------------
 	//
 	// Constructor
@@ -67,25 +59,6 @@ public class ProxyClassLoader extends URLClassLoader
 		super(new URL[] {});
 		_wrappedClassLoader = wrappedClassLoader;
 		_isUrlClassLoader = (wrappedClassLoader instanceof URLClassLoader);
-		_additionalCodeMap = new HashMap<String, AdditionalCode>();
-		
-		// additional code
-		try
-		{
-			// Java 1.4
-			AdditionalCode additionalCode = AdditionalCodeReader.readFromFile(ProxyManager.JAVA_14_LAZY_POJO);
-			_additionalCodeMap.put(additionalCode.getSuffix(), additionalCode);
-			
-			// Java 5
-			additionalCode = AdditionalCodeReader.readFromFile(ProxyManager.JAVA_5_LAZY_POJO);
-			_additionalCodeMap.put(additionalCode.getSuffix(), additionalCode);
-		}
-		catch (IOException ex)
-		{
-		//	Should not happen
-		//
-			throw new RuntimeException("Error reading proxy file", ex);
-		}
 	}
 	
 	//-------------------------------------------------------------------------
@@ -171,12 +144,12 @@ public class ProxyClassLoader extends URLClassLoader
 	 */
 	public Class<?> loadClass(String name) throws ClassNotFoundException
 	{
-		AdditionalCode additionalCode = getAdditionalCodeFor(name);
+		AdditionalCode additionalCode = AdditionalCodeManager.getInstance().getAdditionalCodeFor(name);
 		if (additionalCode != null)
 		{
 		//	Get source class name
 		//
-			String sourceClassName = getSourceClass(name, additionalCode);
+			String sourceClassName = AdditionalCodeManager.getInstance().getSourceClassName(name, additionalCode);
 			Class<?> sourceClass = _wrappedClassLoader.loadClass(sourceClassName);
 			
 		//	Generate proxy 
@@ -190,42 +163,4 @@ public class ProxyClassLoader extends URLClassLoader
 			return _wrappedClassLoader.loadClass(name);
 		}
 	}
-
-	//-------------------------------------------------------------------------
-	//
-	// Internal methods
-	//
-	//-------------------------------------------------------------------------
-	/**
-	 * @return the additional code associated with the argument className, or null if any
-	 */
-	private AdditionalCode getAdditionalCodeFor(String className)
-	{
-	//	Search for suffix
-	//
-		for (String suffix : _additionalCodeMap.keySet())
-		{
-			if (className.endsWith(suffix))
-			{
-				return _additionalCodeMap.get(suffix);
-			}
-		}
-		
-	//	Suffix not found, so no additional code is associated to this class
-	//
-		return null;
-	}
-	
-	/**
-	 * Compute the source class name from the proxy class name and the additional code
-	 * @param proxyName
-	 * @param additionalCode
-	 * @return
-	 */
-	private String getSourceClass(String proxyName, AdditionalCode additionalCode)
-	{
-		return proxyName.substring(0, proxyName.length() - additionalCode.getSuffix().length());
-	}
-
-	
 }

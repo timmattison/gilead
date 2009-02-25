@@ -352,7 +352,32 @@ public class TestHelper
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(new StatelessProxyStore());
 		
-		beanManager.setClassMapper(new ProxyClassMapper());
+		ProxyClassMapper classMapper = new ProxyClassMapper();
+		classMapper.setPersistenceUtil(persistenceUtil);
+		beanManager.setClassMapper(classMapper);
+		
+		return beanManager;
+	}
+	
+	/**
+	 * Init bean manager for dynamic proxy mode
+	 * @throws FileNotFoundException 
+	 */
+	public static PersistentBeanManager initProxy14BeanManager() throws FileNotFoundException
+	{
+		HibernateContext.setContext(HibernateContext.Context.proxy);
+		
+		HibernateUtil persistenceUtil = new HibernateUtil(); 
+		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
+		
+		PersistentBeanManager beanManager = new PersistentBeanManager();
+		beanManager.setPersistenceUtil(persistenceUtil);
+		beanManager.setProxyStore(new StatelessProxyStore());
+		
+		ProxyClassMapper classMapper = new ProxyClassMapper();
+		classMapper.setPersistenceUtil(persistenceUtil);
+		classMapper.setJava5(false);
+		beanManager.setClassMapper(classMapper);
 		
 		return beanManager;
 	}
