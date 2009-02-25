@@ -45,6 +45,11 @@ public class PersistenceUtilManager
 	public static final String HIBERNATE_PERSISTENCE_UTIL = "Hibernate";
 	
 	/**
+	 * Parameter for Hibernate JPA persistence util implementation
+	 */
+	public static final String HIBERNATE_JPA_PERSISTENCE_UTIL = "HibernateJPA";
+	
+	/**
 	 * Parameter for entity manager factory
 	 */
 	public static final String ENTITY_MANAGER_FACTORY = "entityManagerFactory";
@@ -97,7 +102,7 @@ public class PersistenceUtilManager
 		ConfigMap configMap = config.getPropertyAsMap(PERSISTENCE_FACTORY, null);
 		if (configMap.getProperty(ENTITY_MANAGER_FACTORY) != null)
 		{
-			return createPersistenceUtil(configMap);
+			return createUtilFromEntityManagerFactory(configMap);
 		}
 		else if (configMap.getProperty(HELPER_CLASS) != null)
 		{
@@ -238,8 +243,8 @@ public class PersistenceUtilManager
 			throw new RuntimeException("No '" + getter + "' method for singleton " + className);
 		}
 		
-		Object sessionFactory = getterMethod.invoke(instance, (Object[]) null);
-		if (sessionFactory == null)
+		Object factory = getterMethod.invoke(instance, (Object[]) null);
+		if (factory == null)
 		{
 			throw new RuntimeException(getter + "' method for singleton " + className + " returns null !");
 		}
@@ -249,12 +254,21 @@ public class PersistenceUtilManager
 		String persistenceUtilName = configMap.getPropertyAsString(PERSISTENCE_UTIL, HIBERNATE_PERSISTENCE_UTIL);
 		if (persistenceUtilName.equals(HIBERNATE_PERSISTENCE_UTIL))
 		{
-		//	Hibernate JPA
+		//	Hibernate
 		//
 			HibernateUtil hibernateUtil = new HibernateUtil();
-			hibernateUtil.setSessionFactory((SessionFactory)sessionFactory);
+			hibernateUtil.setSessionFactory((SessionFactory)factory);
 			
 			return hibernateUtil;
+		}
+		else if (persistenceUtilName.equals(HIBERNATE_JPA_PERSISTENCE_UTIL))
+		{
+		//	Hibernate JPA
+		//
+			HibernateJpaUtil hibernateJpaUtil = new HibernateJpaUtil();
+			hibernateJpaUtil.setEntityManagerFactory((EntityManagerFactory)factory);
+			
+			return hibernateJpaUtil;
 		}
 		else
 		{
