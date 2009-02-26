@@ -227,7 +227,7 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Retrieve Class<?> hibernate metadata
 	//
-		ClassMetadata hibernateMetadata = _sessionFactory.getClassMetadata(hibernateClass);
+		ClassMetadata hibernateMetadata = _sessionFactory.getClassMetadata(getEntityName(hibernateClass));
 		if (hibernateMetadata == null)
 		{
 		//	Component class (persistent but not metadata) : no associated id
@@ -756,9 +756,14 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Get associated metadata
 	//
-		ClassMetadata metadata = _sessionFactory.getClassMetadata(clazz);
+		ClassMetadata metadata = _sessionFactory.getClassMetadata(getEntityName(clazz));
 		if (metadata == null)
 		{
+			Map<Object, Object> all = _sessionFactory.getAllClassMetadata();
+			for (Map.Entry<Object,Object> entry : all.entrySet())
+			{
+				_log.info(entry.getKey() + " : " + entry.getValue());
+			}
 		//	Not persistent : check implemented interfaces (they can be declared as persistent !!)
 		//
 			Class<?>[] interfaces = clazz.getInterfaces();
@@ -1272,7 +1277,7 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Get unsaved value from entity metamodel
 	//
-		EntityPersister entityPersister = _sessionFactory.getEntityPersister(persistentClass.getName());
+		EntityPersister entityPersister = _sessionFactory.getEntityPersister(getEntityName(persistentClass));
 		EntityMetamodel metamodel = entityPersister.getEntityMetamodel();
 		IdentifierProperty idProperty = metamodel.getIdentifierProperty();
 		
@@ -1303,6 +1308,32 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 			return pojo.getClass();
 		}
+	}
+	
+	/**
+	 * Get Hibernate class metadata
+	 * @param clazz
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private String getEntityName(Class<?> clazz)
+	{
+	//	Iterate over all metadata to prevent entity name bug
+	//	(if entity-name is redefined in mapping file, it is not found with
+	//	_sessionFatory.getClassMetada(clazz); !)
+	//
+		Map<String, ClassMetadata> allMetadata = _sessionFactory.getAllClassMetadata();
+		for (ClassMetadata classMetadata : allMetadata.values())
+		{
+			if (clazz.equals(classMetadata.getMappedClass(EntityMode.POJO)))
+			{
+				return classMetadata.getEntityName();
+			}
+		}
+		
+	//	Not found
+	//
+		return null;
 	}
 }
 
