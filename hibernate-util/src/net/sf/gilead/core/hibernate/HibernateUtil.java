@@ -1276,14 +1276,15 @@ public class HibernateUtil implements IPersistenceUtil
 		EntityMetamodel metamodel = entityPersister.getEntityMetamodel();
 		IdentifierProperty idProperty = metamodel.getIdentifierProperty();
 		
-		if (idProperty != null)
+		if ((idProperty != null) &&
+			(idProperty.getUnsavedValue() != null))
 		{
 			return idProperty.getUnsavedValue().isUnsaved(id);
 		}
 		else
 		{
 			// do not know what to do...
-			return id.toString().equals("0");
+			return false;
 		}
 	}
 	
