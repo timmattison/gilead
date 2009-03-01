@@ -569,8 +569,8 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Get added and deleted items
 	//
-		Collection<?> deletedItems = addDeletedItems(proxyInformations, underlyingCollection);
 		Object addedItems = removeNewItems(proxyInformations, underlyingCollection);
+		Collection<?> deletedItems = addDeletedItems(proxyInformations, underlyingCollection);
 		
 	//	Create collection for the class name
 	//
