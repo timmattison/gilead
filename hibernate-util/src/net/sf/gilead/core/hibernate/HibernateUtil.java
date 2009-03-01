@@ -494,7 +494,7 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Create the associated proxy
 	//
-		return session.load(persistentClass, id);
+		return session.load(getEntityName(persistentClass), id);
 	}
 
 	/*
@@ -995,7 +995,7 @@ public class HibernateUtil implements IPersistenceUtil
 					Class<?> itemClass = Thread.currentThread().getContextClassLoader().loadClass(sid.getClassName());
 					itemClass = UnEnhancer.unenhanceClass(itemClass);
 					
-					deleted.object = session.load(itemClass, sid.getId());
+					deleted.object = session.load(getEntityName(itemClass), sid.getId());
 					deleted.index = idList.indexOf(sid);
 					deletedItems.add(deleted);
 				}
@@ -1064,35 +1064,18 @@ public class HibernateUtil implements IPersistenceUtil
                 {
                 //    New item
                 //
-                	if (_log.isDebugEnabled())
-    				{
-    					_log.debug("New item " + currentItem);
-    				}
-                	NewItem newItem = new NewItem();
-                	newItem.object = currentItem;
-                	
-                	if (collection instanceof List)
-                	{
-                		newItem.index = ((List)collection).indexOf(currentItem);
-                	}
-                	addedItems.add(newItem);
+                	addedItems.add(createNewItem(currentItem, collection));
                 }
             }
             catch(TransientObjectException ex)
             {
                 // Transient objet, must have been added
-            	if (_log.isDebugEnabled())
-				{
-            		_log.debug("New item " + currentItem);
-				}
-            	NewItem newItem = new NewItem();
-            	newItem.object = currentItem;
-            	
-            	if (collection instanceof List)
-            	{
-            		newItem.index = ((List)collection).indexOf(currentItem);
-            	}
-            	addedItems.add(newItem);
+            	addedItems.add(createNewItem(currentItem, collection));
+            }
+            catch(NotPersistentObjectException ex2)
+            {
+            	// Non persistent objet, treat as new
+            	addedItems.add(createNewItem(currentItem, collection));
             }
         }
        
@@ -1108,6 +1091,28 @@ public class HibernateUtil implements IPersistenceUtil
 			}
             return addedItems;
         }
+    }
+    
+    /**
+     * Create a new item
+     * @param currentItem the current added item
+     * @param mergedCollection the merged collection
+     * @return the created new item descriptor
+     */
+    private NewItem createNewItem(Object currentItem, Collection<?> mergedCollection)
+    {
+    	if (_log.isDebugEnabled())
+		{
+    		_log.debug("New item " + currentItem);
+		}
+    	NewItem newItem = new NewItem();
+    	newItem.object = currentItem;
+    	
+    	if (mergedCollection instanceof List)
+    	{
+    		newItem.index = ((List<?>)mergedCollection).indexOf(currentItem);
+    	}
+    	return newItem;
     }
 
 	/**
@@ -1215,47 +1220,50 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 			Collection<?> collection = (Collection<?>) underlyingCollection;
 			ArrayList<SerializableId> idList = (ArrayList<SerializableId>) proxyInformations.get(ID_LIST);
-			if (idList != null)
+			if (idList == null)
 			{
-				List<NewItem> newItemList = getNewItemsForCollection(collection, idList);
-				
-				if (newItemList != null)
-				{
-				//	Remove new items from the underlying collection so the persistent collection
-				//	snapshot is created properly, then marked as dirty
-				//	and new items will be added to db
-				//
-					for (NewItem item : newItemList)
-					{
-						collection.remove(item.object);
-					}
-				}
-				
-				return newItemList;
+				idList = new ArrayList<SerializableId>();
 			}
+			List<NewItem> newItemList = getNewItemsForCollection(collection, idList);
+			
+			if (newItemList != null)
+			{
+			//	Remove new items from the underlying collection so the persistent collection
+			//	snapshot is created properly, then marked as dirty
+			//	and new items will be added to db
+			//
+				for (NewItem item : newItemList)
+				{
+					collection.remove(item.object);
+				}
+			}
+			
+			return newItemList;
 		}
 		else if (underlyingCollection instanceof Map)
 		{
 			Map map = (Map) underlyingCollection;
 			ArrayList<SerializableId> idList = (ArrayList<SerializableId>) proxyInformations.get(ID_LIST);
-			if (idList != null)
+			if (idList == null)
 			{
-			//	Find new keys
-			//
-				List<NewItem> newKeyList = getNewItemsForCollection(map.keySet(), idList);
-				Map newItemMap = new HashMap();
-				if (newKeyList != null)
-				{
-				//	Remove new keys
-				//
-					for (NewItem key : newKeyList)
-					{
-						newItemMap.put(key.object, map.get(key.object));
-						map.remove(key);
-					}
-				}
-				return newItemMap;
+				idList = new ArrayList<SerializableId>();
 			}
+			
+		//	Find new keys
+		//
+			List<NewItem> newKeyList = getNewItemsForCollection(map.keySet(), idList);
+			Map newItemMap = new HashMap();
+			if (newKeyList != null)
+			{
+			//	Remove new keys
+			//
+				for (NewItem key : newKeyList)
+				{
+					newItemMap.put(key.object, map.get(key.object));
+					map.remove(key);
+				}
+			}
+			return newItemMap;
 		}
 		
 		return null;
