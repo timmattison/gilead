@@ -93,6 +93,16 @@ public abstract class AbstractStatefulProxyStore implements IProxyStore
 		delete(computeKey(pojo, property));
 	}
 	
+
+	/**
+	 * Clean up the proxy store after a complete serialization process
+	 */
+	public void cleanUp()
+	{
+		// Nothing to do
+	}
+	
+	
 	//-------------------------------------------------------------------------
 	//
 	// Abstract methods

@@ -190,7 +190,14 @@ public class PersistentBeanManager
 	{
 	//	Explicit clone : no assignable compatibility checking
 	//
-		return clone(object, false);
+		try
+		{
+			return clone(object, false);
+		}
+		finally
+		{
+			_proxyStore.cleanUp();
+		}
 	}
 	
 	/**
@@ -513,6 +520,7 @@ public class PersistentBeanManager
 		finally
 		{
 			_persistenceUtil.closeCurrentSession();
+			_proxyStore.cleanUp();
 		}
 	}
 

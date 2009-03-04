@@ -19,6 +19,9 @@ package net.sf.gilead.core.store.stateless;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import net.sf.gilead.core.serialization.IProxySerialization;
 import net.sf.gilead.core.serialization.JBossProxySerialization;
 import net.sf.gilead.core.store.IProxyStore;
@@ -38,10 +41,28 @@ public class StatelessProxyStore implements IProxyStore
 	// Attribute
 	//-----
 	/**
+	 * Log channel
+	 */
+	private static Log _log = LogFactory.getLog(StatelessProxyStore.class);
+	
+	/**
 	 * Serializer for proxy informations
 	 */
 	private IProxySerialization _proxySerializer;
 	
+	/**
+	 * Use separate serialization thread
+	 */
+	private boolean _useSerializationThread;
+
+	/**
+	 * Separate serialization thread
+	 */
+	private ThreadLocal<SerializationThread> _serializationThread;
+	
+	//----
+	// Properties
+	//----
 	/**
 	 * @return the proxy serializer
 	 */
@@ -58,6 +79,23 @@ public class StatelessProxyStore implements IProxyStore
 		_proxySerializer = serializer;
 	}
 	
+	/**
+	 * @return the _useSerializationThread
+	 */
+	public boolean getUseSerializationThread()
+	{
+		return _useSerializationThread;
+	}
+
+	/**
+	 * @param serializationThread the _useSerializationThread to set
+	 */
+	public void setUseSerializationThread(boolean serializationThread)
+	{
+		_useSerializationThread = serializationThread;
+	}
+
+	
 	//-------------------------------------------------------------------------
 	//
 	// Constructor
@@ -72,6 +110,8 @@ public class StatelessProxyStore implements IProxyStore
 		//_proxySerializer = new XStreamProxySerialization();
 		// _proxySerializer = new ByteStringProxySerialization();
 		_proxySerializer = new JBossProxySerialization();
+		_serializationThread = new ThreadLocal<SerializationThread>();
+		_useSerializationThread = true;
 	}
 	
 	
@@ -97,8 +137,15 @@ public class StatelessProxyStore implements IProxyStore
 		
 	//	Store information in the POJO
 	//
-		((ILightEntity)cloneBean).addProxyInformation(property, 
-			  		  								  convertMap(proxyInformations));
+		if (_useSerializationThread == false)
+		{
+			((ILightEntity)cloneBean).addProxyInformation(property, 
+				  		  								  convertMap(proxyInformations));
+		}
+		else
+		{
+			getSerializationThread().serialize((ILightEntity)cloneBean, property, proxyInformations);
+		}
 	}
 	
 	/*
@@ -131,6 +178,35 @@ public class StatelessProxyStore implements IProxyStore
 		}
 		
 		return convertToSerializable(((ILightEntity)pojo).getProxyInformation(property));
+	}
+	
+	/**
+	 * Clean up the proxy store after a complete serialization process
+	 */
+	public void cleanUp()
+	{
+		if ((_useSerializationThread == true) &&
+			(_serializationThread.get() != null))
+		{
+			_log.info("Cleaning up serialization thread");
+			SerializationThread thread = getSerializationThread();
+			
+		//	Wait for end of serialization
+		//
+			while (thread.isSerializationFinished() == false)
+			{
+				try
+				{
+					Thread.sleep(50);
+				}
+				catch (InterruptedException e)
+				{
+					// does not matter
+				}
+			}
+			thread.setRunning(false);
+			_serializationThread.set(null);
+		}
 	}
 	
 	//-------------------------------------------------------------------------
@@ -171,5 +247,22 @@ public class StatelessProxyStore implements IProxyStore
 	//	Convert map
 	//
 		return (Map<String, Serializable>) _proxySerializer.unserialize(serialized);
+	}
+	
+	/**
+	 * @return the serialization thread.
+	 */
+	protected SerializationThread getSerializationThread()
+	{
+		SerializationThread thread = _serializationThread.get();
+		if (thread == null)
+		{
+			thread = new SerializationThread();
+			thread.setProxySerializer(_proxySerializer);
+			new Thread(thread).start();
+			_serializationThread.set(thread);
+		}
+		
+		return thread;
 	}
 }
