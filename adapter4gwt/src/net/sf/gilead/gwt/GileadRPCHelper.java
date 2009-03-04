@@ -3,9 +3,6 @@
  */
 package net.sf.gilead.gwt;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-
 import javax.servlet.http.HttpSession;
 
 import net.sf.gilead.core.PersistentBeanManager;
@@ -129,6 +126,10 @@ public class GileadRPCHelper
 			catch (TransientObjectException ex)
 			{
 				log.info(returnValue + " is transient : cannot clone...");
+			}
+			finally
+			{
+				beanManager.getProxyStore().cleanUp();
 			}
 		}
 		
