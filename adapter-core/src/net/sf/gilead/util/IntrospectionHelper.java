@@ -1,19 +1,25 @@
 package net.sf.gilead.util;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Static helper for instrospection
+ * Singleton for instrospection search
  * @author bruno.marchesson
  *
  */
 public class IntrospectionHelper
 {
+	//----
+	// Attributes
+	//----
+	private static Map<Class<?>, Map<String, Method>> _declaredMethodMap = new HashMap<Class<?>, Map<String,Method>>();
+	
 	//-------------------------------------------------------------------------
 	//
 	// Static helper
@@ -43,30 +49,35 @@ public class IntrospectionHelper
 	
 	/**
 	 * Recursively find declared method with the argument name
+	 * Important notice : does not check parameters types since it is used for searching 
+	 * getter and setter !
 	 */
 	public static Method getRecursiveDeclaredMethod(Class<?> clazz, String methodName,
 													 Class<?>... parameterTypes) 
 													throws NoSuchMethodException
 	{
-	//	Recursive get superclass declared fields
+	//	Map checking
 	//
-		while(clazz != null)
+		Map<String, Method> methodMap = _declaredMethodMap.get(clazz);
+		if (methodMap == null)
 		{
-			try
-			{
-				return clazz.getDeclaredMethod(methodName, parameterTypes);
-			}
-			catch(NoSuchMethodException ex)
-			{
-			//	Search in superclass
-			//
-				clazz = clazz.getSuperclass();
-			}
+			methodMap = new HashMap<String, Method>();
+			_declaredMethodMap.put(clazz, methodMap);
 		}
-	
-	//	Method not found
+		Method method = methodMap.get(methodName);
+		if (method != null)
+		{
+		//	Already computed
+		//
+			return method;
+		}
+		
+	//	Need to search
 	//
-		throw new NoSuchMethodException(methodName);
+		method = searchRecursiveDeclaredMethod(clazz, methodName, parameterTypes);
+		methodMap.put(methodName, method);
+		
+		return method;
 	}
 	
 	
@@ -175,6 +186,34 @@ public class IntrospectionHelper
 	//	Member not found
 	//
 		return null;
+	}
+	
+	/**
+	 * Recursively find declared method with the argument name
+	 */
+	private static Method searchRecursiveDeclaredMethod(Class<?> clazz, String methodName,
+													 	Class<?>... parameterTypes) 
+														throws NoSuchMethodException
+	{
+	//	Recursive get superclass declared fields
+	//
+		while(clazz != null)
+		{
+			try
+			{
+				return clazz.getDeclaredMethod(methodName, parameterTypes);
+			}
+			catch(NoSuchMethodException ex)
+			{
+			//	Search in superclass
+			//
+				clazz = clazz.getSuperclass();
+			}
+		}
+	
+	//	Method not found
+	//
+		throw new NoSuchMethodException(methodName);
 	}
 	
 }
