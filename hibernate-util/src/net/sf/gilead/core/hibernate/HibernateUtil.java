@@ -933,14 +933,20 @@ public class HibernateUtil implements IPersistenceUtil
 		while(iterator.hasNext())
 		{
 			Object item = iterator.next();
+			
+			SerializableId id = new SerializableId();
+			id.setClassName(item.getClass().getName());
+			
 			if (isPersistentPojo(item))
 			{
-				SerializableId id = new SerializableId();
 				id.setId(getId(item));
-				id.setClassName(item.getClass().getName());
-			
-				idList.add(id);
 			}
+			else
+			{
+				id.setHashCode(item.hashCode());
+			}
+			
+			idList.add(id);
 		}
 		
 		if (idList.isEmpty())
@@ -995,9 +1001,16 @@ public class HibernateUtil implements IPersistenceUtil
 					Class<?> itemClass = Thread.currentThread().getContextClassLoader().loadClass(sid.getClassName());
 					itemClass = UnEnhancer.unenhanceClass(itemClass);
 					
-					deleted.object = session.load(getEntityName(itemClass), sid.getId());
-					deleted.index = idList.indexOf(sid);
-					deletedItems.add(deleted);
+					if (sid.getId() != null)
+					{
+						deleted.object = session.load(getEntityName(itemClass), sid.getId());
+						deleted.index = idList.indexOf(sid);
+						deletedItems.add(deleted);
+					}
+					else
+					{
+						// TODO non persistent entity handling ?
+					}
 				}
 				catch(Exception e)
 				{
@@ -1069,13 +1082,53 @@ public class HibernateUtil implements IPersistenceUtil
             }
             catch(TransientObjectException ex)
             {
-                // Transient objet, must have been added
-            	addedItems.add(createNewItem(currentItem, collection));
+                // Transient objet
+            	int hashCode = currentItem.hashCode();
+                
+            //  Search this iitem in id list
+            //
+                boolean found = false;
+                for (SerializableId sid : idList)
+                {
+                    if ((sid.getHashCode() != null) &&
+                    	(sid.getHashCode() == hashCode))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+               
+                if (found == false)
+                {
+                //    New item
+                //
+                	addedItems.add(createNewItem(currentItem, collection));
+                }
             }
             catch(NotPersistentObjectException ex2)
             {
-            	// Non persistent objet, treat as new
-            	addedItems.add(createNewItem(currentItem, collection));
+            	// Non persistent objet
+            	int hashCode = currentItem.hashCode();
+            
+            //  Search this iitem in id list
+            //
+                boolean found = false;
+                for (SerializableId sid : idList)
+                {
+                	if ((sid.getHashCode() != null) &&
+                        (sid.getHashCode() == hashCode))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+               
+                if (found == false)
+                {
+                //    New item
+                //
+                	addedItems.add(createNewItem(currentItem, collection));
+                }
             }
         }
        
@@ -1260,7 +1313,7 @@ public class HibernateUtil implements IPersistenceUtil
 				for (NewItem key : newKeyList)
 				{
 					newItemMap.put(key.object, map.get(key.object));
-					map.remove(key);
+					map.remove(key.object);
 				}
 			}
 			return newItemMap;
