@@ -1,3 +1,29 @@
+Release 1.2.2 (03/2009)
+-----------------------
+Bug fixed :
+    - NullPointerException on isUnsavedValue call
+    - Ordered collection handling
+    - Dynamic proxy mode fix
+    - Fixed NonPersistentObject exception if entity name is defined in mapping file
+    - adapter4blazeds : Persistence util fix 
+    	* handling entity manager factory with Helper class strategy
+    
+          
+Improvements : 
+	- Handle transient or not persistent items (such as String) in persistent collection
+	- Stateful proxy store refactor
+	- Generalization of HibernateUtil for JPA, JBoss injected factory, Spring Proxy, ...
+	- Performance improvements 
+		* Threaded proxy information serialization (stateless mode)
+		* added cache for getter and setters reflection
+		* Removed useless code (useless loop and CGLIB call) from beanlib unenhancer
+	
+Other :
+    - Use beanlib-3.3beta21c (unofficial but optimized release !)
+    - hibernate-jpa-util has been removed : use hibernate-util instead !
+    - This release was developed listening to "All we know is falling" (Paramore)and various albums from Hans Zimmer :)
+
+
 Release 1.2.1 (02/2009)
 -----------------------
 
