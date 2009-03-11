@@ -8,8 +8,10 @@ import java.util.List;
 import junit.framework.TestCase;
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.TestHelper;
+import net.sf.gilead.pojo.base.ILightEntity;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.dao.IUserDAO;
+import net.sf.gilead.test.domain.interfaces.IMessage;
 import net.sf.gilead.test.domain.interfaces.IUser;
 
 import org.apache.commons.logging.Log;

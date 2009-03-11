@@ -1,9 +1,5 @@
 package net.sf.gilead.core.serialization;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.io.Serializable;
 
 /**
@@ -27,6 +23,11 @@ public class SerializableId implements Serializable
 	protected Serializable id;
 	
 	/**
+	 * Hash code for non persistent and transient values
+	 */
+	protected Integer hashCode;
+	
+	/**
 	 * The associated class name
 	 */
 	protected String className;
@@ -46,6 +47,20 @@ public class SerializableId implements Serializable
 	 */
 	public void setId(Serializable id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the hashCode
+	 */
+	public Integer getHashCode() {
+		return hashCode;
+	}
+
+	/**
+	 * @param hashCode the hashCode to set
+	 */
+	public void setHashCode(Integer hashCode) {
+		this.hashCode = hashCode;
 	}
 
 	/**
@@ -82,33 +97,11 @@ public class SerializableId implements Serializable
 		}
 		if (id == null)
 		{
-			return (((SerializableId)other).id == null);
+			return (((SerializableId)other).hashCode == hashCode);
 		}
 		else 
 		{
 			return id.equals(((SerializableId)other).id);
 		}
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
-	 */
-//	public void writeExternal(ObjectOutput out) throws IOException
-//	{
-//		out.writeUTF(className);
-//		out.writeObject(id);
-//		
-//	}
-//	
-//	/*
-//	 * (non-Javadoc)
-//	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
-//	 */
-//	public void readExternal(ObjectInput in) throws IOException,
-//													ClassNotFoundException
-//	{
-//		className = in.readUTF();
-//		id = (Serializable) in.readObject();
-//	}	
 }

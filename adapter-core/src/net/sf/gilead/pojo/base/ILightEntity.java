@@ -33,26 +33,6 @@ public interface ILightEntity
 	//
 	//-------------------------------------------------------------------------
 	/**
-	 * Indicates if the argument property is initialized or not
-	 */
-	public boolean isInitialized(String property);
-	
-	/**
-	 * Indicates if the argument property is initialized or not
-	 */
-	public void setInitialized(String property, boolean initialized);
-	
-	/**
-	 * @return the initialization map
-	 */
-	public Map getInitializationMap();
-
-	/**
-	 * @param initializationMap the initialization map to set
-	 */
-	public void setInitializationMap(Map initializationMap);
-	
-	/**
 	 * Add proxy information for the argument property.
 	 * @param property the property name
 	 * @param proxyInformation map of proxy informations (string serialized form)

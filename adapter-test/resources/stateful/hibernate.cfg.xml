@@ -20,6 +20,9 @@
     	<!-- No auto-commit -->
     	<property name="connection.autocommit">false</property>
     	
+    	<!-- Disable batch for HSQLDB  -->
+        <property name="jdbc.batch_size">0</property>
+    	
         <!-- Print SQL to stdout. -->
         <property name="show_sql">false</property>
         

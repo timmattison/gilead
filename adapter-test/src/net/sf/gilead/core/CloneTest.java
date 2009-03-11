@@ -1232,6 +1232,53 @@ public abstract class CloneTest extends TestCase
 		assertNotNull(user);
 		assertTrue(user.getMessageList() == null || user.getMessageList().isEmpty());
 	}
+	
+	/**
+	 * Test delete collection on client side
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	public void testNewCollectionAfterClone() throws InstantiationException, IllegalAccessException
+	{  
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Empty user message
+	//
+		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
+		assertNotNull(user);
+		user.getMessageList().clear();
+		userDAO.saveUser(user);
+		
+		assertTrue(user.getMessageList().isEmpty());
+		
+	//	Clone user
+	//
+		IUser cloneUser = (IUser) _beanManager.clone(user); 
+		 
+		// add new message
+		cloneUser.addMessage(createNewCloneMessage(cloneUser)); 
+		 
+	//	Merge user
+	//
+		IUser mergeUser = (IUser) _beanManager.merge(cloneUser); 
+		assertNotNull(mergeUser);
+		assertNotNull(mergeUser.getMessageList());
+		assertFalse(mergeUser.getMessageList().isEmpty());
+		 
+	//	Save merged user
+	//
+		userDAO.saveUser(mergeUser);
+		
+	//	Reload user to count messages
+	//
+		user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
+		assertNotNull(user);
+		assertNotNull(user.getMessageList());
+		assertEquals(1, user.getMessageList().size());
+	}
 
 	/**
 	 * Test clone and merge ArrayList subclass, such as GWT-Plus PagingList
@@ -1493,6 +1540,11 @@ public abstract class CloneTest extends TestCase
 	//
 		IMessage message = messageDAO.loadDetailedMessage(TestHelper.getExistingMessageId());
 		assertNotNull(message);
+		if (message.countKeywords() == 0)
+		{
+			TestHelper.computeKeywords(message);
+			messageDAO.saveMessage(message);
+		}
 		assertTrue(message.countKeywords() > 0);
 		
 	//	Clone message

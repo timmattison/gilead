@@ -46,12 +46,6 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	 */
 	protected Map<String, String> _proxyInformations;
 	
-	/**
-	 * Map of initialization state
-	 * The key is the property name, the value is the initialization state.
-	 */
-	protected Map<String, Boolean> _initializationMap;
-
 	//----
 	// Properties
 	//----
@@ -72,23 +66,6 @@ public abstract class LightEntity implements ILightEntity, Serializable
 		_proxyInformations = informations;
 	}
 	
-	/**
-	 * @return the initializationMap
-	 */
-	public Map<String, Boolean> getInitializationMap()
-	{
-		return _initializationMap;
-	}
-
-	/**
-	 * @param initializationMap the initializationMap to set
-	 */
-	@SuppressWarnings("unchecked")
-	public void setInitializationMap(Map initializationMap)
-	{
-		this._initializationMap = initializationMap;
-	}
-
 	//-------------------------------------------------------------------------
 	//
 	// Constructor
@@ -107,37 +84,6 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	// Public interface
 	//
 	//-------------------------------------------------------------------------
-	/**
-	 * Indicates if the argument property is initialized or not
-	 */
-	public boolean isInitialized(String property)
-	{
-	//	Precondition checking
-	//
-		if ((_initializationMap == null) ||
-			(_initializationMap.containsKey(property) == false))
-		{
-		//	not filled : initialized
-		//
-			return true;
-		}
-		
-	//	Return initialization map value
-	//
-		return ((Boolean)_initializationMap.get(property)).booleanValue();
-	}
-	
-	/**
-	 * Indicates if the argument property is initialized or not
-	 */
-	public void setInitialized(String property, boolean initialized)
-	{
-		if (_initializationMap != null)
-		{
-			_initializationMap = new HashMap();
-		}
-		_initializationMap.put(property, Boolean.valueOf(initialized));
-	}
 	/**
 	 * Add proxy information
 	 */

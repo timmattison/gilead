@@ -47,14 +47,7 @@ public abstract class LightEntity implements ILightEntity, IServerProxyGenerator
 	 * @gwt.typeArgs <java.lang.String, java.lang.String>
 	 */
 	protected Map _proxyInformations;
-	
-	/**
-	 * Map of initialization state
-	 * The key is the property name, the value is the initialization state.
-	 * @gwt.typeArgs <java.lang.String, java.lang.Boolean>
-	 */
-	protected Map _initializationMap;
-	
+
 	//----
 	// Properties
 	//----
@@ -76,24 +69,6 @@ public abstract class LightEntity implements ILightEntity, IServerProxyGenerator
 		_proxyInformations = properties;
 	}
 	
-	/**
-	 * @return the initialization map
-	 * @gwt.typeArgs <java.lang.String, java.lang.Boolean>
-	 */
-	public Map getInitializationMap()
-	{
-		return _initializationMap;
-	}
-
-	/**
-	 * @param initializationMap the initialization map to set
-	 * @gwt.typeArgs initializationMap <java.lang.String, java.lang.Boolean>
-	 */
-	public void setInitializationMap(Map initializationMap)
-	{
-		_initializationMap = initializationMap;
-	}
-	
 	//-------------------------------------------------------------------------
 	//
 	// Constructor
@@ -112,38 +87,6 @@ public abstract class LightEntity implements ILightEntity, IServerProxyGenerator
 	// Public interface
 	//
 	//-------------------------------------------------------------------------
-	/**
-	 * Indicates if the argument property is initialized or not
-	 */
-	public boolean isInitialized(String property)
-	{
-	//	Precondition checking
-	//
-		if ((_initializationMap == null) ||
-			(_initializationMap.containsKey(property) == false))
-		{
-		//	not filled : initialized
-		//
-			return true;
-		}
-		
-	//	Return initialization map value
-	//
-		return ((Boolean)_initializationMap.get(property)).booleanValue();
-	}
-	
-	/**
-	 * Indicates if the argument property is initialized or not
-	 */
-	public void setInitialized(String property, boolean initialized)
-	{
-		if (_initializationMap != null)
-		{
-			_initializationMap = new HashMap();
-		}
-		_initializationMap.put(property, Boolean.valueOf(initialized));
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.pojo.base.ILightEntity#addProxyInformations(java.lang.String, java.lang.Class)
