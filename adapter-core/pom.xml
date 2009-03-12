@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>gilead</artifactId>
 		<groupId>net.sf.gilead</groupId>
-		<version>1.2.1-SNAPSHOT</version>
+		<version>1.2.2-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -14,8 +14,8 @@
 	<version>${parent.version}</version>
 	<dependencies>
 		<dependency>
-		        <groupId>org.springframework</groupId>
-		        <artifactId>spring</artifactId>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>

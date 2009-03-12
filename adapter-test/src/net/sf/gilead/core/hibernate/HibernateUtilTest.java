@@ -14,8 +14,8 @@ import net.sf.gilead.test.dao.IUserDAO;
 import net.sf.gilead.test.domain.interfaces.IMessage;
 import net.sf.gilead.test.domain.interfaces.IUser;
 import net.sf.gilead.test.domain.misc.Configuration;
-import net.sf.gilead.test.domain.misc.PageElement;
-import net.sf.gilead.test.domain.misc.TextElement;
+/* import net.sf.gilead.test.domain.misc.PageElement;
+import net.sf.gilead.test.domain.misc.TextElement; */
 import net.sf.gilead.test.domain.stateless.Message;
 import net.sf.gilead.test.domain.stateless.User;
 
@@ -166,7 +166,7 @@ public class HibernateUtilTest extends TestCase
 	/**
 	 * Test ID retrieving
 	 */
-	public final void testGetIdPageElement()
+	/* public final void testGetIdPageElement()
 	{
 	//	Create PageElement
 	//
@@ -185,5 +185,5 @@ public class HibernateUtilTest extends TestCase
 	//	Test ID retrieving
 	//
 		assertEquals(textElement.getUidPk(), HibernateUtil.getInstance().getId(textElement));
-	}
+	} */
 }

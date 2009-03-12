@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>gilead</artifactId>
 		<groupId>net.sf.gilead</groupId>
-		<version>1.2.1-SNAPSHOT</version>
+		<version>1.2.2-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -21,8 +21,30 @@
 			<artifactId>hibernate</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>ejb3-persistence</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>net.sf.beanlib</groupId>
 			<artifactId>beanlib-hibernate</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.ejb3</groupId>
+			<artifactId>jboss-ejb3-core</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jboss.javaee</groupId>
+					<artifactId>jboss-servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.jpa</groupId>
+			<artifactId>jboss-jpa-deployers</artifactId>
 		</dependency>
 	</dependencies>
 </project>
