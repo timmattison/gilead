@@ -10,6 +10,7 @@ import net.sf.gilead.core.beanlib.mapper.ProxyClassMapper;
 import net.sf.gilead.core.store.stateful.HttpSessionProxyStore;
 import net.sf.gilead.exception.NotAssignableException;
 import net.sf.gilead.exception.TransientObjectException;
+import net.sf.gilead.proxy.AdditionalCodeManager;
 import net.sf.gilead.proxy.ProxyClassLoader;
 
 import org.apache.commons.logging.Log;
@@ -48,6 +49,11 @@ public class GileadRPCHelper
 		 if (contextClassLoader instanceof ProxyClassLoader == false)
 		 {
 			 log.info("Setting proxy class loader for thread " + Thread.currentThread());
+			 
+	     //	 initialize AdditionalCodeManager before changing class loader to prevent stack overflow
+		 //
+			 AdditionalCodeManager.getInstance();
+			 
 			 Thread.currentThread().setContextClassLoader(new ProxyClassLoader(contextClassLoader));
     	 }
 	}
