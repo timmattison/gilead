@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.Map.Entry;
 
 import net.sf.beanlib.hibernate.UnEnhancer;
@@ -32,6 +34,8 @@ import org.hibernate.collection.PersistentCollection;
 import org.hibernate.collection.PersistentList;
 import org.hibernate.collection.PersistentMap;
 import org.hibernate.collection.PersistentSet;
+import org.hibernate.collection.PersistentSortedMap;
+import org.hibernate.collection.PersistentSortedSet;
 import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
@@ -619,6 +623,20 @@ public class HibernateUtil implements IPersistenceUtil
 						 				 	   (Set<?>) underlyingCollection);
 			}
 		}
+		else if (PersistentSortedSet.class.getName().equals(className))
+		{
+		//	Persistent sorted set creation
+		//
+			if (underlyingCollection == null)
+			{
+				collection = new PersistentSortedSet((SessionImpl) session);
+			}
+			else
+			{
+				collection = new PersistentSortedSet((SessionImpl) session,
+						 				 	   		 (SortedSet<?>) underlyingCollection);
+			}
+		}
 		else if (PersistentMap.class.getName().equals(className))
 		{
 		//	Persistent map creation
@@ -631,6 +649,20 @@ public class HibernateUtil implements IPersistenceUtil
 			{
 				collection = new PersistentMap((SessionImpl) session,
 						 				 	   (Map<?, ?>) underlyingCollection);
+			}
+		}
+		else if (PersistentSortedMap.class.getName().equals(className))
+		{
+		//	Persistent map creation
+		//
+			if (underlyingCollection == null)
+			{
+				collection = new PersistentSortedMap((SessionImpl) session);
+			}
+			else
+			{
+				collection = new PersistentSortedMap((SessionImpl) session,
+						 				 	   		 (SortedMap<?, ?>) underlyingCollection);
 			}
 		}
 		else
