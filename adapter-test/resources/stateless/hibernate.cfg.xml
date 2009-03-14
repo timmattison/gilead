@@ -36,6 +36,5 @@
         <mapping resource="stateless/Message.hbm.xml"/>
         <mapping resource="stateless/Group.hbm.xml"/>
         <mapping resource="stateless/Country.hbm.xml"/>
-        <mapping resource="misc/PageElement.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>
