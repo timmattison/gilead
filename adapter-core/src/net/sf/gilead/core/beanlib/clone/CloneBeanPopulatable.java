@@ -128,6 +128,14 @@ public class CloneBeanPopulatable implements DetailedBeanPopulatable
 				return false;
 			}
 			
+		//	'ServerOnly' annotation handling
+		//
+			if ((AnnotationsHelper.isServerOnly(fromBean.getClass(), propertyName)) ||
+				(AnnotationsHelper.isServerOnly(toBean.getClass(), propertyName)))	
+			{
+				return false;
+			}
+			
 		//	Get from value
 		//
 			Object fromValue = readPropertyValue(fromBean, readerMethod.getName());
@@ -182,14 +190,6 @@ public class CloneBeanPopulatable implements DetailedBeanPopulatable
 
 				_proxyStore.storeProxyInformations(toBean, fromBean,
 												   propertyName, proxyInformations);
-			}
-			
-		//	'ServerOnly' annotation handling
-		//
-			if ((AnnotationsHelper.isServerOnly(fromBean.getClass(), propertyName)) ||
-				(AnnotationsHelper.isServerOnly(toBean.getClass(), propertyName)))	
-			{
-				return false;
 			}
 		
 			return true;
