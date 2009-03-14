@@ -167,7 +167,14 @@ public abstract class PersistentRemoteService extends RemoteServiceServlet
 		}
 		catch (IncompatibleRemoteServiceException ex)
 		{
-	        return RPCCopy.getInstance().encodeResponseForFailure(null, ex, rpcRequest.getSerializationPolicy());
+			if (rpcRequest != null)
+			{
+				return RPCCopy.getInstance().encodeResponseForFailure(null, ex, rpcRequest.getSerializationPolicy());
+			}
+			else
+			{
+				return RPCCopy.getInstance().encodeResponseForFailure(null, ex);
+			}
 	    } 
 	}
 }

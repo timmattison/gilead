@@ -174,5 +174,21 @@ public class RPCCopy
 		}
 	}
 	
+	/**
+	 * Encode failure response method.
+	 * @throws SerializationException 
+	 */
+	public String encodeResponseForFailure(Method serviceMethod, Throwable cause)
+										   throws SerializationException
+	{
+		if (_version == Version.GWT14)
+		{
+			return RPCCopy_GWT14.encodeResponseForFailure(serviceMethod, cause);
+		}
+		else
+		{
+			return RPCCopy_GWT15.encodeResponseForFailure(serviceMethod, cause);
+		}
+	}
 	
 }
