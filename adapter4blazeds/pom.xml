@@ -21,10 +21,6 @@
 			<artifactId>hibernate-util</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${parent.groupId}</groupId>
-			<artifactId>hibernate-jpa-util</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 		</dependency>
