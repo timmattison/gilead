@@ -63,7 +63,7 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<scm>
-	     <developerConnection>scm:svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/trunk/</developerConnection>
+	     <developerConnection>scm:svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/branches/1.2</developerConnection>
 	</scm>
 	<dependencyManagement>
 		<dependencies>
