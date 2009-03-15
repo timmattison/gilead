@@ -63,7 +63,11 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<scm>
+<<<<<<< .mine
+	        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/components/releases/gilead-1.2.2</developerConnection>
+=======
 	        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/components/releases/Maintenance release</developerConnection>
+>>>>>>> .r604
 	</scm>
 	<dependencyManagement>
 		<dependencies>
