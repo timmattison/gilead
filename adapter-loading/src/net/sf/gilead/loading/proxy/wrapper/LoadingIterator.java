@@ -1,7 +1,9 @@
-package net.sf.gilead.loading.proxy;
+package net.sf.gilead.loading.proxy.wrapper;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Iterator;
+
+import net.sf.gilead.loading.proxy.LoadingProxyManager;
 
 /**
  * Wrapper for iterator

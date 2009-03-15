@@ -1,19 +1,18 @@
 package net.sf.gilead.loading.proxy;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.gilead.loading.LoadingHelper;
 import net.sf.gilead.loading.annotations.LoadingInterface;
+import net.sf.gilead.loading.proxy.wrapper.LoadingList;
+import net.sf.gilead.loading.proxy.wrapper.LoadingWrapper;
 import net.sf.gilead.proxy.JavassistProxyGenerator;
 import net.sf.gilead.proxy.xml.AdditionalCode;
-import net.sf.gilead.proxy.xml.Constructor;
-import net.sf.gilead.proxy.xml.Method;
-import net.sf.gilead.proxy.xml.Parameter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
 
 /**
@@ -35,6 +34,7 @@ public class LoadingProxyManager
 	 * Key is the loading interface, value is the associated wrapper.
 	 */
 	private Map<Class<?>,Class<?>> _proxyMap;
+	
 	//-----
 	// Singleton
 	//-----
@@ -94,7 +94,7 @@ public class LoadingProxyManager
 		// (bidirectional associations)
 		_proxyMap.put(loadingInterface, getClass());
 		
-		AdditionalCode additionalCode = generateCodeFor(loadingInterface);
+		AdditionalCode additionalCode = LoadingProxyCreator.generateProxyFor(loadingInterface);
 		JavassistProxyGenerator generator = new JavassistProxyGenerator();
 		wrapperClass = generator.generateProxyFor(LoadingWrapper.class, additionalCode);
 		
@@ -130,157 +130,30 @@ public class LoadingProxyManager
 		{
 			throw new RuntimeException("Wrapper creation exception", e);
 		}
-	}
-
-	//-------------------------------------------------------------------------
-	//
-	// Internal methods
-	//
-	//-------------------------------------------------------------------------
+	}	
+	
 	/**
-	 * Generate code for loading wrapper
-	 * @param persistentClass the root persistent class
-	 * @param loadingInterface the associated loading interface
-	 * @return the additional code to generate
+	 * Wrap the persistent entity collection with the loading interface relevant wrapper
+	 * @param collection
+	 * @param loadingInterface
+	 * @return
 	 */
-	protected AdditionalCode generateCodeFor(Class<?> loadingInterface)
+	public Object wrapCollectionAs(Object collection, Class<?> loadingInterface)
 	{
-	//	Get persistent class
+	//	Precondition checking
 	//
-		Class<?> persistentClass = LoadingHelper.getPersistentClass(loadingInterface);
-		_log.info("Generating wrapper code for " + loadingInterface.getName());
-		
-	//	Create additional code
-	//
-		AdditionalCode code = new AdditionalCode();
-		
-	//	Set suffix and implemented interfaces
-	//
-		code.setSuffix(loadingInterface.getSimpleName());
-		code.setImplementedInterface(loadingInterface.getCanonicalName());
-			
-	//	Add constructor
-	//
-		Constructor constructor = new Constructor();
-		constructor.setVisibility("public");
-		
-		Parameter parameter = new Parameter();
-		parameter.setName("data");
-		parameter.setType(persistentClass.getCanonicalName());
-		constructor.addParameter(parameter);
-		
-		constructor.setCode("{ _data = data; }");
-		code.addConstructor(constructor);
-		
-	//	Generate interface needed methods
-	//
-		for (java.lang.reflect.Method interfaceMethod : loadingInterface.getMethods())
+		if (collection == null)
 		{
-		//	Convert java.lang.reflect.method to additional code method
-		//
-			Method additionalMethod = AdditionalCodeHelper.convertMethod(interfaceMethod);
-			additionalMethod.setCode(generateCode(persistentClass, interfaceMethod));
-			
-			code.addMethod(additionalMethod);
+			return null;
 		}
 		
-		return code;
-	}
-	/**
-	 * Generate the additional method code for the loading interface method
-	 */
-	private String generateCode(Class<?> persistentClass,
-								java.lang.reflect.Method interfaceMethod)
-	{
-		StringBuilder code = new StringBuilder();
-		code.append("{ ");
-		Class<?> returnType = interfaceMethod.getReturnType();
-		
-		if (returnType != Void.TYPE)
+	//	Collection handling
+	//
+		if (List.class.isAssignableFrom(collection.getClass()))
 		{
-			if (Collection.class.isAssignableFrom(returnType))
-			{
-				// Generate wrapper for nested Loading interface
-				getWrapper(interfaceMethod.getGenericReturnType().getClass());
-				
-				code.append(" return wrapAs(");
-				code.append(returnType.getName());
-				code.append(".class,");
-			}
-			else if (Map.class.isAssignableFrom(returnType))
-			{
-				// TODO
-				throw new RuntimeException("Not yet implemented  : map wrapping !");
-			}
-			else if (returnType.getAnnotation(LoadingInterface.class) != null)
-			{
-			//	Wrapping needed
-			//
-				// Generate wrapper for nested Loading interface
-				getWrapper(returnType);
-				
-				code.append(" return wrapAs(");
-				code.append(returnType.getName());
-				code.append(".class,");
-			}
-			else
-			{
-				code.append(" return (");
-			}
-			
-		}
-		code.append("((");
-		code.append(persistentClass.getName());
-		code.append(")_data).");
-		code.append(interfaceMethod.getName());
-		code.append('(');
-		Class<?>[] parameters = interfaceMethod.getParameterTypes();
-		if (parameters != null)
-		{
-		// 	Get persistent class parameters
-		//
-			for (int index = 0; index < parameters.length ; index ++)
-			{
-				Class<?> parameter = parameters[index];
-				if (index > 0)
-				{
-					code.append(',');
-				}
-				
-				if ((Collection.class.isAssignableFrom(parameter)) ||
-					(Map.class.isAssignableFrom(parameter)))
-				{
-					// TODO
-					throw new RuntimeException("Not yet implemented  : collection wrapping !");
-				}
-				else if (parameter.getAnnotation(LoadingInterface.class) != null)
-				{
-				//	Conversion from wrapper
-				//
-					// Generate wrapper for nested Loading interface
-					getWrapper(parameter);
-					
-					Class<?> parameterPersistentClass = LoadingHelper.getPersistentClass(parameter);
-					
-					code.append("((");
-					code.append(parameterPersistentClass.getName());
-					code.append(")unwrap(param");
-					code.append(index);
-					code.append("))");
-				}
-				else
-				{
-					code.append("param");
-					code.append(index);
-				}
-			}
+			// return new LoadingList((List)collection);
 		}
 		
-		if (returnType != Void.TYPE)
-		{
-			code.append(")");
-		}
-		code.append("); }");
-		return code.toString();
-	}
+		return null;
+	}	
 }

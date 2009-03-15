@@ -8,7 +8,7 @@ import org.junit.Test;
 import net.sf.gilead.loading.TestHelper;
 import net.sf.gilead.loading.domain.interfaces.ISimpleUser;
 import net.sf.gilead.loading.domain.interfaces.IUserAndAccount;
-import net.sf.gilead.loading.proxy.LoadingWrapper;
+import net.sf.gilead.loading.proxy.wrapper.LoadingWrapper;
 
 /**
  * Loading session test 

@@ -23,7 +23,7 @@
   <!--## Le passage en mode DEBUG doit se faire localement -->
   <!--## Ã  une classe ou un package sinon utiliser l'AOP -->
   <logger name="net.sf.gilead">
-    <level value="DEBUG"></level>
+    <level value="TRACE"></level>
   </logger>
   <!-- ============================================= #### LIBS TIERCES -->
   <logger name="org.apache">
@@ -58,7 +58,7 @@
   </logger>
   <!-- ========================================================= Root -->
   <root>
-    <level value="DEBUG" />
+    <level value="TRACE" />
     <!--  Appenders par dÃ©faut   -->
     <appender-ref ref="stdout" />
   </root>

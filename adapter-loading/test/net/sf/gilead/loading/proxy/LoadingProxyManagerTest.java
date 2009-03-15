@@ -34,7 +34,7 @@ public class LoadingProxyManagerTest
 	{
 	//	Generate additional code
 	//
-		AdditionalCode additionalCode = LoadingProxyManager.getInstance().generateCodeFor(ISimpleUser.class);
+		AdditionalCode additionalCode = LoadingProxyCreator.generateProxyFor(ISimpleUser.class);
 		
 	//	Code verification
 	//
@@ -59,7 +59,7 @@ public class LoadingProxyManagerTest
 	{
 	//	Generate additional code
 	//
-		AdditionalCode additionalCode = LoadingProxyManager.getInstance().generateCodeFor(IUserAndAccount.class);
+		AdditionalCode additionalCode = LoadingProxyCreator.generateProxyFor(IUserAndAccount.class);
 		
 	//	Code verification
 	//

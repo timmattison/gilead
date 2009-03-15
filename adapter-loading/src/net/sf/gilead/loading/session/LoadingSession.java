@@ -14,7 +14,7 @@ import net.sf.gilead.loading.QueryManager;
 import net.sf.gilead.loading.annotations.LoadingInterface;
 import net.sf.gilead.loading.hql.HQLQueryGenerator;
 import net.sf.gilead.loading.proxy.LoadingProxyManager;
-import net.sf.gilead.loading.proxy.LoadingWrapper;
+import net.sf.gilead.loading.proxy.wrapper.LoadingWrapper;
 
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;

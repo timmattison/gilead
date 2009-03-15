@@ -1,28 +1,29 @@
 /**
  * 
  */
-package net.sf.gilead.loading.proxy;
+package net.sf.gilead.loading.proxy.wrapper;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.Set;
+
+import net.sf.gilead.loading.proxy.LoadingProxyManager;
 
 /**
- * Wrapper for List implementation
+ * Wrapper for Set collection
  * @author bruno.marchesson
  *
  */
-public class LoadingList<PROXY, PERSISTENT> implements List<PROXY>
+public class LoadingSet<PROXY,PERSISTENT>
 {
 	//----
 	// Attribute
 	//----
 	/**
-	 * The wrapped list
+	 * The wrapped set
 	 */
-	private List<PERSISTENT> _wrapped;
+	private Set<PERSISTENT> _wrapped;
 	
 	/**
 	 * The proxy class
@@ -37,7 +38,7 @@ public class LoadingList<PROXY, PERSISTENT> implements List<PROXY>
 	/**
 	 * Constructor
 	 */
-	public LoadingList(List<PERSISTENT> wrapped)
+	public LoadingSet(Set<PERSISTENT> wrapped)
 	{
 		_wrapped = wrapped;
 		
@@ -45,16 +46,12 @@ public class LoadingList<PROXY, PERSISTENT> implements List<PROXY>
 								 getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 	}
 
-	//-------------------------------------------------------------------------
-	//
-	// List public interface
-	//
-	//-------------------------------------------------------------------------
-	public void add(int arg0, PROXY arg1)
-	{
-		_wrapped.add(arg0, unwrapLoadingInterface(arg1));
-	}
 
+	//-------------------------------------------------------------------------
+	//
+	// Set public interface
+	//
+	//-------------------------------------------------------------------------
 	public boolean add(PROXY arg0)
 	{
 		return _wrapped.add(unwrapLoadingInterface(arg0));
@@ -73,16 +70,6 @@ public class LoadingList<PROXY, PERSISTENT> implements List<PROXY>
 		}
 		
 		return changed;
-	}
-
-	public boolean addAll(int index, Collection<? extends PROXY> arg1)
-	{
-		for (PROXY proxy : arg1)
-		{
-			_wrapped.add(index++, unwrapLoadingInterface(proxy));
-		}
-		
-		return true;
 	}
 
 	public void clear()
@@ -106,49 +93,19 @@ public class LoadingList<PROXY, PERSISTENT> implements List<PROXY>
 		return _wrapped.equals(arg0);
 	}
 
-	public PROXY get(int arg0)
-	{
-		return wrap(_wrapped.get(arg0));
-	}
-
 	public int hashCode()
 	{
 		return _wrapped.hashCode();
 	}
 
-	public int indexOf(Object arg0)
-	{
-		return _wrapped.indexOf(unwrap(arg0));
-	}
-
 	public boolean isEmpty()
-	{	
+	{
 		return _wrapped.isEmpty();
 	}
 
 	public Iterator<PROXY> iterator()
 	{
 		return new LoadingIterator<PROXY, PERSISTENT>(_wrapped.iterator());
-	}
-
-	public int lastIndexOf(Object arg0)
-	{
-		return _wrapped.lastIndexOf(unwrap(arg0));
-	}
-
-	public ListIterator<PROXY> listIterator()
-	{
-		return new LoadingListIterator<PROXY, PERSISTENT>(_wrapped.listIterator());
-	}
-
-	public ListIterator<PROXY> listIterator(int arg0)
-	{
-		return new LoadingListIterator<PROXY, PERSISTENT>(_wrapped.listIterator(arg0));
-	}
-
-	public PROXY remove(int arg0)
-	{
-		return wrap(_wrapped.remove(arg0));
 	}
 
 	public boolean remove(Object arg0)
@@ -168,24 +125,14 @@ public class LoadingList<PROXY, PERSISTENT> implements List<PROXY>
 		return _wrapped.retainAll(arg0);
 	}
 
-	public PROXY set(int arg0, PROXY arg1)
-	{
-		return wrap(_wrapped.set(arg0, unwrapLoadingInterface(arg1)));
-	}
-
 	public int size()
 	{
 		return _wrapped.size();
 	}
 
-	public List<PROXY> subList(int arg0, int arg1)
-	{
-		return new LoadingList<PROXY, PERSISTENT>(_wrapped.subList(arg0, arg1));
-	}
-
 	public Object[] toArray()
 	{
-	//	Create copy array
+//		Create copy array
 	//
 		Object[] copy = (Object[])java.lang.reflect.Array.newInstance(_proxyClass, _wrapped.size());
 		
@@ -204,10 +151,9 @@ public class LoadingList<PROXY, PERSISTENT> implements List<PROXY>
 
 	public <T> T[] toArray(T[] arg0)
 	{
-		// TODO ?
 		return _wrapped.toArray(arg0);
 	}
-	
+
 	//-------------------------------------------------------------------------
 	//
 	// Internal method
@@ -253,4 +199,5 @@ public class LoadingList<PROXY, PERSISTENT> implements List<PROXY>
 			return item;
 		}
 	}
+
 }

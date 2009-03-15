@@ -1,7 +1,9 @@
 /**
  * 
  */
-package net.sf.gilead.loading.proxy;
+package net.sf.gilead.loading.proxy.wrapper;
+
+import net.sf.gilead.loading.proxy.LoadingProxyManager;
 
 /**
  * Abstract class for all loading wrapper
@@ -40,6 +42,14 @@ public abstract class LoadingWrapper
 	protected Object wrapAs(Class<?> loadingInterface, Object persistentData)
 	{
 		return LoadingProxyManager.getInstance().wrapAs(persistentData, loadingInterface);
+	}
+	
+	/**
+	 * Wrap a list of persistent object with the associated loading interface
+	 */
+	protected Object wrapCollectionAs(Class<?> loadingInterface, Object list)
+	{
+		return LoadingProxyManager.getInstance().wrapCollectionAs(list, loadingInterface);
 	}
 	
 	/**

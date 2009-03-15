@@ -48,7 +48,7 @@ public class JavassistProxyGenerator implements IServerProxyGenerator
 	/**
 	 * Log channel
 	 */
-	private static Log log = LogFactory.getLog(JavassistProxyGenerator.class);
+	private static Log _log = LogFactory.getLog(JavassistProxyGenerator.class);
 	//-------------------------------------------------------------------------
 	//
 	// Public interface
@@ -66,7 +66,7 @@ public class JavassistProxyGenerator implements IServerProxyGenerator
 		//
 			String sourceClassName = superClass.getName();
 			String proxyClassName = sourceClassName + additionalCode.getSuffix();
-			log.info("Generating server proxy " + proxyClassName + " for class " + sourceClassName);
+			_log.info("Generating server proxy " + proxyClassName + " for class " + sourceClassName);
 		
 		//	Create proxy class
 		//
