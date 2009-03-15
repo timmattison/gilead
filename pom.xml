@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sf.gilead</groupId>
 	<artifactId>gilead</artifactId>
 	<packaging>pom</packaging>
-	<version>1.2.2-SNAPSHOT</version>
+	<version>1.2.2</version>
 	<name>gilead</name>
 	<url>http://gilead.sourceforge.net/</url>
 	<description>Generic Light Entity Adapter</description>
@@ -65,7 +64,7 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<scm>
-	        <developerConnection>scm:svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/trunk/</developerConnection>
+	        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/components/releases/Maintenance release</developerConnection>
 	</scm>
 	<dependencyManagement>
 		<dependencies>
