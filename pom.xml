@@ -4,7 +4,7 @@
 	<groupId>net.sf.gilead</groupId>
 	<artifactId>gilead</artifactId>
 	<packaging>pom</packaging>
-	<version>1.2.2-SNAPSHOT</version>
+	<version>1.2.2</version>
 	<name>gilead</name>
 	<url>http://gilead.sourceforge.net/</url>
 	<description>Generic Light Entity Adapter</description>
@@ -63,7 +63,7 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<scm>
-	     <developerConnection>scm:svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/branches/1.2</developerConnection>
+	     <developerConnection>scm:svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/tags/gilead-1.2.2</developerConnection>
 	</scm>
 	<dependencyManagement>
 		<dependencies>
