@@ -14,6 +14,8 @@ import net.sf.gilead.test.dao.IUserDAO;
 import net.sf.gilead.test.domain.interfaces.IMessage;
 import net.sf.gilead.test.domain.interfaces.IUser;
 import net.sf.gilead.test.domain.misc.Configuration;
+/* import net.sf.gilead.test.domain.misc.PageElement;
+import net.sf.gilead.test.domain.misc.TextElement; */
 import net.sf.gilead.test.domain.stateless.Message;
 import net.sf.gilead.test.domain.stateless.User;
 
@@ -160,4 +162,28 @@ public class HibernateUtilTest extends TestCase
 	//
 		assertEquals(loadedPojo, hibernatePojo);
 	}
+	
+	/**
+	 * Test ID retrieving
+	 */
+	/* public final void testGetIdPageElement()
+	{
+	//	Create PageElement
+	//
+		PageElement pageElement = new PageElement();
+		pageElement.setUidPk(Long.parseLong("1"));
+		
+	//	Test ID retrieving
+	//
+		assertEquals(pageElement.getUidPk(), HibernateUtil.getInstance().getId(pageElement));
+		
+	//	Create PageElement
+	//
+		TextElement textElement = new TextElement();
+		textElement.setUidPk(Long.parseLong("1"));
+		
+	//	Test ID retrieving
+	//
+		assertEquals(textElement.getUidPk(), HibernateUtil.getInstance().getId(textElement));
+	} */
 }

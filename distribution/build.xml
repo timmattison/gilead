@@ -14,7 +14,6 @@
 	<property name="core.dir" value="../adapter-core"/>
 	<property name="core.test.dir" value="../adapter-test"/>
 	<property name="hibernate.dir" value="../hibernate-util"/>
-	<property name="hibernate-jpa.dir" value="../hibernate-jpa-util"/>
 	<property name="adapter4gwt.dir" value="../adapter4gwt"/>
 	<property name="adapter-actionscript.dir" value="../adapter-actionscript"/>
 	<property name="adapter4blazeds.dir" value="../adapter4blazeds"/>
@@ -54,8 +53,6 @@
    		 	dir="${core.dir}"/>
 		<ant antfile="${hibernate.dir}/build.xml" target="clean" 
 			dir="${hibernate.dir}"/>
-		<ant antfile="${hibernate-jpa.dir}/build.xml" target="clean" 
-			dir="${hibernate-jpa.dir}"/>
 		<ant antfile="${adapter4gwt.dir}/build.xml" target="clean" 
 			dir="${adapter4gwt.dir}"/>
 		<ant antfile="${adapter-actionscript.dir}/build.xml" target="clean" 
@@ -74,8 +71,6 @@
    		 	dir="${core.dir}"/>
 		<ant antfile="${hibernate.dir}/build.xml" target="jar" 
 			dir="${hibernate.dir}"/>
-		<ant antfile="${hibernate-jpa.dir}/build.xml" target="jar" 
-			dir="${hibernate-jpa.dir}"/>
 		<ant antfile="${adapter4gwt.dir}/build.xml" target="jar" 
 			dir="${adapter4gwt.dir}"/>
 		<ant antfile="${adapter-actionscript.dir}/build.xml" target="swc" 
@@ -98,9 +93,6 @@
 				<include name="*.jar"/>
 			</fileset>
 			<fileset dir="${hibernate.dir}/${jar.dir}">
-				<include name="*.jar"/>
-			</fileset>
-			<fileset dir="${hibernate-jpa.dir}/${jar.dir}">
 				<include name="*.jar"/>
 			</fileset>
 			<fileset dir="${adapter4gwt.dir}/${jar.dir}">
@@ -131,16 +123,6 @@
 		<copy todir="${output.dir}/hibernate-util"
 			  includeemptydirs="false">
 			<fileset dir="${hibernate.dir}">
-				<include name="**/*"/>
-				<exclude name="**/bin/**/*"/>
-				<exclude name="**/${build.dir}/**/*"/>
-				<exclude name="**/${jar.dir}/**/*"/>
-			</fileset>
-		</copy>
-
-		<copy todir="${output.dir}/hibernate-jpa-util"
-			  includeemptydirs="false">
-			<fileset dir="${hibernate-jpa.dir}">
 				<include name="**/*"/>
 				<exclude name="**/bin/**/*"/>
 				<exclude name="**/${build.dir}/**/*"/>
@@ -205,9 +187,6 @@
 				<include name="**/*.java"/>
 			</fileset>
 			<fileset dir="${hibernate.dir}/${src.dir}">
-				<include name="**/*.java"/>
-			</fileset>
-			<fileset dir="${hibernate-jpa.dir}/${src.dir}">
 				<include name="**/*.java"/>
 			</fileset>
 			<fileset dir="${adapter4gwt.dir}/${src.dir}">

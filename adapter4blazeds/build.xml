@@ -13,7 +13,6 @@
 	
 	<property name="core.dir" value="../adapter-core"/>
 	<property name="hibernate.dir" value="../hibernate-util"/>
-	<property name="hibernate-jpa.dir" value="../hibernate-jpa-util"/>
 	
 	<!-- Classpath -->
     <path id="project.classpath">
@@ -30,11 +29,6 @@
     	<fileset dir="${hibernate.dir}">
 	        <include name="**/*.jar" />
     	</fileset>
-	
-	
-		<fileset dir="${hibernate-jpa.dir}">
-	        <include name="**/*.jar" />
-    	</fileset>
 		
     </path>
 	
@@ -44,8 +38,6 @@
     	    dir="${core.dir}"/>
     	<ant antfile="${hibernate.dir}/build.xml" target="jar" 
     	     dir="${hibernate.dir}"/>
-    	<ant antfile="${hibernate-jpa.dir}/build.xml" target="jar" 
-    	     dir="${hibernate-jpa.dir}"/>
     	    	
         <mkdir dir="${build.dir}"/>
     </target>

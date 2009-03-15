@@ -65,7 +65,7 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	{
 		_proxyInformations = informations;
 	}
-
+	
 	//-------------------------------------------------------------------------
 	//
 	// Constructor

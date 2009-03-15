@@ -13,8 +13,8 @@
 	<version>1.2.2-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
-		        <groupId>org.springframework</groupId>
-		        <artifactId>spring</artifactId>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>

@@ -16,7 +16,6 @@
 
 package net.sf.gilead.core.beanlib.clone;
 
-import net.sf.beanlib.BeanlibException;
 import net.sf.beanlib.hibernate3.Hibernate3JavaBeanReplicator;
 import net.sf.beanlib.spi.BeanTransformerSpi;
 import net.sf.beanlib.spi.replicator.BeanReplicatorSpi;
@@ -24,6 +23,9 @@ import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.beanlib.IClassMapper;
 import net.sf.gilead.core.beanlib.merge.BeanlibThreadLocal;
 import net.sf.gilead.core.beanlib.merge.MergeClassBeanReplicator;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Bean replicator with different from and to classes for clone operation
@@ -35,6 +37,11 @@ public class CloneClassBeanReplicator extends Hibernate3JavaBeanReplicator
 	//---
 	// Attributes
 	//---
+	/**
+	 * Log channel
+	 */
+	private static Log _log = LogFactory.getLog(CloneClassBeanReplicator.class);
+	
 	/**
 	 * The class mapper (can be null)
 	 */
@@ -141,7 +148,18 @@ public class CloneClassBeanReplicator extends Hibernate3JavaBeanReplicator
         //
         	if (targetClass != null)
         	{
+        		if (_log.isDebugEnabled())
+        		{
+        			_log.debug("Class mapper : from " + from.getClass() + " to " + targetClass);
+        		}
         		toClass = targetClass;
+        	}
+        	else
+        	{
+        		if (_log.isDebugEnabled())
+        		{
+        			_log.debug("Class mapper : no target class for " + from.getClass());
+        		}
         	}
         	
         }

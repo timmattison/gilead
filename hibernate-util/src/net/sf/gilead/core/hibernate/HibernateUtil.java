@@ -1,7 +1,6 @@
 package net.sf.gilead.core.hibernate;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.Map.Entry;
 
 import net.sf.beanlib.hibernate.UnEnhancer;
@@ -33,6 +34,8 @@ import org.hibernate.collection.PersistentCollection;
 import org.hibernate.collection.PersistentList;
 import org.hibernate.collection.PersistentMap;
 import org.hibernate.collection.PersistentSet;
+import org.hibernate.collection.PersistentSortedMap;
+import org.hibernate.collection.PersistentSortedSet;
 import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
@@ -152,7 +155,7 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 		//	Probably a Spring injected session factory
 		//
-			sessionFactory = searchHibernateImplementation(sessionFactory);
+			sessionFactory = (SessionFactory) IntrospectionHelper.searchMember(SessionFactoryImpl.class, sessionFactory);
 			if (sessionFactory == null)
 			{
 				throw new IllegalArgumentException("Cannot find Hibernate session factory implementation !");
@@ -228,7 +231,7 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Retrieve Class<?> hibernate metadata
 	//
-		ClassMetadata hibernateMetadata = _sessionFactory.getClassMetadata(hibernateClass);
+		ClassMetadata hibernateMetadata = _sessionFactory.getClassMetadata(getEntityName(hibernateClass));
 		if (hibernateMetadata == null)
 		{
 		//	Component class (persistent but not metadata) : no associated id
@@ -495,7 +498,7 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Create the associated proxy
 	//
-		return session.load(persistentClass, id);
+		return session.load(getEntityName(persistentClass), id);
 	}
 
 	/*
@@ -570,8 +573,8 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Get added and deleted items
 	//
-		Collection<?> deletedItems = addDeletedItems(proxyInformations, underlyingCollection);
 		Object addedItems = removeNewItems(proxyInformations, underlyingCollection);
+		Collection<?> deletedItems = addDeletedItems(proxyInformations, underlyingCollection);
 		
 	//	Create collection for the class name
 	//
@@ -620,6 +623,20 @@ public class HibernateUtil implements IPersistenceUtil
 						 				 	   (Set<?>) underlyingCollection);
 			}
 		}
+		else if (PersistentSortedSet.class.getName().equals(className))
+		{
+		//	Persistent sorted set creation
+		//
+			if (underlyingCollection == null)
+			{
+				collection = new PersistentSortedSet((SessionImpl) session);
+			}
+			else
+			{
+				collection = new PersistentSortedSet((SessionImpl) session,
+						 				 	   		 (SortedSet<?>) underlyingCollection);
+			}
+		}
 		else if (PersistentMap.class.getName().equals(className))
 		{
 		//	Persistent map creation
@@ -632,6 +649,20 @@ public class HibernateUtil implements IPersistenceUtil
 			{
 				collection = new PersistentMap((SessionImpl) session,
 						 				 	   (Map<?, ?>) underlyingCollection);
+			}
+		}
+		else if (PersistentSortedMap.class.getName().equals(className))
+		{
+		//	Persistent map creation
+		//
+			if (underlyingCollection == null)
+			{
+				collection = new PersistentSortedMap((SessionImpl) session);
+			}
+			else
+			{
+				collection = new PersistentSortedMap((SessionImpl) session,
+						 				 	   		 (SortedMap<?, ?>) underlyingCollection);
 			}
 		}
 		else
@@ -757,9 +788,14 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Get associated metadata
 	//
-		ClassMetadata metadata = _sessionFactory.getClassMetadata(clazz);
+		ClassMetadata metadata = _sessionFactory.getClassMetadata(getEntityName(clazz));
 		if (metadata == null)
 		{
+			Map<Object, Object> all = _sessionFactory.getAllClassMetadata();
+			for (Map.Entry<Object,Object> entry : all.entrySet())
+			{
+				_log.info(entry.getKey() + " : " + entry.getValue());
+			}
 		//	Not persistent : check implemented interfaces (they can be declared as persistent !!)
 		//
 			Class<?>[] interfaces = clazz.getInterfaces();
@@ -916,54 +952,6 @@ public class HibernateUtil implements IPersistenceUtil
 	}
 	
 	/**
-	 * Seach the underlying Hibernate session factory implementation.
-	 * @param object
-	 * @return the session factory if found, null otherwise
-	 */
-	private static SessionFactoryImpl searchHibernateImplementation(Object object)
-	{
-	//	Precondition checking
-	//
-		if ((object == null) ||
-			(object.getClass().getName().startsWith("java.")))
-		{
-			return null;
-		}
-	//	Iterate over fields
-	//
-		Field[] fields = IntrospectionHelper.getRecursiveDeclaredFields(object.getClass());
-		for (Field field : fields)
-		{
-		//	Check current value 
-		//
-			field.setAccessible(true);
-			try
-			{
-				Object value = field.get(object);
-				if (value instanceof SessionFactoryImpl)
-				{
-					return (SessionFactoryImpl) value;
-				}
-				value = searchHibernateImplementation(value);
-				if (value != null)
-				{
-					return (SessionFactoryImpl) value;
-				}
-			}
-			catch (Exception e)
-			{
-			//	Should not happen
-			//
-				e.printStackTrace();
-			}
-		}
-		
-	//	Session Factory not found
-	//
-		return null;
-	}
-	
-	/**
 	 * Create a list of serializable ID for the argument collection
 	 * @param collection
 	 * @return
@@ -977,14 +965,20 @@ public class HibernateUtil implements IPersistenceUtil
 		while(iterator.hasNext())
 		{
 			Object item = iterator.next();
+			
+			SerializableId id = new SerializableId();
+			id.setClassName(item.getClass().getName());
+			
 			if (isPersistentPojo(item))
 			{
-				SerializableId id = new SerializableId();
 				id.setId(getId(item));
-				id.setClassName(item.getClass().getName());
-			
-				idList.add(id);
 			}
+			else
+			{
+				id.setHashCode(item.hashCode());
+			}
+			
+			idList.add(id);
 		}
 		
 		if (idList.isEmpty())
@@ -1039,9 +1033,16 @@ public class HibernateUtil implements IPersistenceUtil
 					Class<?> itemClass = Thread.currentThread().getContextClassLoader().loadClass(sid.getClassName());
 					itemClass = UnEnhancer.unenhanceClass(itemClass);
 					
-					deleted.object = session.load(itemClass, sid.getId());
-					deleted.index = idList.indexOf(sid);
-					deletedItems.add(deleted);
+					if (sid.getId() != null)
+					{
+						deleted.object = session.load(getEntityName(itemClass), sid.getId());
+						deleted.index = idList.indexOf(sid);
+						deletedItems.add(deleted);
+					}
+					else
+					{
+						// TODO non persistent entity handling ?
+					}
 				}
 				catch(Exception e)
 				{
@@ -1108,35 +1109,58 @@ public class HibernateUtil implements IPersistenceUtil
                 {
                 //    New item
                 //
-                	if (_log.isDebugEnabled())
-    				{
-    					_log.debug("New item " + currentItem);
-    				}
-                	NewItem newItem = new NewItem();
-                	newItem.object = currentItem;
-                	
-                	if (collection instanceof List)
-                	{
-                		newItem.index = ((List)collection).indexOf(currentItem);
-                	}
-                	addedItems.add(newItem);
+                	addedItems.add(createNewItem(currentItem, collection));
                 }
             }
             catch(TransientObjectException ex)
             {
-                // Transient objet, must have been added
-            	if (_log.isDebugEnabled())
-				{
-            		_log.debug("New item " + currentItem);
-				}
-            	NewItem newItem = new NewItem();
-            	newItem.object = currentItem;
-            	
-            	if (collection instanceof List)
-            	{
-            		newItem.index = ((List)collection).indexOf(currentItem);
-            	}
-            	addedItems.add(newItem);
+                // Transient objet
+            	int hashCode = currentItem.hashCode();
+                
+            //  Search this iitem in id list
+            //
+                boolean found = false;
+                for (SerializableId sid : idList)
+                {
+                    if ((sid.getHashCode() != null) &&
+                    	(sid.getHashCode() == hashCode))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+               
+                if (found == false)
+                {
+                //    New item
+                //
+                	addedItems.add(createNewItem(currentItem, collection));
+                }
+            }
+            catch(NotPersistentObjectException ex2)
+            {
+            	// Non persistent objet
+            	int hashCode = currentItem.hashCode();
+            
+            //  Search this iitem in id list
+            //
+                boolean found = false;
+                for (SerializableId sid : idList)
+                {
+                	if ((sid.getHashCode() != null) &&
+                        (sid.getHashCode() == hashCode))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+               
+                if (found == false)
+                {
+                //    New item
+                //
+                	addedItems.add(createNewItem(currentItem, collection));
+                }
             }
         }
        
@@ -1152,6 +1176,28 @@ public class HibernateUtil implements IPersistenceUtil
 			}
             return addedItems;
         }
+    }
+    
+    /**
+     * Create a new item
+     * @param currentItem the current added item
+     * @param mergedCollection the merged collection
+     * @return the created new item descriptor
+     */
+    private NewItem createNewItem(Object currentItem, Collection<?> mergedCollection)
+    {
+    	if (_log.isDebugEnabled())
+		{
+    		_log.debug("New item " + currentItem);
+		}
+    	NewItem newItem = new NewItem();
+    	newItem.object = currentItem;
+    	
+    	if (mergedCollection instanceof List)
+    	{
+    		newItem.index = ((List<?>)mergedCollection).indexOf(currentItem);
+    	}
+    	return newItem;
     }
 
 	/**
@@ -1259,47 +1305,50 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 			Collection<?> collection = (Collection<?>) underlyingCollection;
 			ArrayList<SerializableId> idList = (ArrayList<SerializableId>) proxyInformations.get(ID_LIST);
-			if (idList != null)
+			if (idList == null)
 			{
-				List<NewItem> newItemList = getNewItemsForCollection(collection, idList);
-				
-				if (newItemList != null)
-				{
-				//	Remove new items from the underlying collection so the persistent collection
-				//	snapshot is created properly, then marked as dirty
-				//	and new items will be added to db
-				//
-					for (NewItem item : newItemList)
-					{
-						collection.remove(item.object);
-					}
-				}
-				
-				return newItemList;
+				idList = new ArrayList<SerializableId>();
 			}
+			List<NewItem> newItemList = getNewItemsForCollection(collection, idList);
+			
+			if (newItemList != null)
+			{
+			//	Remove new items from the underlying collection so the persistent collection
+			//	snapshot is created properly, then marked as dirty
+			//	and new items will be added to db
+			//
+				for (NewItem item : newItemList)
+				{
+					collection.remove(item.object);
+				}
+			}
+			
+			return newItemList;
 		}
 		else if (underlyingCollection instanceof Map)
 		{
 			Map map = (Map) underlyingCollection;
 			ArrayList<SerializableId> idList = (ArrayList<SerializableId>) proxyInformations.get(ID_LIST);
-			if (idList != null)
+			if (idList == null)
 			{
-			//	Find new keys
-			//
-				List<NewItem> newKeyList = getNewItemsForCollection(map.keySet(), idList);
-				Map newItemMap = new HashMap();
-				if (newKeyList != null)
-				{
-				//	Remove new keys
-				//
-					for (NewItem key : newKeyList)
-					{
-						newItemMap.put(key.object, map.get(key.object));
-						map.remove(key);
-					}
-				}
-				return newItemMap;
+				idList = new ArrayList<SerializableId>();
 			}
+			
+		//	Find new keys
+		//
+			List<NewItem> newKeyList = getNewItemsForCollection(map.keySet(), idList);
+			Map newItemMap = new HashMap();
+			if (newKeyList != null)
+			{
+			//	Remove new keys
+			//
+				for (NewItem key : newKeyList)
+				{
+					newItemMap.put(key.object, map.get(key.object));
+					map.remove(key.object);
+				}
+			}
+			return newItemMap;
 		}
 		
 		return null;
@@ -1321,18 +1370,19 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Get unsaved value from entity metamodel
 	//
-		EntityPersister entityPersister = _sessionFactory.getEntityPersister(persistentClass.getName());
+		EntityPersister entityPersister = _sessionFactory.getEntityPersister(getEntityName(persistentClass));
 		EntityMetamodel metamodel = entityPersister.getEntityMetamodel();
 		IdentifierProperty idProperty = metamodel.getIdentifierProperty();
+		Boolean result = idProperty.getUnsavedValue().isUnsaved(id);
 		
-		if (idProperty != null)
+		if (result == null)
 		{
-			return idProperty.getUnsavedValue().isUnsaved(id);
+			// Unsaved value undefined
+			return false;
 		}
 		else
 		{
-			// do not know what to do...
-			return id.toString().equals("0");
+			return result.booleanValue();
 		}
 	}
 	
@@ -1351,6 +1401,32 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 			return pojo.getClass();
 		}
+	}
+	
+	/**
+	 * Get Hibernate class metadata
+	 * @param clazz
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private String getEntityName(Class<?> clazz)
+	{
+	//	Iterate over all metadata to prevent entity name bug
+	//	(if entity-name is redefined in mapping file, it is not found with
+	//	_sessionFatory.getClassMetada(clazz); !)
+	//
+		Map<String, ClassMetadata> allMetadata = _sessionFactory.getAllClassMetadata();
+		for (ClassMetadata classMetadata : allMetadata.values())
+		{
+			if (clazz.equals(classMetadata.getMappedClass(EntityMode.POJO)))
+			{
+				return classMetadata.getEntityName();
+			}
+		}
+		
+	//	Not found
+	//
+		return null;
 	}
 }
 

@@ -3,14 +3,17 @@
 	<!-- Inherit the core Web Toolkit stuff.                  -->
 	<inherits name='com.google.gwt.user.User'/>
 	<inherits name='net.sf.gilead.Adapter4Gwt15'/>
+	<inherits name='net.sf.gilead.emul.java5.ejb3.Ejb3' /> 
 
 	<!-- Source path -->
 	<source path="test/domain/stateless"/>
 	<source path="test/domain/stateful"/>
+	<source path="test/domain/annotated"/>
 	<source path="test/domain/interfaces"/>
-	<source path="performance/gwt"/>
+	<source path="performance/gwt/client"/>
   
   	<!-- Servlets -->
-  	<servlet path="/StatelessPerformanceService" class="net.sf.gilead.performance.StatelessPerformanceServiceImpl"/>
-  	<servlet path="/StatefulPerformanceService" class="net.sf.gilead.performance.StatefulPerformanceServiceImpl"/>
+  	<servlet path="/StatelessPerformanceService" class="net.sf.gilead.performance.gwt.server.StatelessPerformanceServiceImpl"/>
+  	<servlet path="/StatefulPerformanceService" class="net.sf.gilead.performance.gwt.server.StatefulPerformanceServiceImpl"/>
+  	<servlet path="/Java5PerformanceService" class="net.sf.gilead.performance.gwt.server.Java5PerformanceServiceImpl"/>
 </module>

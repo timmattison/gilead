@@ -56,4 +56,11 @@ public interface IProxyStore
 	 * @return the proxy informations if they exists, null otherwise
 	 */
 	public Map<String, Serializable> getProxyInformations(Object pojo, String property);
+	
+
+	/**
+	 * Clean up the proxy store after a complete serialization process
+	 */
+	public void cleanUp();
+	
 }

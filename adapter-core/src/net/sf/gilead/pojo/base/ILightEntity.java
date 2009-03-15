@@ -25,14 +25,8 @@ import java.util.Map;
  */
 public interface ILightEntity
 {
-	//-----
-	// Constant
-	//----
-	/**
-	 * Key value for the proxy initialisation information
-	 */
-	public static final String INITIALISED = "initialised";
-	
+	public static final String INITIALISED = "initialized";
+
 	//-------------------------------------------------------------------------
 	//
 	// Public interface

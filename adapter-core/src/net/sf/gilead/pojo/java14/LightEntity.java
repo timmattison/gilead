@@ -47,7 +47,7 @@ public abstract class LightEntity implements ILightEntity, IServerProxyGenerator
 	 * @gwt.typeArgs <java.lang.String, java.lang.String>
 	 */
 	protected Map _proxyInformations;
-	
+
 	//----
 	// Properties
 	//----

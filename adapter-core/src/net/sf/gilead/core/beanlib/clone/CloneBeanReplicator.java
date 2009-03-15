@@ -22,11 +22,11 @@ import net.sf.beanlib.hibernate3.Hibernate3BlobReplicator;
 import net.sf.beanlib.hibernate3.Hibernate3CollectionReplicator;
 import net.sf.beanlib.hibernate3.Hibernate3MapReplicator;
 import net.sf.beanlib.provider.collector.PrivateSetterMethodCollector;
-import net.sf.beanlib.provider.finder.PrivateReaderMethodFinder;
 import net.sf.beanlib.spi.BeanTransformerSpi;
 import net.sf.beanlib.spi.CustomBeanTransformerSpi;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.beanlib.IClassMapper;
+import net.sf.gilead.core.beanlib.finder.FastPrivateReaderMethodFinder;
 import net.sf.gilead.core.beanlib.transformer.CustomTransformersFactory;
 import net.sf.gilead.core.store.IProxyStore;
 
@@ -85,7 +85,7 @@ public class CloneBeanReplicator extends HibernateBeanReplicator
 	//	Protected and private setter collection
 	//
     	transformer.initSetterMethodCollector(PrivateSetterMethodCollector.inst);
-    	transformer.initReaderMethodFinder(PrivateReaderMethodFinder.inst);
+    	transformer.initReaderMethodFinder(FastPrivateReaderMethodFinder.inst);
     	
         return transformer;
     }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package net.sf.gilead.performance.gwt;
+package net.sf.gilead.performance.gwt.client;
 
 import net.sf.gilead.test.domain.interfaces.IUser;
 
@@ -52,6 +52,13 @@ public class GwtPerformanceTest extends GWTTestCase
 		testLoadUserAndMessages("/StatelessPerformanceService");
 	}
 	
+	/**
+	 * Test clone user and messages with Java5 annotations
+	 */
+	public void testJava5CloneUserAndMessage()
+	{
+		testLoadUserAndMessages("/Java5PerformanceService");
+	}
 	
 	//-------------------------------------------------------------------------
 	//
@@ -103,7 +110,7 @@ public class GwtPerformanceTest extends GWTTestCase
 
 		// Set a delay period significantly longer than the
 		// event is expected to take.
-		delayTestFinish(5000);
+		delayTestFinish(500000);
 
 		// Schedule the event and return control to the test system.
 		timer.schedule(100);

@@ -22,6 +22,9 @@
         <!-- Print SQL to stdout. -->
         <property name="show_sql">false</property>
         
+        <!-- Disable batch for HSQLDB  -->
+        <property name="jdbc.batch_size">0</property>
+        
         <!-- Drop and then re-create schema on SessionFactory build, for testing. -->
         <property name="hbm2ddl.auto">create-drop</property>
     

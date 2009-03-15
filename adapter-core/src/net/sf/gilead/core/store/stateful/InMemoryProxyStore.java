@@ -20,18 +20,13 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.gilead.core.IPersistenceUtil;
-import net.sf.gilead.core.store.IProxyStore;
-import net.sf.gilead.exception.NotPersistentObjectException;
-import net.sf.gilead.exception.TransientObjectException;
-
 /**
  * In Memory Proxy Information Store.
  * This class stores POJO in a simple hashmap
  * @author bruno.marchesson
  *
  */
-public class InMemoryProxyStore implements IProxyStore
+public class InMemoryProxyStore extends AbstractStatefulProxyStore
 {
 	//----
 	// Attributes
@@ -41,105 +36,28 @@ public class InMemoryProxyStore implements IProxyStore
 	 */
 	protected Map<String, Map<String, Serializable>> _map = 
 										new HashMap<String, Map<String,Serializable>>();
-	
-	/**
-	 * The associated persistence util
-	 */
-	protected IPersistenceUtil _persistenceUtil;
-	
-	//----
-	// Properties
-	//----
-	/**
-	 * @return the persistence Util implementation
-	 */
-	public IPersistenceUtil getPersistenceUtil() {
-		return _persistenceUtil;
+
+	//-------------------------------------------------------------------------
+	//
+	// Abstract stateful proxy store implementation
+	//
+	//-------------------------------------------------------------------------
+	@Override
+	protected void delete(String key)
+	{
+		_map.remove(key);
 	}
 
-	/**
-	 * @param persistenceUtil the persistence Util to set
-	 */
-	public void setPersistenceUtil(IPersistenceUtil persistenceUtil) {
-		this._persistenceUtil = persistenceUtil;
-	}
-	
-	//-------------------------------------------------------------------------
-	//
-	// IProxyStore implementation
-	//
-	//-------------------------------------------------------------------------
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.gilead.core.store.IProxyStore#storeProxyInformations(java.lang.Object, java.lang.String, java.util.Map)
-	 */
-	public void storeProxyInformations(Object cloneBean, Object persistentBean, 
-									   String property,
-									   Map<String, Serializable> proxyInformations)
+	@Override
+	protected Map<String, Serializable> get(String key)
 	{
-		Serializable id = UniqueNameGenerator.getUniqueId(_persistenceUtil, persistentBean);
-		_map.put(computeKey(cloneBean, id, property), 
-					 proxyInformations);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.gilead.core.store.IProxyStore#getProxyInformations(java.lang.Object, java.lang.String)
-	 */
-	public Map<String, Serializable> getProxyInformations(Object pojo,
-														  String property)
-    {
-		try
-		{
-			return _map.get(computeKey(pojo, property));
-		}
-		catch(TransientObjectException ex)
-		{
-			return null;
-		}
-		catch (NotPersistentObjectException e)
-		{
-			return null;
-		}
+		return _map.get(key);
 	}
 
-
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.gilead.core.store.IProxyStore#removeProxyInformations(java.lang.Object, java.lang.String)
-	 */
-	public void removeProxyInformations(Object pojo, String property)
+	@Override
+	protected void store(String key, Map<String, Serializable> proxyInformation)
 	{
-		_map.remove(computeKey(pojo, property));
-	}
-	
-	//-------------------------------------------------------------------------
-	//
-	// Internal methods
-	//
-	//-------------------------------------------------------------------------
-	/**
-	 * Compute the hashmap key
-	 * @param pojo
-	 * @param property
-	 * @return
-	 */
-	protected String computeKey(Object pojo, Serializable id, String property)
-	{
-		Class<?> pojoClass = _persistenceUtil.getUnenhancedClass(pojo.getClass());
-		return UniqueNameGenerator.generateUniqueName(id, pojoClass) + '.' + property;
-	}
-	
-	/**
-	 * Compute the hashmap key
-	 * @param pojo
-	 * @param property
-	 * @return
-	 */
-	protected String computeKey(Object pojo, String property)
-	{
-		return UniqueNameGenerator.generateUniqueName(_persistenceUtil, pojo) + '.' + property;
+		_map.put(key, proxyInformation);
 	}
 	
 }
