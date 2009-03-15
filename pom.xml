@@ -14,7 +14,6 @@
 		<module>adapter-test</module>
 		<module>adapter4blazeds</module>
 		<module>adapter4gwt</module>
-		<!--module>hibernate-jpa-util</module-->
 		<module>hibernate-util</module>
 		<module>comet4gwt</module>
 	</modules>
@@ -75,11 +74,6 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>hibernate-util</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>hibernate-jpa-util</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
