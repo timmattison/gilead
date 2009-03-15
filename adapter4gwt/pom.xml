@@ -2,14 +2,14 @@
 	<parent>
 		<artifactId>gilead</artifactId>
 		<groupId>net.sf.gilead</groupId>
-		<version>1.2.2-SNAPSHOT</version>
+		<version>1.2.2</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>${parent.groupId}</groupId>
 	<artifactId>adapter4gwt</artifactId>
 	<name>adapter4gwt</name>
-	<version>1.2.2-SNAPSHOT</version>
+	<version>1.2.2</version>
 	<profiles>
 		<profile>
 			<id>gwt-1.4-mac</id>
