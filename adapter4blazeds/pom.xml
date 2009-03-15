@@ -2,14 +2,14 @@
 	<parent>
 		<artifactId>gilead</artifactId>
 		<groupId>net.sf.gilead</groupId>
-		<version>1.2.2</version>
+		<version>1.2.2-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>${parent.groupId}</groupId>
 	<artifactId>adapter4blazeds</artifactId>
 	<name>adapter4blazeds</name>
-	<version>1.2.2</version>
+	<version>${parent.version}</version>
 	<dependencies>
 		<dependency>
 			<groupId>${parent.groupId}</groupId>
