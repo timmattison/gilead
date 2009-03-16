@@ -769,6 +769,12 @@ public class PersistentBeanManager
 				//
 					propertyClass  = ((IndexedPropertyDescriptor) descriptor).getPropertyType();
 				}
+				if (propertyClass == null)
+				{
+				//	Can do nothing with this...
+				//
+					continue;
+				}
 				
 				// Check needed for collection or property declared as bare Object
 				boolean isCollection = Collection.class.isAssignableFrom(propertyClass) ||
