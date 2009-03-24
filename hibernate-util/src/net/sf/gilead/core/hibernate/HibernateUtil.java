@@ -716,7 +716,16 @@ public class HibernateUtil implements IPersistenceUtil
 				List<Object> collectionList = (List<Object>) collection;
 				for (NewItem key : (List<NewItem>)addedItems)
 				{
-					collectionList.add(key.index, key.object);
+					if (key.index < collectionList.size())
+					{
+						collectionList.add(key.index, key.object);
+					}
+					else
+					{
+					//	There have been deleted items : add it at the end of the collection
+					//
+						collectionList.add(key.object);
+					}
 				}
 			}
 			else if (collection instanceof Collection)
