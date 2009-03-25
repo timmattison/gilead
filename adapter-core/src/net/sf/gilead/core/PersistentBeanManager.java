@@ -749,7 +749,8 @@ public class PersistentBeanManager
 				}
 			}
 			
-			if ((_persistenceUtil.isPersistentClass(pojoClass) == true) ||
+			if ((_persistenceUtil.isEnhanced(pojoClass) == true) ||
+				(_persistenceUtil.isPersistentClass(pojoClass) == true) ||
 				(_persistenceUtil.isPersistentCollection(pojoClass) == true))
 			{
 				return true;
@@ -823,43 +824,40 @@ public class PersistentBeanManager
 				
 			//	Check property value
 			//
-				if (propertyValue != null)
+				if (propertyValue instanceof Collection<?>)
 				{
-					if (propertyValue instanceof Collection<?>)
+				//	Check collection values
+				//
+					Collection<?> propertyCollection = (Collection<?>)propertyValue;
+					for(Object value : propertyCollection)
 					{
-					//	Check collection values
-					//
-						Collection<?> propertyCollection = (Collection<?>)propertyValue;
-						for(Object value : propertyCollection)
-						{
-							if (holdPersistentObject(value, alreadyChecked) == true)
-							{
-								return true;
-							}
-						}
-					}
-					else if (propertyValue instanceof Map<?, ?>)
-					{
-					//	Check map entry and values
-					//
-						Map<?,?> propertyMap = (Map<?, ?>) propertyValue;
-						for(Map.Entry<?, ?> value : propertyMap.entrySet())
-						{
-							if ((holdPersistentObject(value.getKey(), alreadyChecked) == true) ||
-								(holdPersistentObject(value.getValue(), alreadyChecked) == true))
-							{
-								return true;
-							}
-						}
-					}
-					else
-					{
-					//	Recursive search
-					//
-						if (holdPersistentObject(propertyValue, alreadyChecked) == true)
+						if (holdPersistentObject(value, alreadyChecked) == true)
 						{
 							return true;
 						}
+					}
+				}
+				else if (propertyValue instanceof Map<?, ?>)
+				{
+				//	Check map entry and values
+				//
+					Map<?,?> propertyMap = (Map<?, ?>) propertyValue;
+					for(Map.Entry<?, ?> value : propertyMap.entrySet())
+					{
+						if ((holdPersistentObject(value.getKey(), alreadyChecked) == true) ||
+							(holdPersistentObject(value.getValue(), alreadyChecked) == true))
+						{
+							return true;
+						}
+					}
+				}
+				else
+				{
+				//	Recursive search
+				//
+					if (holdPersistentObject(propertyValue, alreadyChecked) == true)
+					{
+						return true;
 					}
 				}
 			}
