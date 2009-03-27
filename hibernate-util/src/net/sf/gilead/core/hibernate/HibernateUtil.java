@@ -967,6 +967,13 @@ public class HibernateUtil implements IPersistenceUtil
 	 */
 	private ArrayList<SerializableId> createIdList(Collection collection)
 	{
+	//	Precondition checking
+	//
+		if (collection == null)
+		{
+			return null;
+		}
+		
 		int size = collection.size();
 		ArrayList<SerializableId> idList = new ArrayList<SerializableId>(size);
 		
