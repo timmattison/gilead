@@ -10,6 +10,6 @@
 	<classpathentry kind="lib" path="lib/spring/spring-2.5.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/adapter-core"/>
 	<classpathentry kind="lib" path="/adapter-core/lib/commons-logging-1.1.jar"/>
-	<classpathentry kind="lib" path="/adapter-core/lib/beanlib-hibernate-3.3.0beta21c.jar"/>
+	<classpathentry kind="lib" path="/adapter-core/lib/beanlib-hibernate-5.0.1beta.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
