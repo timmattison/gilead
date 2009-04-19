@@ -60,7 +60,7 @@ public class SerializableIdConverter implements Converter
 		writer.endNode();
 		
 		writer.startNode("cn");
-		writer.setValue(sId.getClassName());
+		writer.setValue(sId.getEntityName());
 		writer.endNode();
 	}
 
@@ -82,7 +82,7 @@ public class SerializableIdConverter implements Converter
             }
             else if ("cn".equals(reader.getNodeName())) 
             {
-            	sId.setClassName(reader.getValue());
+            	sId.setEntityName(reader.getValue());
             }
             reader.moveUp();
         }

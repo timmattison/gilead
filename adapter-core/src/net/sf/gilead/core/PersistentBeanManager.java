@@ -328,50 +328,58 @@ public class PersistentBeanManager
 		
 	//	Precondition checking : is the pojo managed by Hibernate
 	//
-		Class<?> targetClass = pojo.getClass();
-		if (_persistenceUtil.isPersistentPojo(pojo) == true)
+		try
 		{
-		//	Assignation test
-		//
-			Class<?> hibernateClass = _persistenceUtil.getUnenhancedClass(pojo.getClass());
-			targetClass = null;
-			if (_classMapper != null)
+			Class<?> targetClass = pojo.getClass();
+			if (_persistenceUtil.isPersistentPojo(pojo) == true)
 			{
-				targetClass = _classMapper.getTargetClass(hibernateClass);
-			}
-			
-			if (targetClass == null)
-			{
-				targetClass = hibernateClass;
-			}
-			
-			if ((assignable == true) &&
-				(hibernateClass.isAssignableFrom(targetClass) == false))
-			{
-				throw new NotAssignableException(hibernateClass, targetClass);
-			}
-			
-		//	Proxy checking
-		//
-			if (_persistenceUtil.isInitialized(pojo) == false)
-			{
-			//	If the root pojo is not initialized, replace it by null
+			//	Assignation test
 			//
-				return null;
+				Class<?> hibernateClass = _persistenceUtil.getUnenhancedClass(pojo.getClass());
+				targetClass = null;
+				if (_classMapper != null)
+				{
+					targetClass = _classMapper.getTargetClass(hibernateClass);
+				}
+				
+				if (targetClass == null)
+				{
+					targetClass = hibernateClass;
+				}
+				
+				if ((assignable == true) &&
+					(hibernateClass.isAssignableFrom(targetClass) == false))
+				{
+					throw new NotAssignableException(hibernateClass, targetClass);
+				}
+				
+			//	Proxy checking
+			//
+				if (_persistenceUtil.isInitialized(pojo) == false)
+				{
+				//	If the root pojo is not initialized, replace it by null
+				//
+					return null;
+				}
 			}
-		}
-		else if (holdPersistentObject(pojo) == false)
-		{
-		//	Do not clone not persistent classes, since they do not necessary
-		//	implement Java Bean specification.
+			else if (holdPersistentObject(pojo) == false)
+			{
+			//	Do not clone not persistent classes, since they do not necessary
+			//	implement Java Bean specification.
+			//
+				_log.info("Third party instance, not cloned : " + pojo.toString());
+				return pojo;
+			}
+			
+		//	Clone the pojo
 		//
-			_log.info("Third party instance, not cloned : " + pojo.toString());
-			return pojo;
+			return _lazyKiller.detach(pojo, targetClass);
 		}
-		
-	//	Clone the pojo
-	//
-		return _lazyKiller.detach(pojo, targetClass);
+		finally
+		{
+			_persistenceUtil.closeCurrentSession();
+			_proxyStore.cleanUp();
+		}
 	}
 	
 	/**
@@ -451,7 +459,6 @@ public class PersistentBeanManager
 	//
 		try
 		{
-			_persistenceUtil.openSession();
 			Serializable id = null;
 			try
 			{

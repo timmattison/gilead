@@ -28,9 +28,9 @@ public class SerializableId implements Serializable
 	protected Integer hashCode;
 	
 	/**
-	 * The associated class name
+	 * The associated entity name
 	 */
-	protected String className;
+	protected String entityName;
 
 	//----
 	// Properties
@@ -64,17 +64,17 @@ public class SerializableId implements Serializable
 	}
 
 	/**
-	 * @return the className
+	 * @return the entity Name
 	 */
-	public String getClassName() {
-		return className;
+	public String getEntityName() {
+		return entityName;
 	}
 
 	/**
-	 * @param className the className to set
+	 * @param entityName the entity Name to set
 	 */
-	public void setClassName(String className) {
-		this.className = className;
+	public void setEntityName(String entityName) {
+		this.entityName = entityName;
 	}
 	
 	//-------------------------------------------------------------------------
@@ -91,7 +91,7 @@ public class SerializableId implements Serializable
 			return false;
 		}
 		
-		if (className.equals(((SerializableId)other).className) == false)
+		if (entityName.equals(((SerializableId)other).entityName) == false)
 		{
 			return false;
 		}
