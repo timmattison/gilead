@@ -30,16 +30,6 @@ import net.sf.gilead.util.IntrospectionHelper;
  */
 public class FastPrivateReaderMethodFinder implements BeanMethodFinder
 {
-	/**
-	 * The unique instance of the finder
-	 */
-	public static final FastPrivateReaderMethodFinder inst = new FastPrivateReaderMethodFinder();
-	
-	/**
-	 * Private constructor
-	 */
-	FastPrivateReaderMethodFinder() {}
-	
 	//-------------------------------------------------------------------------
 	//
 	// BeanMethodFinder implementation

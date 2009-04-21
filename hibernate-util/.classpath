@@ -2,14 +2,14 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/hibernate3.jar" sourcepath="C:/GWT/hibernate3.2/src"/>
+	<classpathentry kind="lib" path="lib/hibernate3.jar" sourcepath="D:/OpenSource/hibernate/3.3.1/core/src/main/java"/>
+	<classpathentry kind="lib" path="lib/spring/spring-2.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/jpa/ejb3-persistence.jar"/>
 	<classpathentry kind="lib" path="lib/jpa/hibernate-entitymanager.jar"/>
-	<classpathentry kind="lib" path="lib/jbossas/jboss-jpa-deployers.jar"/>
 	<classpathentry kind="lib" path="lib/jbossas/jboss-ejb3-core.jar"/>
-	<classpathentry kind="lib" path="lib/spring/spring-2.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/jbossas/jboss-jpa-deployers.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/adapter-core"/>
 	<classpathentry kind="lib" path="/adapter-core/lib/commons-logging-1.1.jar"/>
-	<classpathentry kind="lib" path="/adapter-core/lib/beanlib-hibernate-3.3.0beta21c.jar"/>
+	<classpathentry kind="lib" path="/adapter-core/lib/beanlib-hibernate-5.0.1beta.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

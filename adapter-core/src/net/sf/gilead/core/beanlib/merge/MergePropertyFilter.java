@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 
-import net.sf.beanlib.spi.DetailedBeanPopulatable;
+import net.sf.beanlib.spi.DetailedPropertyFilter;
 import net.sf.gilead.annotations.AnnotationsHelper;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.beanlib.CloneAndMergeConstants;
@@ -37,7 +37,7 @@ import net.sf.gilead.util.IntrospectionHelper;
  * <b>same</b> Hibernate POJO, or a POJO with the <b>same</b> fetching strategy
  * @author bruno.marchesson
  */
-public class MergeBeanPopulatable implements DetailedBeanPopulatable 
+public class MergePropertyFilter implements DetailedPropertyFilter 
 {
 	//----
 	// Attributes
@@ -95,7 +95,7 @@ public class MergeBeanPopulatable implements DetailedBeanPopulatable
 	/**
 	 * Constructor
 	 */
-	public MergeBeanPopulatable(IPersistenceUtil persistenceUtil, IProxyStore proxyStore)
+	public MergePropertyFilter(IPersistenceUtil persistenceUtil, IProxyStore proxyStore)
 	{
 		setPersistenceUtil(persistenceUtil);
 		setProxyStore(proxyStore);
@@ -109,7 +109,7 @@ public class MergeBeanPopulatable implements DetailedBeanPopulatable
 	/* (non-Javadoc)
 	 * @see net.sf.beanlib.spi.DetailedBeanPopulatable#shouldPopulate(java.lang.String, java.lang.Object, java.lang.reflect.Method, java.lang.Object, java.lang.reflect.Method)
 	 */
-	public boolean shouldPopulate(String propertyName, 
+	public boolean propagate(String propertyName, 
 								  Object cloneBean, 
 								  Method readerMethod, 
 								  Object persistentBean, 

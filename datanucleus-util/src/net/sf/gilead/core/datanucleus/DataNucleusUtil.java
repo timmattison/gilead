@@ -4,6 +4,8 @@
 package net.sf.gilead.core.datanucleus;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.jdo.spi.PersistenceCapable;
@@ -17,14 +19,44 @@ import net.sf.gilead.core.IPersistenceUtil;
  */
 public class DataNucleusUtil implements IPersistenceUtil {
 
+	//----
+	// Constant
+	//----
+	private static final String JDO_DETACHED_STATE = "jdoDetachedState";
+	
 	/* (non-Javadoc)
-	 * @see net.sf.gilead.core.IPersistenceUtil#closeCurrentSession()
+	 * @see net.sf.gilead.core.IPersistenceUtil#serializeEntityProxy(java.lang.Object)
 	 */
 	@Override
-	public void closeCurrentSession() 
+	public Map<String, Serializable> serializeEntityProxy(Object proxy)
 	{
-		// TODO Auto-generated method stub
-
+	//	Precondition checking
+	//
+		if (isPersistentPojo(proxy) == false)
+		{
+			return null;
+		}
+		
+		try
+		{
+			//	Get "jdoDetachedState"
+			//
+				Field field = proxy.getClass().getDeclaredField(JDO_DETACHED_STATE);
+				field.setAccessible(true);
+				Object[] jdoDetachedState = (Object[]) field.get(proxy);
+				
+				// Replace with null
+				field.set(proxy, null);
+				
+				// Create map
+				Map<String, Serializable> result = new HashMap<String, Serializable>();
+				result.put(JDO_DETACHED_STATE, jdoDetachedState);
+				return result;
+		}
+		catch(Exception ex)
+		{
+			throw new RuntimeException(ex.getMessage(), ex);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -48,6 +80,17 @@ public class DataNucleusUtil implements IPersistenceUtil {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see net.sf.gilead.core.IPersistenceUtil#serializePersistentCollection(java.lang.Object)
+	 */
+	@Override
+	public Map<String, Serializable> serializePersistentCollection(
+			Object persistentCollection) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see net.sf.gilead.core.IPersistenceUtil#getId(java.lang.Object)
@@ -148,7 +191,8 @@ public class DataNucleusUtil implements IPersistenceUtil {
 	 * @see net.sf.gilead.core.IPersistenceUtil#load(java.io.Serializable, java.lang.Class)
 	 */
 	@Override
-	public Object load(Serializable id, Class<?> persistentClass) {
+	public Object load(Serializable id, Class<?> persistentClass)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -157,28 +201,18 @@ public class DataNucleusUtil implements IPersistenceUtil {
 	 * @see net.sf.gilead.core.IPersistenceUtil#openSession()
 	 */
 	@Override
-	public void openSession() {
+	public void openSession()
+	{
 		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
-	 * @see net.sf.gilead.core.IPersistenceUtil#serializeEntityProxy(java.lang.Object)
+	 * @see net.sf.gilead.core.IPersistenceUtil#closeCurrentSession()
 	 */
 	@Override
-	public Map<String, Serializable> serializeEntityProxy(Object proxy) {
+	public void closeCurrentSession() 
+	{
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see net.sf.gilead.core.IPersistenceUtil#serializePersistentCollection(java.lang.Object)
-	 */
-	@Override
-	public Map<String, Serializable> serializePersistentCollection(
-			Object persistentCollection) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

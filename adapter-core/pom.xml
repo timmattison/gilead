@@ -27,6 +27,12 @@
 		<dependency>
 			<groupId>net.sf.beanlib</groupId>
 			<artifactId>beanlib</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>xstream</groupId>
+					<artifactId>xstream</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.beanlib</groupId>

@@ -3,6 +3,7 @@
  */
 package net.sf.gilead.core;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1354,31 +1355,30 @@ public abstract class CloneTest extends TestCase
 	/**
 	 * Test clone of Project item
 	 */
-//	public void testCloneAndMergeProject()
-//	{
-//	//	Create BaseListLoadResult
-//	//
-//		Project project = new Project();
-//		project.setTgStatus(5);
-//		
-//	//	Clone user list
-//	//
-//		Project cloneProject = (Project) _beanManager.clone(project);
-//		
-//	//	Test cloned user list
-//	//
-//		assertNotNull(cloneProject);
-//		assertEquals(project.getTgStatus(), cloneProject.getTgStatus());
-//		
-//	//	Merge user list
-//	//
-//		Project mergeProject = (Project) _beanManager.merge(cloneProject);
-//		
-//	//	Test merged user list
-//	//
-//		assertNotNull(mergeProject);
-//		assertEquals(project.getTgStatus(), mergeProject.getTgStatus());
-//	}
+	public void testCloneAndMergeBigDecimal()
+	{
+	//	Create Big Decimal
+	//
+		BigDecimal decimal = new BigDecimal(1);
+		
+	//	Clone decimal
+	//
+		BigDecimal cloneDecimal = (BigDecimal) _beanManager.clone(decimal);
+		
+	//	Test cloned decimal
+	//
+		assertNotNull(cloneDecimal);
+		assertSame(decimal, cloneDecimal);
+		
+	//	Merge decimal
+	//
+		BigDecimal mergeDecimal = (BigDecimal) _beanManager.merge(cloneDecimal);
+		
+	//	Test merged decimal
+	//
+		assertNotNull(mergeDecimal);
+		assertEquals(decimal, mergeDecimal);
+	}
 	
 	/**
 	 * Test delete property on client side

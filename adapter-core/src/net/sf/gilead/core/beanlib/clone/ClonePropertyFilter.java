@@ -20,7 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import net.sf.beanlib.spi.DetailedBeanPopulatable;
+import net.sf.beanlib.spi.DetailedPropertyFilter;
 import net.sf.gilead.annotations.AnnotationsHelper;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.beanlib.CloneAndMergeConstants;
@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * Populatable for Hibernate lazy handling
  * @author bruno.marchesson
  */
-public class CloneBeanPopulatable implements DetailedBeanPopulatable 
+public class ClonePropertyFilter implements DetailedPropertyFilter 
 {
 	//----
 	// Attributes
@@ -43,7 +43,7 @@ public class CloneBeanPopulatable implements DetailedBeanPopulatable
 	/**
 	 * Log channel
 	 */
-	private static Log _log = LogFactory.getLog(CloneBeanPopulatable.class);
+	private static Log _log = LogFactory.getLog(ClonePropertyFilter.class);
 	
 	/**
 	 * The associated persistence utils
@@ -98,7 +98,7 @@ public class CloneBeanPopulatable implements DetailedBeanPopulatable
 	/**
 	 * Constructor
 	 */
-	public CloneBeanPopulatable(IPersistenceUtil persistenceUtil,
+	public ClonePropertyFilter(IPersistenceUtil persistenceUtil,
 								IProxyStore proxyStore)
 	{
 		setPersistenceUtil(persistenceUtil);
@@ -113,7 +113,7 @@ public class CloneBeanPopulatable implements DetailedBeanPopulatable
 	/* (non-Javadoc)
 	 * @see net.sf.beanlib.spi.DetailedBeanPopulatable#shouldPopulate(java.lang.String, java.lang.Object, java.lang.reflect.Method, java.lang.Object, java.lang.reflect.Method)
 	 */
-	public boolean shouldPopulate(String propertyName, 
+	public boolean propagate(String propertyName, 
 								  Object fromBean, 
 								  Method readerMethod, 
 								  Object toBean, 

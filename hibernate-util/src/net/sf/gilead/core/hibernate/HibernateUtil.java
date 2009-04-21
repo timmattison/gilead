@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
+import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.collection.AbstractPersistentCollection;
@@ -231,7 +232,7 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Retrieve Class<?> hibernate metadata
 	//
-		ClassMetadata hibernateMetadata = _sessionFactory.getClassMetadata(getEntityName(hibernateClass));
+		ClassMetadata hibernateMetadata = _sessionFactory.getClassMetadata(getEntityName(hibernateClass, pojo));
 		if (hibernateMetadata == null)
 		{
 		//	Component class (persistent but not metadata) : no associated id
@@ -290,7 +291,7 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Post condition checking
 	//
-		if (isUnsavedValue(id, hibernateClass))
+		if (isUnsavedValue(pojo, id, hibernateClass))
 		{
 			throw new TransientObjectException(pojo);
 		}
@@ -428,21 +429,13 @@ public class HibernateUtil implements IPersistenceUtil
 	 */
 	public Object load(Serializable id, Class<?> persistentClass)
 	{
-	//	Get current opened session
-	//
-		Session session = _session.get();
-		if (session == null)
-		{
-			throw new NullPointerException("Cannot load : no session opened !");
-		}
-		
 	//	Unenhance persistent class if needed
 	//
 		persistentClass = getUnenhancedClass(persistentClass);
 		
 	//	Load the entity
 	//
-		return session.get(persistentClass, id);
+		return getSession().get(persistentClass, id);
 	}
 	
 	/*
@@ -472,33 +465,14 @@ public class HibernateUtil implements IPersistenceUtil
 	 */
 	public Object createEntityProxy(Map<String, Serializable> proxyInformations)
 	{
-	//	Get current opened session
-	//
-		Session session = _session.get();
-		if (session == null)
-		{
-			throw new NullPointerException("Cannot load : no session opened !");
-		}
-	
 	//	Get needed proxy inforamtions
 	//
 		Serializable id = proxyInformations.get(ID);
-		String className = (String) proxyInformations.get(CLASS_NAME);
-		Class<?> persistentClass = null;
-		try
-		{
-			persistentClass = Thread.currentThread().getContextClassLoader().loadClass(className);
-		}
-		catch(Exception e)
-		{
-		// Should not happen !
-		//
-			throw new RuntimeException("Cannot find persistent class : " + className, e);
-		}
-		
+		String entityName = (String) proxyInformations.get(CLASS_NAME);
+
 	//	Create the associated proxy
 	//
-		return session.load(getEntityName(persistentClass), id);
+		return getSession().load(entityName, id);
 	}
 
 	/*
@@ -563,14 +537,6 @@ public class HibernateUtil implements IPersistenceUtil
 	public Object createPersistentCollection(Map<String, Serializable> proxyInformations,
 											 Object underlyingCollection)
 	{
-	//	Get current opened session
-	//
-		Session session = _session.get();
-		if (session == null)
-		{
-			throw new NullPointerException("Cannot load : no session opened !");
-		}
-		
 	//	Get added and deleted items
 	//
 		Object addedItems = removeNewItems(proxyInformations, underlyingCollection);
@@ -580,6 +546,7 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		String className = (String) proxyInformations.get(CLASS_NAME);
 
+		Session session = getSession();
 		PersistentCollection collection = null;
 		if (PersistentBag.class.getName().equals(className))
 		{
@@ -716,7 +683,16 @@ public class HibernateUtil implements IPersistenceUtil
 				List<Object> collectionList = (List<Object>) collection;
 				for (NewItem key : (List<NewItem>)addedItems)
 				{
-					collectionList.add(key.index, key.object);
+					if (key.index < collectionList.size())
+					{
+						collectionList.add(key.index, key.object);
+					}
+					else
+					{
+					//	There have been deleted items : add it at the end of the collection
+					//
+						collectionList.add(key.object);
+					}
 				}
 			}
 			else if (collection instanceof Collection)
@@ -788,14 +764,10 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Get associated metadata
 	//
-		ClassMetadata metadata = _sessionFactory.getClassMetadata(getEntityName(clazz));
-		if (metadata == null)
+		List<String> entityNames = getEntityNamesFor(clazz);
+		if ((entityNames == null) ||
+			(entityNames.isEmpty() == true))
 		{
-			Map<Object, Object> all = _sessionFactory.getAllClassMetadata();
-			for (Map.Entry<Object,Object> entry : all.entrySet())
-			{
-				_log.info(entry.getKey() + " : " + entry.getValue());
-			}
 		//	Not persistent : check implemented interfaces (they can be declared as persistent !!)
 		//
 			Class<?>[] interfaces = clazz.getInterfaces();
@@ -824,15 +796,18 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Look for component classes
 	//
-		Type[] types = metadata.getPropertyTypes();
-		for (int index = 0; index < types.length; index++)
+		for (String entityName : entityNames)
 		{
-			Type type = types[index];
-			if (_log.isDebugEnabled())
+			Type[] types = _sessionFactory.getClassMetadata(entityName).getPropertyTypes();
+			for (int index = 0; index < types.length; index++)
 			{
-				_log.debug("Scanning type " + type.getName() + " from " + clazz);
+				Type type = types[index];
+				if (_log.isDebugEnabled())
+				{
+					_log.debug("Scanning type " + type.getName() + " from " + clazz);
+				}
+				computePersistentForType(type);
 			}
-			computePersistentForType(type);
 		}
 	}
 	
@@ -880,6 +855,18 @@ public class HibernateUtil implements IPersistenceUtil
 	 */
 	private void computePersistentForType(Type type)
 	{
+	//	Precondition checking
+	//
+		synchronized (_persistenceMap)
+		{
+			if (_persistenceMap.get(type.getReturnedClass()) != null)
+			{
+			//	already computed
+			//
+				return;
+			}
+		}
+		
 		if (_log.isDebugEnabled())
 		{
 			_log.debug("Scanning type " + type.getName());
@@ -958,6 +945,13 @@ public class HibernateUtil implements IPersistenceUtil
 	 */
 	private ArrayList<SerializableId> createIdList(Collection collection)
 	{
+	//	Precondition checking
+	//
+		if (collection == null)
+		{
+			return null;
+		}
+		
 		int size = collection.size();
 		ArrayList<SerializableId> idList = new ArrayList<SerializableId>(size);
 		
@@ -967,14 +961,15 @@ public class HibernateUtil implements IPersistenceUtil
 			Object item = iterator.next();
 			
 			SerializableId id = new SerializableId();
-			id.setClassName(item.getClass().getName());
 			
 			if (isPersistentPojo(item))
 			{
+				id.setEntityName(getEntityName(item.getClass(), item));
 				id.setId(getId(item));
 			}
 			else
 			{
+				id.setEntityName(item.getClass().getName());
 				id.setHashCode(item.hashCode());
 			}
 			
@@ -1000,14 +995,6 @@ public class HibernateUtil implements IPersistenceUtil
 	private List<NewItem> getDeletedItemsForCollection(Collection collection,
 										 			   ArrayList<SerializableId> idList)
 	{
-	//	Get current opened session
-	//
-		Session session = _session.get();
-		if (session == null)
-		{
-			throw new NullPointerException("Cannot load : no session opened !");
-		}
-		
 	//	Compute current collection ID 
 	//	(performance issue : better than computing collection item ID for each iteration)
 	//
@@ -1022,20 +1009,18 @@ public class HibernateUtil implements IPersistenceUtil
 				(collectionID.contains(sid) == false))
 			{
 				NewItem deleted = new NewItem();
+				
 			//	Create associated proxy
 			//
 				if (_log.isDebugEnabled())
 				{
-					_log.debug("Deleted item " + sid.getClassName() + "[" + sid.getId() + "]");
+					_log.debug("Deleted item " + sid.getEntityName() + "[" + sid.getId() + "]");
 				}
 				try
-				{	
-					Class<?> itemClass = Thread.currentThread().getContextClassLoader().loadClass(sid.getClassName());
-					itemClass = UnEnhancer.unenhanceClass(itemClass);
-					
+				{						
 					if (sid.getId() != null)
 					{
-						deleted.object = session.load(getEntityName(itemClass), sid.getId());
+						deleted.object = getSession().load(sid.getEntityName(), sid.getId());
 						deleted.index = idList.indexOf(sid);
 						deletedItems.add(deleted);
 					}
@@ -1074,14 +1059,6 @@ public class HibernateUtil implements IPersistenceUtil
     private List<NewItem> getNewItemsForCollection(Collection collection,
                                                    ArrayList<SerializableId> idList)
     {
-    //    Get current opened session
-    //
-        Session session = _session.get();
-        if (session == null)
-        {
-            throw new NullPointerException("Cannot load : no session opened !");
-        }
-   
     //  Iterate over collection elements
     //
         List<NewItem> addedItems = new ArrayList<NewItem>();
@@ -1359,7 +1336,7 @@ public class HibernateUtil implements IPersistenceUtil
 	 * @param entity
 	 * @return
 	 */
-	private boolean isUnsavedValue(Serializable id, Class<?> persistentClass)
+	private boolean isUnsavedValue(Object pojo, Serializable id, Class<?> persistentClass)
 	{
 	//	Precondition checking
 	//
@@ -1370,7 +1347,7 @@ public class HibernateUtil implements IPersistenceUtil
 		
 	//	Get unsaved value from entity metamodel
 	//
-		EntityPersister entityPersister = _sessionFactory.getEntityPersister(getEntityName(persistentClass));
+		EntityPersister entityPersister = _sessionFactory.getEntityPersister(getEntityName(persistentClass, pojo));
 		EntityMetamodel metamodel = entityPersister.getEntityMetamodel();
 		IdentifierProperty idProperty = metamodel.getIdentifierProperty();
 		Boolean result = idProperty.getUnsavedValue().isUnsaved(id);
@@ -1403,31 +1380,91 @@ public class HibernateUtil implements IPersistenceUtil
 		}
 	}
 	
+
+	/**
+	 * @return the current session (open a new one if needed)
+	 */
+	private Session getSession()
+	{
+		Session session = _session.get();
+		if (session == null)
+		{
+			openSession();
+			session = _session.get();
+		}
+		return session;
+	}
+	
 	/**
 	 * Get Hibernate class metadata
 	 * @param clazz
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private String getEntityName(Class<?> clazz)
+	private String getEntityName(Class<?> clazz, Object pojo)
 	{
+	//	Direct metadata search
+	//
+		ClassMetadata metadata = _sessionFactory.getClassMetadata(clazz);
+		if (metadata != null)
+		{
+			return metadata.getEntityName();
+		}
+		
 	//	Iterate over all metadata to prevent entity name bug
 	//	(if entity-name is redefined in mapping file, it is not found with
 	//	_sessionFatory.getClassMetada(clazz); !)
 	//
+		List<String> entityNames = getEntityNamesFor(clazz);
+		
+	//	check entity names
+	//
+		if (entityNames.isEmpty())
+		{
+		//	Not found
+		//
+			return null;
+		}
+		else if (entityNames.size() == 1)
+		{
+		//	Only one entity name
+		//
+			return entityNames.get(0);
+		}
+		
+	//	More than one entity name : need pojo to know which one is the right one
+	//
+		if (pojo != null)
+		{
+			// Need to attach the pojo to the current session to retrieve its entity name...
+			getSession().lock(pojo, LockMode.NONE);
+			return getSession().getEntityName(pojo);
+		}
+		else
+		{
+			throw new NullPointerException("Missing pojo for entity name retrieving !");
+		}
+	}
+	
+	/**
+	 * @return all possible entity names for the argument class.
+	 */
+	@SuppressWarnings("unchecked")
+	private List<String> getEntityNamesFor(Class<?> clazz)
+	{
+		List<String> entityNames = new ArrayList<String>();
 		Map<String, ClassMetadata> allMetadata = _sessionFactory.getAllClassMetadata();
 		for (ClassMetadata classMetadata : allMetadata.values())
 		{
 			if (clazz.equals(classMetadata.getMappedClass(EntityMode.POJO)))
 			{
-				return classMetadata.getEntityName();
+				entityNames.add(classMetadata.getEntityName());
 			}
 		}
 		
-	//	Not found
-	//
-		return null;
+		return entityNames;
 	}
+	
 }
 
 /**

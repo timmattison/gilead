@@ -5,9 +5,10 @@ import net.sf.beanlib.provider.collector.PrivateSetterMethodCollector;
 import net.sf.beanlib.provider.finder.PrivateReaderMethodFinder;
 import net.sf.beanlib.spi.BeanTransformerSpi;
 import net.sf.beanlib.spi.CustomBeanTransformerSpi;
-import net.sf.beanlib.spi.DetailedBeanPopulatable;
+import net.sf.beanlib.spi.DetailedPropertyFilter;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.beanlib.IClassMapper;
+import net.sf.gilead.core.beanlib.finder.FastPrivateReaderMethodFinder;
 import net.sf.gilead.core.beanlib.transformer.CustomTransformersFactory;
 import net.sf.gilead.core.store.IProxyStore;
 
@@ -30,20 +31,20 @@ public class MergeBeanPopulator
 												 IPersistenceUtil persistenceUtil,
 												 IProxyStore proxyStore) 
     {
-		BeanPopulator replicator = BeanPopulator.newBeanPopulator(from, to);
+		BeanPopulator replicator = new BeanPopulator(from, to);
 		
 	//	Change bean class replicator
 	//
 		BeanTransformerSpi transformer = (BeanTransformerSpi) replicator.getTransformer();
-		transformer.initBeanReplicatable(MergeClassBeanReplicator.factory);
+		transformer.initBeanReplicatableFactory(MergeClassBeanReplicator.factory);
 		((MergeClassBeanReplicator) transformer.getBeanReplicatable()).setClassMapper(classMapper);
 		((MergeClassBeanReplicator) transformer.getBeanReplicatable()).setPersistenceUtil(persistenceUtil);
 		((MergeClassBeanReplicator) transformer.getBeanReplicatable()).setProxyStore(proxyStore);
 		
-		transformer.initCollectionReplicatable(MergeCollectionReplicator.factory);
+		transformer.initCollectionReplicatableFactory(MergeCollectionReplicator.factory);
 		((MergeCollectionReplicator) transformer.getCollectionReplicatable()).setPersistenceUtil(persistenceUtil);
 		
-		transformer.initMapReplicatable(MergeMapReplicator.factory);
+		transformer.initMapReplicatableFactory(MergeMapReplicator.factory);
 		((MergeMapReplicator) transformer.getMapReplicatable()).setPersistenceUtil(persistenceUtil);
 		
 	//	Custom transformers (timestamp handling)
@@ -59,13 +60,13 @@ public class MergeBeanPopulator
 		
 	//	Lazy properties handling
 	//
-		DetailedBeanPopulatable hibernatePopulatable = new MergeBeanPopulatable(persistenceUtil, proxyStore);
-		replicator.initDetailedBeanPopulatable(hibernatePopulatable);
+		DetailedPropertyFilter hibernateFilter = new MergePropertyFilter(persistenceUtil, proxyStore);
+		replicator.initDetailedPropertyFilter(hibernateFilter);
 		
 	//	Merge based on protected and private setters
 	//
-		replicator.initSetterMethodCollector(PrivateSetterMethodCollector.inst);
-		replicator.initReaderMethodFinder(PrivateReaderMethodFinder.inst);
+		replicator.initSetterMethodCollector(new PrivateSetterMethodCollector());
+		replicator.initReaderMethodFinder(new FastPrivateReaderMethodFinder());
 		
 		return replicator;
     }

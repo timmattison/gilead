@@ -15,7 +15,6 @@
  */
 package net.sf.beanlib.hibernate3;
 
-import static net.sf.beanlib.utils.ClassUtils.isHibernatePackage;
 import static net.sf.beanlib.utils.ClassUtils.isJavaPackage;
 
 import java.lang.reflect.Constructor;
@@ -29,7 +28,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import net.jcip.annotations.ThreadSafe;
 import net.sf.beanlib.hibernate.UnEnhancer;
 import net.sf.beanlib.provider.replicator.CollectionReplicator;
 import net.sf.beanlib.spi.BeanTransformerSpi;
@@ -53,7 +51,6 @@ public class Hibernate3CollectionReplicator extends CollectionReplicator {
      * 
      * @author Joe D. Velopar
      */
-    @ThreadSafe
     public static class Factory implements CollectionReplicatorSpi.Factory {
         private Factory() {}
         

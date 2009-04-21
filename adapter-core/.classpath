@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="lib/stateless/xpp3-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="lib/stateless/jboss-serialization.jar"/>
 	<classpathentry kind="lib" path="lib/stateless/trove.jar"/>
-	<classpathentry kind="lib" path="lib/beanlib-3.3.0beta21c.jar" sourcepath="D:/OpenSource/beanlib/beanlib/src"/>
-	<classpathentry kind="lib" path="lib/beanlib-hibernate-3.3.0beta21c.jar"/>
+	<classpathentry kind="lib" path="lib/beanlib-5.0.1beta.jar"/>
+	<classpathentry kind="lib" path="lib/beanlib-hibernate-5.0.1beta.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

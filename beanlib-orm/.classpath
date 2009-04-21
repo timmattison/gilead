@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="javadoc"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/beanlib"/>
-	<classpathentry kind="lib" path="/beanlib/lib/jcip-annotations.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/hibernate-3.2.4.sp1.jar" sourcepath="C:/Playground/hibernate/3.2/ga/src"/>
-	<classpathentry kind="lib" path="/beanlib/lib/cglib-nodep-2.1_3.jar"/>
-	<classpathentry kind="lib" path="/beanlib/lib/log4j-1.2.14.jar"/>
-	<classpathentry kind="lib" path="/beanlib/lib/commons/commons-lang-2.3.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.5"/>
-	<classpathentry kind="output" path="target/classes"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/adapter-core/lib/beanlib-5.0.1beta.jar"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -59,6 +59,11 @@
 			<id>hibernat4gwt-repo</id>
 			<url>https://hibernate4gwt.svn.sourceforge.net/svnroot/hibernate4gwt/branches/jens_meiss/maven/</url>
 		</repository>
+		<repository>
+			<id>gilead-repo</id>
+			<name>Gilead Maven Repository</name>
+			<url>https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -67,7 +72,7 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<scm>
-	        <developerConnection>scm:svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/trunk/</developerConnection>
+	     <developerConnection>scm:svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/branches/1.2</developerConnection>
 	</scm>
 	<dependencyManagement>
 		<dependencies>
@@ -99,12 +104,12 @@
 			<dependency>
 				<groupId>net.sf.beanlib</groupId>
 				<artifactId>beanlib</artifactId>
-				<version>3.3.0beta21c</version>
+				<version>5.0.2beta</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.beanlib</groupId>
 				<artifactId>beanlib-hibernate</artifactId>
-				<version>3.3.0beta21c</version>
+				<version>5.0.2beta</version>
 			</dependency>
 			<dependency>
 				<groupId>cglib</groupId>
@@ -231,7 +236,7 @@
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.0-beta-7</version>
 				<configuration>
-					<tagBase>https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/tags/</tagBase>
+			  	        <tagBase>https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/tags/</tagBase>
 				</configuration>
 			</plugin>
 

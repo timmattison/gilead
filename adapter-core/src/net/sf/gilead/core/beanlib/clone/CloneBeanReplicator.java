@@ -48,20 +48,19 @@ public class CloneBeanReplicator extends HibernateBeanReplicator
 																IPersistenceUtil persistenceUtil,
 																IProxyStore proxyStore) 
     {
-        Hibernate3BeanTransformer transformer = Hibernate3BeanTransformer.newBeanTransformer();
+        Hibernate3BeanTransformer transformer = new Hibernate3BeanTransformer();
         
-        transformer.initCollectionReplicatable(
+        transformer.initCollectionReplicatableFactory(
                 Hibernate3CollectionReplicator.getFactory());
 
-        transformer.initMapReplicatable(
+        transformer.initMapReplicatableFactory(
                 Hibernate3MapReplicator.getFactory());
-        transformer.initBlobReplicatable(
+        transformer.initBlobReplicatableFactory(
                 Hibernate3BlobReplicator.getFactory());
         
 
         // Custom bean replicatable
-        transformer.initBeanReplicatable(
-                	CloneClassBeanReplicator.factory);
+        transformer.initBeanReplicatableFactory(CloneClassBeanReplicator.factory);
         
         // Set the associated class mapper
         ((CloneClassBeanReplicator)transformer.getBeanReplicatable()).setClassMapper(classMapper);
@@ -80,12 +79,12 @@ public class CloneBeanReplicator extends HibernateBeanReplicator
 		
 	//	Lazy properties handling
 	//
-		transformer.initDetailedBeanPopulatable(new CloneBeanPopulatable(persistenceUtil, proxyStore));
+		transformer.initDetailedPropertyFilter(new ClonePropertyFilter(persistenceUtil, proxyStore));
     	
 	//	Protected and private setter collection
 	//
-    	transformer.initSetterMethodCollector(PrivateSetterMethodCollector.inst);
-    	transformer.initReaderMethodFinder(FastPrivateReaderMethodFinder.inst);
+    	transformer.initSetterMethodCollector(new PrivateSetterMethodCollector());
+    	transformer.initReaderMethodFinder(new FastPrivateReaderMethodFinder());
     	
         return transformer;
     }
