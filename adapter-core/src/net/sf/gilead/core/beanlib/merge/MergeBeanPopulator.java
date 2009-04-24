@@ -53,7 +53,7 @@ public class MergeBeanPopulator
 		{
 			public CustomBeanTransformerSpi newCustomBeanTransformer(final BeanTransformerSpi beanTransformer)
 			{
-				return CustomTransformersFactory.getInstance().createUnionCustomBeanTransformer(beanTransformer);
+				return CustomTransformersFactory.getInstance().createUnionCustomBeanTransformerForMerge(beanTransformer);
 			}
 		});
 
