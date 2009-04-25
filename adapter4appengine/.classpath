@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="lib/gwt-user.jar"/>
 	<classpathentry kind="lib" path="lib/datanucleus-core-1.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jdo2-api-2.3-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

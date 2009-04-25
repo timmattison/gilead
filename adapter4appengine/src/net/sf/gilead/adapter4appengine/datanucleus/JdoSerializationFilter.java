@@ -1,16 +1,16 @@
 /**
  * 
  */
-package net.sf.gilead.adapter4appengine;
+package net.sf.gilead.adapter4appengine.datanucleus;
 
-import com.google.gwt.user.server.rpc.ISerializationAdapter;
+import com.google.gwt.user.server.rpc.ISerializationFilter;
 
 /**
- * Serialization adapter for DataNucleus.
+ * Serialization filter for DataNucleus JDO fields.
  * @author bruno.marchesson
  *
  */
-public class DataNucleausSerializationAdapter implements ISerializationAdapter
+public class JdoSerializationFilter implements ISerializationFilter
 {
 	/* (non-Javadoc)
 	 * @see com.google.gwt.user.server.rpc.ISerializationAdapter#beforeSerialization(java.lang.Object)

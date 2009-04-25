@@ -29,7 +29,6 @@ import java.util.Map;
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.impl.AbstractSerializationStreamReader;
-import com.google.gwt.user.server.rpc.ISerializationAdapter;
 import com.google.gwt.user.server.rpc.RPC;
 import com.google.gwt.user.server.rpc.SerializationPolicy;
 import com.google.gwt.user.server.rpc.SerializationPolicyProvider;
@@ -40,26 +39,6 @@ import com.google.gwt.user.server.rpc.SerializationPolicyProvider;
  */
 public final class ServerSerializationStreamReaderCopy_GWT16 extends
     AbstractSerializationStreamReader {
-
-	/**
-	 * The serialization adapter;
-	 */
-	private ISerializationAdapter serializationAdapter;
-	
-    /**
-	 * @return the serializationAdapter
-	 */
-	public ISerializationAdapter getSerializationAdapter() {
-		return serializationAdapter;
-	}
-
-	/**
-	 * @param serializationAdapter the serializationAdapter to set
-	 */
-	public void setSerializationAdapter(ISerializationAdapter serializationAdapter) {
-		this.serializationAdapter = serializationAdapter;
-		SerializabilityUtilCopy_GWT16.setSerializationAdapter(serializationAdapter);
-	}
 
 /**
    * Used to accumulate elements while deserializing array types. The generic

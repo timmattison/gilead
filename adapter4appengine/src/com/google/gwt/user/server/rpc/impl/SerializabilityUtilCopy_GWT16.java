@@ -28,31 +28,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.CRC32;
 
-import com.google.gwt.user.server.rpc.ISerializationAdapter;
+import com.google.gwt.user.server.rpc.ISerializationFilter;
+import com.google.gwt.user.server.rpc.SerializationExtensionFactory;
 
 /**
  * Serialization utility class used by the server-side RPC code.
  */
 class SerializabilityUtilCopy_GWT16 {
 
-	/**
-	 * The serialization adapter;
-	 */
-	private static ISerializationAdapter serializationAdapter;
-
-	 /**
-	 * @return the serializationAdapter
-	 */
-	public static ISerializationAdapter getSerializationAdapter() {
-		return serializationAdapter;
-	}
-
-	/**
-	 * @param serializationAdapter the serializationAdapter to set
-	 */
-	public static void setSerializationAdapter(ISerializationAdapter adapter) {
-		serializationAdapter = adapter;
-	}
   public static final String DEFAULT_ENCODING = "UTF-8";
 
   /**
@@ -279,12 +262,13 @@ class SerializabilityUtilCopy_GWT16 {
     } else if (instanceType.isArray()) {
       generateSerializationSignature(instanceType.getComponentType(), crc);
     } else if (!instanceType.isPrimitive()) {
+      ISerializationFilter serializationFilter = SerializationExtensionFactory.getInstance().getSerializationFilter();
       Field[] fields = applyFieldSerializationPolicy(instanceType);
       for (Field field : fields) {
         assert (field != null);
         
-        if ((serializationAdapter == null) ||
-        	(serializationAdapter.shouldSerialize(instanceType, field.getName())))
+        if ((serializationFilter == null) ||
+        	(serializationFilter.shouldSerialize(instanceType, field.getName())))
         {
 	        crc.update(field.getName().getBytes(DEFAULT_ENCODING));
 	        crc.update(getSerializedTypeName(field.getType()).getBytes(

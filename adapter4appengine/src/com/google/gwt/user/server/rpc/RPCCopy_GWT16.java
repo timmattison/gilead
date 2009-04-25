@@ -62,25 +62,6 @@ public final class RPCCopy_GWT16 {
   private static Map<Class<?>, Set<String>> serviceToImplementedInterfacesMap;
 
   private static final HashMap<String, Class<?>> TYPE_NAMES;
-  
-  /**
-   * The serialization adapter;
-   */
-  private static ISerializationAdapter serializationAdapter;
-  
-  /**
-	 * @return the serializationAdapter
-	 */
-	public static ISerializationAdapter getSerializationAdapter() {
-		return serializationAdapter;
-	}
-
-	/**
-	 * @param serializationAdapter the serializationAdapter to set
-	 */
-	public static void setSerializationAdapter(ISerializationAdapter adapter) {
-		serializationAdapter = adapter;
-	}
 
   static {
     PRIMITIVE_WRAPPER_CLASS_TO_PRIMITIVE_CLASS.put(Boolean.class, Boolean.TYPE);
@@ -250,7 +231,6 @@ public final class RPCCopy_GWT16 {
     try {
       ServerSerializationStreamReaderCopy_GWT16 streamReader = new ServerSerializationStreamReaderCopy_GWT16(
           classLoader, serializationPolicyProvider);
-      streamReader.setSerializationAdapter(serializationAdapter);
       streamReader.prepareToRead(encodedRequest);
 
       // Read the name of the RemoteService interface
@@ -587,7 +567,6 @@ public final class RPCCopy_GWT16 {
 
     ServerSerializationStreamWriterCopy_GWT16 stream = new ServerSerializationStreamWriterCopy_GWT16(
         serializationPolicy);
-    stream.setSerializationAdapter(serializationAdapter);
     stream.prepareToWrite();
     if (responseClass != void.class) {
       stream.serializeValue(object, responseClass);

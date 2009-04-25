@@ -3,13 +3,18 @@
  */
 package net.sf.gilead.adapter4appengine;
 
+import net.sf.gilead.adapter4appengine.datanucleus.JdoBackedCollectionSerializationTransformer;
+import net.sf.gilead.adapter4appengine.datanucleus.JdoSerializationFilter;
+import net.sf.gilead.adapter4appengine.datanucleus.JdoSimpleDateSerializationTransformer;
+
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.SerializationException;
-import com.google.gwt.user.server.rpc.ISerializationAdapter;
+import com.google.gwt.user.server.rpc.ISerializationFilter;
 import com.google.gwt.user.server.rpc.RPC;
 import com.google.gwt.user.server.rpc.RPCCopy_GWT16;
 import com.google.gwt.user.server.rpc.RPCRequest;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.gwt.user.server.rpc.SerializationExtensionFactory;
 
 /**
  * Dedicated remote service servlet
@@ -28,7 +33,11 @@ public class EngineRemoteService extends RemoteServiceServlet {
 	 */
 	public EngineRemoteService()
 	{
-		RPCCopy_GWT16.setSerializationAdapter(new DataNucleausSerializationAdapter());
+	//	Init serialization extension points
+	//
+		SerializationExtensionFactory.getInstance().setSerializationFilter(new JdoSerializationFilter());
+		SerializationExtensionFactory.getInstance().addSerializationTransformer(new JdoBackedCollectionSerializationTransformer());
+		SerializationExtensionFactory.getInstance().addSerializationTransformer(new JdoSimpleDateSerializationTransformer());
 	}
 
 	/**

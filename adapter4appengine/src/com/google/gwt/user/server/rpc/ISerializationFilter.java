@@ -5,7 +5,7 @@ package com.google.gwt.user.server.rpc;
  * @author bruno.marchesson
  *
  */
-public interface ISerializationAdapter
+public interface ISerializationFilter
 {
 	/**
 	 * Indicates if the field should be used for CRC computation in serialization process

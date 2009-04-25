@@ -17,7 +17,9 @@ package com.google.gwt.user.server.rpc.impl;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.impl.AbstractSerializationStreamWriter;
-import com.google.gwt.user.server.rpc.ISerializationAdapter;
+import com.google.gwt.user.server.rpc.ISerializationFilter;
+import com.google.gwt.user.server.rpc.ISerializationTransformer;
+import com.google.gwt.user.server.rpc.SerializationExtensionFactory;
 import com.google.gwt.user.server.rpc.SerializationPolicy;
 
 import java.lang.reflect.Field;
@@ -35,26 +37,6 @@ import java.util.Map;
  */
 public final class ServerSerializationStreamWriterCopy_GWT16 extends
     AbstractSerializationStreamWriter {
-	
-	/**
-	 * The serialization adapter;
-	 */
-	private ISerializationAdapter serializationAdapter;
-
-	 /**
-	 * @return the serializationAdapter
-	 */
-	public ISerializationAdapter getSerializationAdapter() {
-		return serializationAdapter;
-	}
-
-	/**
-	 * @param serializationAdapter the serializationAdapter to set
-	 */
-	public void setSerializationAdapter(ISerializationAdapter serializationAdapter) {
-		this.serializationAdapter = serializationAdapter;
-		SerializabilityUtilCopy_GWT16.setSerializationAdapter(serializationAdapter);
-	}
 	
   /**
    * Builds a string that evaluates into an array containing the given elements.
@@ -638,6 +620,8 @@ public final class ServerSerializationStreamWriterCopy_GWT16 extends
   private void serializeClass(Object instance, Class<?> instanceClass)
       throws SerializationException {
     assert (instance != null);
+    
+    ISerializationFilter serializationFilter = SerializationExtensionFactory.getInstance().getSerializationFilter();
 
     Field[] serializableFields = SerializabilityUtilCopy_GWT16.applyFieldSerializationPolicy(instanceClass);
     for (Field declField : serializableFields) {
@@ -654,11 +638,28 @@ public final class ServerSerializationStreamWriterCopy_GWT16 extends
       Object value;
       try {
         value = declField.get(instance);
-        if ((serializationAdapter == null) ||
-          	(serializationAdapter.shouldSerialize(instance, declField.getName(), value)))
+        
+    //  Filter checking
+    //
+        if ((serializationFilter != null) &&
+          	(serializationFilter.shouldSerialize(instance, declField.getName(), value) == false))
         {
-        	serializeValue(value, declField.getType());
+        //	Do not serialize this field
+        //
+        	continue;
         }
+        
+    //  Transformation checking
+    //
+        ISerializationTransformer serializationTransformer = SerializationExtensionFactory.getInstance().getSerializationTransformerFor(value);
+        if (serializationTransformer != null)
+        {
+        	value = serializationTransformer.transform(value);
+        }
+        
+    //  Serialize value
+    //
+        serializeValue(value, declField.getType());
       } catch (IllegalArgumentException e) {
         throw new SerializationException(e);
 
