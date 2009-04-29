@@ -177,6 +177,23 @@ public class PersistentBeanManager
 		_lazyKiller = new LazyKiller();
 		_lazyKiller.setProxyStore(_proxyStore);
 	}
+	
+	/**
+	 *  Complete Constructor
+	 */
+	public PersistentBeanManager(IPersistenceUtil persistenceUtil, 
+								 IProxyStore proxyStore, 
+								 IClassMapper classMapper)
+	{
+		_persistenceUtil = persistenceUtil;
+		_proxyStore = proxyStore;
+		_classMapper = classMapper;
+	
+		_lazyKiller = new LazyKiller();
+		_lazyKiller.setProxyStore(_proxyStore);
+		_lazyKiller.setClassMapper(_classMapper);
+		_lazyKiller.setPersistenceUtil(_persistenceUtil);
+	}
 		
 	//-------------------------------------------------------------------------
 	//
