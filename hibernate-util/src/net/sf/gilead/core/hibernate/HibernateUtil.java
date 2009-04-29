@@ -152,7 +152,8 @@ public class HibernateUtil implements IPersistenceUtil
 	 */
 	public void setSessionFactory(SessionFactory sessionFactory)
 	{
-		if (sessionFactory instanceof SessionFactoryImpl == false)
+		if ((sessionFactory != null) &&
+			(sessionFactory instanceof SessionFactoryImpl == false))
 		{
 		//	Probably a Spring injected session factory
 		//
@@ -172,10 +173,11 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 	//-------------------------------------------------------------------------
 	/**
-	 * Default constructor
+	 * Complete constructor
 	 */
-	public HibernateUtil()
+	public HibernateUtil(SessionFactory sessionFactory)
 	{
+		setSessionFactory(sessionFactory);
 		_session = new ThreadLocal<Session>();
 		_persistenceMap = new HashMap<Class<?>, Boolean>();
 		_unehancementMap = new HashMap<Class<?>, Class<?>>();
@@ -189,6 +191,14 @@ public class HibernateUtil implements IPersistenceUtil
 		_persistenceMap.put(Double.class, false);
 		_persistenceMap.put(Boolean.class, false);
 		_persistenceMap.put(String.class, false);
+	}
+	
+	/**
+	 * Empty constructor
+	 */
+	public HibernateUtil()
+	{
+		this(null);
 	}
 	
 	//-------------------------------------------------------------------------
@@ -1437,8 +1447,13 @@ public class HibernateUtil implements IPersistenceUtil
 		if (pojo != null)
 		{
 			// Need to attach the pojo to the current session to retrieve its entity name...
-			getSession().lock(pojo, LockMode.NONE);
-			return getSession().getEntityName(pojo);
+			Session session = _sessionFactory.getCurrentSession();
+			if (session == null)
+			{
+				session = getSession();
+			}
+			session.lock(pojo, LockMode.NONE);
+			return session.getEntityName(pojo);
 		}
 		else
 		{
