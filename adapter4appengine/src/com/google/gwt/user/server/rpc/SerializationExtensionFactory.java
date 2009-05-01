@@ -37,47 +37,83 @@ public class SerializationExtensionFactory
 	 */
 	private SerializationExtensionFactory()
 	{
-		serializationTransformers = new ArrayList<ISerializationTransformer>();
+		writeSerializationTransformers = new ArrayList<ISerializationTransformer>();
+		readSerializationTransformers = new ArrayList<ISerializationTransformer>();
 	}
 	
 	//-----
 	// Attributes
 	//-----
 	/**
-	 * The associated serialization filter
+	 * The associated serialization filter for write operation
 	 */
-	private ISerializationFilter serializationFilter;
+	private ISerializationFilter writeSerializationFilter;
 	
 	/**
-	 * The associated serialization transformers
+	 * The associated serialization transformers for write operation
 	 */
-	private List<ISerializationTransformer> serializationTransformers;
+	private List<ISerializationTransformer> writeSerializationTransformers;
+	
+	/**
+	 * The associated serialization filter for read operation
+	 */
+	private ISerializationFilter readSerializationFilter;
+	
+	/**
+	 * The associated serialization transformers for read operation
+	 */
+	private List<ISerializationTransformer> readSerializationTransformers;
 	
 	//----
 	// Properties
 	//----
 	/**
-	 * @return the serializationFilter
+	 * @return the serialization Filter for write operation
 	 */
-	public ISerializationFilter getSerializationFilter()
+	public ISerializationFilter getWriteSerializationFilter()
 	{
-		return serializationFilter;
+		return writeSerializationFilter;
 	}
 
 	/**
-	 * @param serializationFilter the serializationFilter to set
+	 * @param filter the serializationFilter for write operation
 	 */
-	public void setSerializationFilter(ISerializationFilter filter)
+	public void setWriteSerializationFilter(ISerializationFilter filter)
 	{
-		this.serializationFilter = filter;
+		this.writeSerializationFilter = filter;
 	}
 
 	/**
-	 * @return the serializationTransformers
+	 * @return the serialization Transformers list for write operation
 	 */
-	public List<ISerializationTransformer> getSerializationTransformers()
+	public List<ISerializationTransformer> getWriteSerializationTransformers()
 	{
-		return serializationTransformers;
+		return writeSerializationTransformers;
+	}
+
+	/**
+	 * @return the readSerializationFilter
+	 */
+	public ISerializationFilter getReadSerializationFilter()
+	{
+		return readSerializationFilter;
+	}
+
+	/**
+	 * @param readSerializationFilter the readSerializationFilter to set
+	 */
+	public void setReadSerializationFilter(
+			ISerializationFilter readSerializationFilter)
+	{
+		this.readSerializationFilter = readSerializationFilter;
+	}
+
+	/**
+	 * @return the readSerializationTransformers
+	 */
+	public List<ISerializationTransformer> getReadSerializationTransformers()
+	{
+		return readSerializationTransformers;
 	}
 
 	//-------------------------------------------------------------------------
@@ -86,20 +122,37 @@ public class SerializationExtensionFactory
 	//
 	//-------------------------------------------------------------------------
 	/**
-	 * @param serializationTransformers the serializationTransformers to set
+	 * @param transformer the serializationTransformer to set for both read and write operation
 	 */
 	public void addSerializationTransformer(ISerializationTransformer transformer)
 	{
-		serializationTransformers.add(transformer);
+		writeSerializationTransformers.add(transformer);
+		readSerializationTransformers.add(transformer);
+	}
+	
+	/**
+	 * @param transformer the transformer to set for write operation
+	 */
+	public void addWriteSerializationTransformer(ISerializationTransformer transformer)
+	{
+		writeSerializationTransformers.add(transformer);
+	}
+	
+	/**
+	 * @param transformer the transformer to set for read operation
+	 */
+	public void addReadSerializationTransformer(ISerializationTransformer transformer)
+	{
+		readSerializationTransformers.add(transformer);
 	}
 	
 	/**
 	 * @param instance
 	 * @return the instance associated serialization transformer if any, null otherwise.
 	 */
-	public ISerializationTransformer getSerializationTransformerFor(Object instance)
+	public ISerializationTransformer getWriteSerializationTransformerFor(Object instance)
 	{
-		for (ISerializationTransformer transformer : serializationTransformers)
+		for (ISerializationTransformer transformer : writeSerializationTransformers)
 		{
 			if (transformer.isTransformable(instance))
 			{
@@ -112,5 +165,22 @@ public class SerializationExtensionFactory
 		return null;
 	}
 	
-	
+	/**
+	 * @param instance
+	 * @return the instance associated serialization transformer if any, null otherwise.
+	 */
+	public ISerializationTransformer getReadSerializationTransformerFor(Object instance)
+	{
+		for (ISerializationTransformer transformer : readSerializationTransformers)
+		{
+			if (transformer.isTransformable(instance))
+			{
+				return transformer;
+			}
+		}
+		
+	//	Not transformer is associated to instance
+	//
+		return null;
+	}
 }

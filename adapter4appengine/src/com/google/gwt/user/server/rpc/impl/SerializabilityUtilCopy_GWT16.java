@@ -262,7 +262,7 @@ class SerializabilityUtilCopy_GWT16 {
     } else if (instanceType.isArray()) {
       generateSerializationSignature(instanceType.getComponentType(), crc);
     } else if (!instanceType.isPrimitive()) {
-      ISerializationFilter serializationFilter = SerializationExtensionFactory.getInstance().getSerializationFilter();
+      ISerializationFilter serializationFilter = SerializationExtensionFactory.getInstance().getWriteSerializationFilter();
       Field[] fields = applyFieldSerializationPolicy(instanceType);
       for (Field field : fields) {
         assert (field != null);

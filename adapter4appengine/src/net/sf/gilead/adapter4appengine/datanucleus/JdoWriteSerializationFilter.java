@@ -3,6 +3,8 @@
  */
 package net.sf.gilead.adapter4appengine.datanucleus;
 
+import javax.jdo.spi.PersistenceCapable;
+
 import com.google.gwt.user.server.rpc.ISerializationFilter;
 
 /**
@@ -10,13 +12,19 @@ import com.google.gwt.user.server.rpc.ISerializationFilter;
  * @author bruno.marchesson
  *
  */
-public class JdoSerializationFilter implements ISerializationFilter
+public class JdoWriteSerializationFilter implements ISerializationFilter
 {
 	/* (non-Javadoc)
 	 * @see com.google.gwt.user.server.rpc.ISerializationAdapter#beforeSerialization(java.lang.Object)
 	 */
 	public void beforeSerialization(Object obj)
 	{
+	//	Store JDO detached state
+	//
+		if (obj instanceof PersistenceCapable)
+		{
+			JdoEntityStore.getInstance().storeEntity((PersistenceCapable) obj);
+		}
 	}
 
 

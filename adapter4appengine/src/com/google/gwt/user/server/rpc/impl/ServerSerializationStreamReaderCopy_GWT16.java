@@ -29,7 +29,10 @@ import java.util.Map;
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.impl.AbstractSerializationStreamReader;
+import com.google.gwt.user.server.rpc.ISerializationFilter;
+import com.google.gwt.user.server.rpc.ISerializationTransformer;
 import com.google.gwt.user.server.rpc.RPC;
+import com.google.gwt.user.server.rpc.SerializationExtensionFactory;
 import com.google.gwt.user.server.rpc.SerializationPolicy;
 import com.google.gwt.user.server.rpc.SerializationPolicyProvider;
 
@@ -567,11 +570,29 @@ public final class ServerSerializationStreamReaderCopy_GWT16 extends
   private void deserializeClass(Class<?> instanceClass, Object instance)
       throws SerializationException, IllegalAccessException,
       NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
+	
+  // Before deserialization
+  //
+	ISerializationFilter serializationFilter = SerializationExtensionFactory.getInstance().getReadSerializationFilter();
+	if (serializationFilter != null)
+	{
+		serializationFilter.beforeSerialization(instance);
+	}
+	
     Field[] serializableFields = SerializabilityUtilCopy_GWT16.applyFieldSerializationPolicy(instanceClass);
-
+    
     for (Field declField : serializableFields) {
       assert (declField != null);
 
+  //  Filter checking
+  //
+      if ((serializationFilter != null) &&
+          (serializationFilter.shouldSerialize(instance.getClass(), declField.getName()) == false))
+      {
+      //	Do not populate this field
+      //
+      	continue;
+      }
       Object value = deserializeValue(declField.getType());
 
       boolean isAccessible = declField.isAccessible();
@@ -582,6 +603,23 @@ public final class ServerSerializationStreamReaderCopy_GWT16 extends
         declField.setAccessible(true);
       }
 
+  //  Filter checking
+  //
+      if ((serializationFilter != null) &&
+          (serializationFilter.shouldSerialize(instance, declField.getName(), value) == false))
+      {
+      //	Do not populate this field
+      //
+      	continue;
+      }
+      
+  //  Transformation checking
+  //
+      ISerializationTransformer serializationTransformer = SerializationExtensionFactory.getInstance().getReadSerializationTransformerFor(value);
+      if (serializationTransformer != null)
+      {
+      	value = serializationTransformer.transform(value);
+      }
       declField.set(instance, value);
     }
 
@@ -590,6 +628,11 @@ public final class ServerSerializationStreamReaderCopy_GWT16 extends
       deserializeImpl(SerializabilityUtilCopy_GWT16.hasCustomFieldSerializer(superClass),
           superClass, instance);
     }
+    
+    if (serializationFilter != null)
+	{
+		serializationFilter.afterSerialization(instance);
+	}
   }
 
   private Object deserializeImpl(Class<?> customSerializer,

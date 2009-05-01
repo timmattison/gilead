@@ -4,12 +4,13 @@
 package net.sf.gilead.adapter4appengine;
 
 import net.sf.gilead.adapter4appengine.datanucleus.JdoBackedCollectionSerializationTransformer;
-import net.sf.gilead.adapter4appengine.datanucleus.JdoSerializationFilter;
+import net.sf.gilead.adapter4appengine.datanucleus.JdoEntityStore;
+import net.sf.gilead.adapter4appengine.datanucleus.JdoReadSerializationFilter;
+import net.sf.gilead.adapter4appengine.datanucleus.JdoWriteSerializationFilter;
 import net.sf.gilead.adapter4appengine.datanucleus.JdoSimpleDateSerializationTransformer;
 
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.SerializationException;
-import com.google.gwt.user.server.rpc.ISerializationFilter;
 import com.google.gwt.user.server.rpc.RPC;
 import com.google.gwt.user.server.rpc.RPCCopy_GWT16;
 import com.google.gwt.user.server.rpc.RPCRequest;
@@ -33,11 +34,16 @@ public class EngineRemoteService extends RemoteServiceServlet {
 	 */
 	public EngineRemoteService()
 	{
-	//	Init serialization extension points
+	//	Init write serialization extension points
 	//
-		SerializationExtensionFactory.getInstance().setSerializationFilter(new JdoSerializationFilter());
-		SerializationExtensionFactory.getInstance().addSerializationTransformer(new JdoBackedCollectionSerializationTransformer());
-		SerializationExtensionFactory.getInstance().addSerializationTransformer(new JdoSimpleDateSerializationTransformer());
+		SerializationExtensionFactory.getInstance().setWriteSerializationFilter(new JdoWriteSerializationFilter());
+		SerializationExtensionFactory.getInstance().addWriteSerializationTransformer(new JdoBackedCollectionSerializationTransformer());
+		SerializationExtensionFactory.getInstance().addWriteSerializationTransformer(new JdoSimpleDateSerializationTransformer());
+		
+	//	Init read serialization extension points
+	//
+		SerializationExtensionFactory.getInstance().setReadSerializationFilter(new JdoReadSerializationFilter());
+		
 	}
 
 	/**
@@ -45,6 +51,11 @@ public class EngineRemoteService extends RemoteServiceServlet {
 	 */
 	@Override
 	public String processCall(String payload) throws SerializationException {
+		
+	//	Set HTTP session
+	//
+		JdoEntityStore.getInstance().setHttpSession(getThreadLocalRequest().getSession());
+		
 		try {
 			RPCRequest rpcRequest = RPCCopy_GWT16.decodeRequest(payload, this
 					.getClass(), this);
@@ -57,6 +68,12 @@ public class EngineRemoteService extends RemoteServiceServlet {
 					"An IncompatibleRemoteServiceException was thrown while processing this call.",
 					ex);
 			return RPC.encodeResponseForFailure(null, ex);
+		}
+		finally
+		{
+		//	Set Http session to null
+		//
+			JdoEntityStore.getInstance().setHttpSession(null);
 		}
 	}
 }

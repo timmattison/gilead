@@ -621,7 +621,13 @@ public final class ServerSerializationStreamWriterCopy_GWT16 extends
       throws SerializationException {
     assert (instance != null);
     
-    ISerializationFilter serializationFilter = SerializationExtensionFactory.getInstance().getSerializationFilter();
+  // Before serialization
+  //
+    ISerializationFilter serializationFilter = SerializationExtensionFactory.getInstance().getWriteSerializationFilter();
+    if (serializationFilter != null)
+    {
+    	serializationFilter.beforeSerialization(instance);
+    }
 
     Field[] serializableFields = SerializabilityUtilCopy_GWT16.applyFieldSerializationPolicy(instanceClass);
     for (Field declField : serializableFields) {
@@ -651,7 +657,7 @@ public final class ServerSerializationStreamWriterCopy_GWT16 extends
         
     //  Transformation checking
     //
-        ISerializationTransformer serializationTransformer = SerializationExtensionFactory.getInstance().getSerializationTransformerFor(value);
+        ISerializationTransformer serializationTransformer = SerializationExtensionFactory.getInstance().getWriteSerializationTransformerFor(value);
         if (serializationTransformer != null)
         {
         	value = serializationTransformer.transform(value);
@@ -672,6 +678,13 @@ public final class ServerSerializationStreamWriterCopy_GWT16 extends
     if (serializationPolicy.shouldSerializeFields(superClass)) {
       serializeImpl(instance, superClass);
     }
+    
+  // After serialization
+  //
+    if (serializationFilter != null)
+	{
+		serializationFilter.afterSerialization(instance);
+	}
   }
 
   private void serializeImpl(Object instance, Class<?> instanceClass)
