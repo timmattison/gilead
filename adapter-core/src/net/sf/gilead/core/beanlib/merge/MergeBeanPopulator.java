@@ -2,7 +2,6 @@ package net.sf.gilead.core.beanlib.merge;
 
 import net.sf.beanlib.provider.BeanPopulator;
 import net.sf.beanlib.provider.collector.PrivateSetterMethodCollector;
-import net.sf.beanlib.provider.finder.PrivateReaderMethodFinder;
 import net.sf.beanlib.spi.BeanTransformerSpi;
 import net.sf.beanlib.spi.CustomBeanTransformerSpi;
 import net.sf.beanlib.spi.DetailedPropertyFilter;

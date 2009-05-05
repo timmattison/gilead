@@ -1436,9 +1436,8 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		if (pojo != null)
 		{
-			// Need to attach the pojo to the current session to retrieve its entity name...
-			getSession().lock(pojo, LockMode.NONE);
-			return getSession().getEntityName(pojo);
+			// Get entity name
+			return ((SessionImpl)getSession()).bestGuessEntityName(pojo);
 		}
 		else
 		{
