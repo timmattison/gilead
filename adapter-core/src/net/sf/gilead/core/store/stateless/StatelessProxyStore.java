@@ -188,7 +188,10 @@ public class StatelessProxyStore implements IProxyStore
 		if ((_useSerializationThread == true) &&
 			(_serializationThread.get() != null))
 		{
-			_log.info("Cleaning up serialization thread");
+			if (_log.isDebugEnabled())
+			{
+				_log.debug("Cleaning up serialization thread");
+			}
 			SerializationThread thread = getSerializationThread();
 			
 		//	Wait for end of serialization
