@@ -1,6 +1,5 @@
 package net.sf.gilead.test.domain.interfaces;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**

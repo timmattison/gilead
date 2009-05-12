@@ -5,6 +5,7 @@ package net.sf.gilead.core;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -606,7 +607,7 @@ public abstract class CloneTest extends TestCase
 		
 	//	Create a map with all users and message
 	//
-		Map<IUser, Set<IMessage>> userMap = new HashMap<IUser, Set<IMessage>>();
+		Map<IUser, Collection<IMessage>> userMap = new HashMap<IUser, Collection<IMessage>>();
 		List<IUser> userList = userDAO.loadAll();
 		for (IUser user : userList)
 		{
@@ -616,13 +617,13 @@ public abstract class CloneTest extends TestCase
 		
 	//	Clone map
 	//
-		Map<IUser, Set<IMessage>> cloneMap = (Map<IUser, Set<IMessage>>) _beanManager.clone(userMap);
+		Map<IUser, Collection<IMessage>> cloneMap = (Map<IUser, Collection<IMessage>>) _beanManager.clone(userMap);
 		assertNotNull(cloneMap);
 		assertEquals(cloneMap.size(), userMap.size());
 		
 	//	Clone verification
 	//
-		for (Entry<IUser, Set<IMessage>> entry : cloneMap.entrySet())
+		for (Entry<IUser, Collection<IMessage>> entry : cloneMap.entrySet())
 		{
 		//	User checking
 		//
@@ -642,13 +643,13 @@ public abstract class CloneTest extends TestCase
 		
 	//	Merge map
 	//
-		Map<IUser, Set<IMessage>> mergeMap = (Map<IUser, Set<IMessage>>) _beanManager.merge(cloneMap);
+		Map<IUser, Collection<IMessage>> mergeMap = (Map<IUser, Collection<IMessage>>) _beanManager.merge(cloneMap);
 		assertNotNull(mergeMap);
 		assertEquals(mergeMap.size(), cloneMap.size());
 		
 	//	Merge verification
 	//
-		for (Entry<IUser, Set<IMessage>> entry : mergeMap.entrySet())
+		for (Entry<IUser, Collection<IMessage>> entry : mergeMap.entrySet())
 		{
 		//	User checking
 		//

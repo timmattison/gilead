@@ -20,7 +20,7 @@
     	<property name="connection.autocommit">false</property>
     	
         <!-- Print SQL to stdout. -->
-        <property name="show_sql">false</property>
+        <property name="show_sql">true</property>
         
         <!-- Disable batch for HSQLDB  -->
         <property name="jdbc.batch_size">0</property>
@@ -36,5 +36,8 @@
         <mapping resource="stateless/Message.hbm.xml"/>
         <mapping resource="stateless/Group.hbm.xml"/>
         <mapping resource="stateless/Country.hbm.xml"/>
+        
+        <mapping resource="misc/Page.hbm.xml"/>
+        <mapping resource="misc/Photo.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>
