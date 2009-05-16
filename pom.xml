@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sf.gilead</groupId>
 	<artifactId>gilead</artifactId>
@@ -40,7 +42,9 @@
 		</repository>
 		<repository>
 			<id>gwt-maven</id>
-			<url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+			<url>
+				http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/
+			</url>
 		</repository>
 		<repository>
 			<id>jboss</id>
@@ -48,7 +52,9 @@
 		</repository>
 		<repository>
 			<id>hibernat4gwt-repo</id>
-			<url>https://hibernate4gwt.svn.sourceforge.net/svnroot/hibernate4gwt/branches/jens_meiss/maven/</url>
+			<url>
+				https://hibernate4gwt.svn.sourceforge.net/svnroot/hibernate4gwt/branches/jens_meiss/maven/
+			</url>
 		</repository>
 		<repository>
 			<id>maven2-repository.dev.java.net</id>
@@ -58,17 +64,23 @@
 		<repository>
 			<id>gilead-repo</id>
 			<name>Gilead Maven Repository</name>
-			<url>https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo</url>
+			<url>
+				https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo
+			</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>gwt-maven-plugins</id>
-			<url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+			<url>
+				http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/
+			</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<scm>
-	     <developerConnection>scm:svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/branches/1.2</developerConnection>
+		<developerConnection>
+			scm:svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/branches/1.2
+		</developerConnection>
 	</scm>
 	<dependencyManagement>
 		<dependencies>
@@ -93,9 +105,9 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-			    <groupId>org.springframework</groupId>
-			    <artifactId>spring</artifactId>
-			    <version>2.5.1</version>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring</artifactId>
+				<version>2.5.1</version>
 			</dependency>
 			<dependency>
 				<groupId>antlr</groupId>
@@ -146,11 +158,243 @@
 				<groupId>org.jboss.ejb3</groupId>
 				<artifactId>jboss-ejb3-core</artifactId>
 				<version>1.1.2</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.jboss.integration</groupId>
+						<artifactId>jboss-jca-spi</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.metadata</groupId>
+						<artifactId>jboss-metadata</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.logging</groupId>
+						<artifactId>jboss-logging-spi</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss</groupId>
+						<artifactId>jboss-vfs</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.naming</groupId>
+						<artifactId>jnpserver</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.aop</groupId>
+						<artifactId>jboss-aop</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.aop</groupId>
+						<artifactId>jboss-aop-aspects</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.cache</groupId>
+						<artifactId>jbosscache-core</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.aspects</groupId>
+						<artifactId>jboss-remoting-aspects</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.cluster</groupId>
+						<artifactId>jboss-ha-client</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.cluster</groupId>
+						<artifactId>jboss-ha-server-api</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.ejb3</groupId>
+						<artifactId>jboss-ejb3-cache</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.ejb3</groupId>
+						<artifactId>jboss-ejb3-common</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.ejb3</groupId>
+						<artifactId>jboss-ejb3-security</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.ejb3</groupId>
+						<artifactId>
+							jboss-ejb3-timerservice-spi
+						</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.ejb3</groupId>
+						<artifactId>jboss-ejb3-ext-api</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.ejb3</groupId>
+						<artifactId>jboss-ejb3-ext-api-impl</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.ejb3</groupId>
+						<artifactId>jboss-ejb3-interceptors</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.ejb3</groupId>
+						<artifactId>jboss-ejb3-metadata</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.ejb3</groupId>
+						<artifactId>jboss-ejb3-proxy</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.ejb3</groupId>
+						<artifactId>
+							jboss-ejb3-proxy-clustered
+						</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.ejb3</groupId>
+						<artifactId>jboss-ejb3-transactions</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.javaee</groupId>
+						<artifactId>jboss-ejb-api</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.javaee</groupId>
+						<artifactId>jboss-jacc-api</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.javaee</groupId>
+						<artifactId>jboss-jca-api</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.javaee</groupId>
+						<artifactId>jboss-jms-api</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.javaee</groupId>
+						<artifactId>jboss-servlet-api</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.jbossas</groupId>
+						<artifactId>jboss-as-main</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.jbossas</groupId>
+						<artifactId>jboss-as-system</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.jbossas</groupId>
+						<artifactId>jboss-as-system-jmx</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.jbossas</groupId>
+						<artifactId>jboss-as-mbeans</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.jbossas</groupId>
+						<artifactId>jboss-as-j2se</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.jbossas</groupId>
+						<artifactId>jboss-as-server</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.jpa</groupId>
+						<artifactId>jboss-jpa-deployers</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.deployers</groupId>
+						<artifactId>
+							jboss-deployers-core-spi
+						</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.microcontainer</groupId>
+						<artifactId>jboss-kernel</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.security</groupId>
+						<artifactId>jboss-security-spi</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.security</groupId>
+						<artifactId>jbosssx</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.jboss.ws</groupId>
+						<artifactId>jbossws-spi</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.jpa</groupId>
 				<artifactId>jboss-jpa-deployers</artifactId>
 				<version>1.0.0-CR1</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-entitymanager</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.jboss.integration</groupId>
+						<artifactId>jboss-transaction-spi</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.jboss.deployers</groupId>
+						<artifactId>jboss-deployers-vfs</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.jboss.deployers</groupId>
+						<artifactId>jboss-deployers-vfs-spi</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.jboss.metadata</groupId>
+						<artifactId>jboss-metadata</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.jboss.microcontainer</groupId>
+						<artifactId>jboss-aop-mc-int</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.jboss</groupId>
+						<artifactId>jboss-common-core</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
@@ -207,7 +451,7 @@
 				<groupId>com.google.gwt</groupId>
 				<artifactId>gwt-user</artifactId>
 				<version>1.5.3</version>
-			</dependency>  
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -217,22 +461,24 @@
 			<version>3.8.1</version>
 		</dependency>
 	</dependencies>
-	
+
 	<properties>
 		<maven.test.skip>true</maven.test.skip>
 		<catalina.version>6.0.18</catalina.version>
 	</properties>
-	
+
 	<!-- Tests currently not available -->
-	
+
 	<build>
 		<plugins>
 			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.0-beta-7</version>
 				<configuration>
-			  	        <tagBase>https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/tags/</tagBase>
+					<tagBase>
+						https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/tags/
+					</tagBase>
 				</configuration>
 			</plugin>
 
@@ -262,17 +508,21 @@
 		</extensions>
 	</build>
 	<distributionManagement>
-                <!-- use the following if you're not using a snapshot version. -->
-                <repository>
-                        <id>releases</id>
-                        <name>releases</name>
-                        <url>svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo</url>
-                </repository>
-                <!-- use the following if you ARE using a snapshot version. -->
-                <snapshotRepository>
-                        <id>snapshots</id>
-                        <name>snapshots</name>
-                        <url>svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-snapshots-repo</url>
-                </snapshotRepository>
-     </distributionManagement>
+		<!-- use the following if you're not using a snapshot version. -->
+		<repository>
+			<id>releases</id>
+			<name>releases</name>
+			<url>
+				svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo
+			</url>
+		</repository>
+		<!-- use the following if you ARE using a snapshot version. -->
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>snapshots</name>
+			<url>
+				svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-snapshots-repo
+			</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
