@@ -5,6 +5,8 @@ package net.sf.gilead.adapter4appengine.datanucleus;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -83,30 +85,49 @@ public class JdoReadSerializationFilter implements ISerializationFilter
 		//	Restore JDO detached state
 		//
 			Object id = getId(obj, fieldValues);
-			if (id != null)
+			if (id == null)
 			{
-				restoreJdoDetachedState(obj, id);
+				// new item : nothing to do ?
+				//
+				return;
 			}
+			
+			Object stored = JdoEntityStore.getInstance().getEntity(id);
+			
+			restoreJdoDetachedState(obj, stored);
 			
 		//	Call setter on each value
 		//
 			for(Entry<String, Object> fieldValue : fieldValues.entrySet())
 			{
-				log.info("Setting value " + fieldValue.getValue() 
-						+" for field " + fieldValue.getKey());
-				
-				Method setter = getSetterFor(obj, fieldValue.getKey());
-				if (setter != null)
+				String fieldName = fieldValue.getKey();
+				Object value = fieldValue.getValue();
+				if (value instanceof Collection)
 				{
-				//	Set new value
+				//	TODO Collection handling
 				//
-					try 
+					updateCollection(obj, fieldName, (Collection<Object>) value, stored);
+				}
+				else
+				{
+				//	Simple value
+				//
+					log.info("Setting value " + value
+							+" for field " + fieldName);
+					
+					Method setter = getSetterFor(obj, fieldName);
+					if (setter != null)
 					{
-						setter.invoke(obj, fieldValue.getValue());
-					} 
-					catch (Exception e)
-					{
-						throw new RuntimeException(e);
+					//	Set new value
+					//
+						try 
+						{
+							setter.invoke(obj, value);
+						} 
+						catch (Exception e)
+						{
+							throw new RuntimeException(e);
+						}
 					}
 				}
 			}
@@ -163,20 +184,23 @@ public class JdoReadSerializationFilter implements ISerializationFilter
 	 * @param id
 	 * @return
 	 */
-	protected void restoreJdoDetachedState(Object obj, Object id)
+	protected void restoreJdoDetachedState(Object obj, Object stored)
 	{
 		try
 		{
-			PersistenceCapable stored = JdoEntityStore.getInstance().getEntity(id);
-			
-		//	Copy JDO detached state
+		//	Copy all JDO fields
 		//
-			Field field = obj.getClass().getDeclaredField("jdoDetachedState");
-			field.setAccessible(true);
-			
-			Object[] detachedState = (Object[]) field.get(stored);
-			
-			field.set(obj, detachedState);
+			Field[] fields = obj.getClass().getDeclaredFields();
+			for (Field field : fields)
+			{
+				if ((field.getName().startsWith("jdo")) &&
+					(Modifier.isStatic(field.getModifiers()) == false))
+				{
+					field.setAccessible(true);
+					Object jdoValue = field.get(stored);
+					field.set(obj, jdoValue);
+				}
+			}
 		}
 		catch(Exception ex)
 		{
@@ -205,7 +229,7 @@ public class JdoReadSerializationFilter implements ISerializationFilter
 		for (Method method : methods)
 		{
 			if ((setterName.equals(method.getName())) &&
-				(method.getParameterTypes().length == 0))
+				(method.getParameterTypes().length == 1))
 			{
 				method.setAccessible(true);
 				return method;
@@ -216,5 +240,47 @@ public class JdoReadSerializationFilter implements ISerializationFilter
 	//
 		log.warn("No setter for " + fieldName);
 		return null;
+	}
+	
+	/**
+	 * Update collection field.
+	 * This method is based on previously stored collection so persistence marker on 
+	 * DN implementation will be updated correctly.
+	 * @param obj
+	 * @param fieldName
+	 * @param value
+	 * @param stored
+	 */
+	protected void updateCollection(Object obj, String fieldName, 
+									Collection<Object> values, Object stored)
+	{
+		try
+		{
+		//	Get stored collection
+		//
+			Field field = stored.getClass().getDeclaredField(fieldName);
+			assert(field != null);
+			field.setAccessible(true);
+			
+			Collection<Object> storedCollection = (Collection<Object>) field.get(stored);
+			if (storedCollection == null)
+			{
+				// No collection before sending : nothing to do
+				return;
+			}
+			
+		//	TODO stored collection update to be improved
+		//
+			storedCollection.clear();
+			storedCollection.addAll(values);
+			
+		//	Update the deserialized object with stored DataNucleus collection
+		//
+			field.set(obj, storedCollection);
+		}
+		catch(Exception e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 }
