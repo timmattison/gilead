@@ -1,8 +1,10 @@
 package net.sf.gilead.adapter4appengine.datanucleus;
 
+import javax.jdo.identity.ObjectIdentity;
 import javax.jdo.spi.PersistenceCapable;
 import javax.servlet.http.HttpSession;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.repackaged.org.apache.commons.logging.Log;
 import com.google.appengine.repackaged.org.apache.commons.logging.LogFactory;
 
@@ -90,7 +92,7 @@ public class JdoEntityStore
 			throw new NullPointerException("HTTP session not set !");
 		}
 	
-	//	Get ID (TODO Key handling)
+	//	Get ID
 	//	
 		Object id = entity.jdoGetObjectId();
 		if (id != null)
@@ -98,7 +100,8 @@ public class JdoEntityStore
 		//	Store JDO in HTTP session
 		//
 			log.info("Storing entity " + entity + " with ID " + id);
-			httpSession.setAttribute(id.toString(), entity);
+			String idKey = computeIdKey(id);
+			httpSession.setAttribute(idKey, entity);
 		}
 	}
 	
@@ -121,6 +124,42 @@ public class JdoEntityStore
 	//	Get entity from HTTP session
 	//
 		log.info("Search entity with ID " + id);
-		return (PersistenceCapable) httpSession.getAttribute(id.toString());
+		String idKey = computeIdKey(id);
+		return (PersistenceCapable) httpSession.getAttribute(idKey);
+	}
+	
+	//-------------------------------------------------------------------------
+	//
+	// Internal methods
+	//
+	//-------------------------------------------------------------------------
+	/**
+	 * Compute ID key
+	 * @param id
+	 * @return
+	 */
+	protected String computeIdKey(Object id)
+	{
+	//	Special handling for ObjectEntity
+	//
+		if (id instanceof ObjectIdentity)
+		{
+			id = ((ObjectIdentity)id).getKeyAsObject();
+		}
+		
+	//	Key handling
+	//
+		if (id instanceof Key)
+		{
+		//	Use underlying id
+		//
+			return Long.toString(((Key) id).getId());
+		}
+		else
+		{
+		//	Use toString
+		//
+			return id.toString();
+		}
 	}
 }

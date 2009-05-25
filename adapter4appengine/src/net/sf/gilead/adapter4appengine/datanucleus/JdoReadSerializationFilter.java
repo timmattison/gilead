@@ -131,6 +131,10 @@ public class JdoReadSerializationFilter implements ISerializationFilter
 					}
 				}
 			}
+			
+		//	Restore stored Id if needed
+		//
+			restoreStoredId(obj, stored);
 		}
 	}
 
@@ -207,6 +211,32 @@ public class JdoReadSerializationFilter implements ISerializationFilter
 			throw new RuntimeException(ex);
 		}
 	}
+	
+	/**
+	 * Restore stored ID (for Key handling)
+	 * @param obj
+	 * @param stored
+	 */
+	protected void restoreStoredId(Object obj, Object stored)
+	{
+		try
+		{
+			// TODO ID field name
+			Field idField = obj.getClass().getDeclaredField("id");
+			idField.setAccessible(true);
+			
+			// Get stored ID
+			Object value = idField.get(stored);
+			
+			// Set stored id
+			idField.set(obj, value);
+		}
+		catch(Exception ex)
+		{
+			throw new RuntimeException(ex);
+		}
+	}
+
 	
 	/**
 	 * Get setter method for the argument field
