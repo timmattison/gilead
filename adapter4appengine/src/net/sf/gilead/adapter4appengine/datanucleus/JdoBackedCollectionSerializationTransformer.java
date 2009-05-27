@@ -6,6 +6,7 @@ package net.sf.gilead.adapter4appengine.datanucleus;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -63,7 +64,14 @@ public class JdoBackedCollectionSerializationTransformer implements ISerializati
 		Collection<Object> result = null;
 		if (instance instanceof List)
 		{
-			result = new ArrayList<Object>(backed.size());
+			if (instance instanceof LinkedList)
+			{
+				result = new LinkedList<Object>();
+			}
+			else
+			{
+				result = new ArrayList<Object>(backed.size());
+			}
 		}
 		else if (instance instanceof Set)
 		{
