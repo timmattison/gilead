@@ -763,6 +763,20 @@ public class PersistentBeanManager
 				return true;
 			}
 			
+			if (pojo instanceof Collection) 
+			{
+			    Collection<Object> pojoCollection = (Collection) pojo;
+			    for (Object item : pojoCollection)
+			    {
+			        if (holdPersistentObject(item, alreadyChecked))
+			        {
+			            return true;
+			        }
+			    }
+			    
+			    return false;
+			}
+			
 		//	Iterate over properties
 		//
 			BeanInfo info = Introspector.getBeanInfo(pojo.getClass());
