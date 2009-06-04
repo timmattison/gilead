@@ -289,6 +289,13 @@ public class PersistentBeanManager
 		}
 		else if (object.getClass().isArray())
 		{
+		//	Check primitive type
+		//
+			if (object.getClass().getComponentType().isPrimitive())
+			{ 
+				return object; 
+			} 
+			
 		//	Merge as a collection
 		//
 			Object[] array = (Object[]) object;
