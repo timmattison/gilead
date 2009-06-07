@@ -50,7 +50,9 @@ public class TimestampCustomTransformer implements CustomBeanTransformerSpi
 	/**
 	 * Filter method
 	 */
-	public <T> boolean isTransformable(Object from, Class<T> toClass, PropertyInfo info)
+
+	@Override
+	public boolean isTransformable(Object from, Class<?> toClass, PropertyInfo info) 
 	{
 		return ((from instanceof Timestamp) && 
 			    (toClass == Date.class));

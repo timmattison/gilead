@@ -65,14 +65,13 @@ public class UnionCustomBeanTransformer implements CustomBeanTransformerSpi
 	 * @param toClass the destination class to transform the 'from' object in 
 	 * @return true if a custom bean transformer was found, false if not
 	 */
-	public <T> boolean isTransformable(Object from, Class<T> toClass,
-			PropertyInfo propertyInfo)
+	public boolean isTransformable(Object from, Class<?> toClass, PropertyInfo info)
 	{
 	//	Iterate over custom transformers
 	//
 		for (CustomBeanTransformerSpi cbt : _customTransformers)
 		{
-			if (cbt.isTransformable(from, toClass, propertyInfo))
+			if (cbt.isTransformable(from, toClass, info))
 				return true;
 		}
 		return false;
