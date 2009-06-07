@@ -6,12 +6,11 @@ package net.sf.gilead.performance;
 import java.util.List;
 
 import junit.framework.TestCase;
+import net.sf.beanlib.hibernate.UnEnhancer;
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.TestHelper;
-import net.sf.gilead.pojo.base.ILightEntity;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.dao.IUserDAO;
-import net.sf.gilead.test.domain.interfaces.IMessage;
 import net.sf.gilead.test.domain.interfaces.IUser;
 
 import org.apache.commons.logging.Log;
@@ -125,13 +124,51 @@ public abstract class PerformanceTest extends TestCase
 		long end = System.currentTimeMillis();
 		assertNotNull(cloneUserList);
 		
-		_log.info("Clone user list took " + (end - start) + " ms.");
+		_log.info("[CGLIB check enabled] Clone user list took " + (end - start) + " ms.");
 		
 	//	Merge user
 	//
 		start = System.currentTimeMillis();
 		List<IUser> mergeUserList = (List<IUser>) _beanManager.merge(cloneUserList);
-		_log.info("Merge user list took " + (System.currentTimeMillis() - start) + " ms.");
+		_log.info("[CGLIB check enabled] Merge user list took " + (System.currentTimeMillis() - start) + " ms.");
+		
+	//	Test merged user
+	//
+		assertNotNull(mergeUserList);
+	}
+	
+	/**
+	 * Test clone of a list of user and associated messages
+	 */
+	public void testPerformanceOnCloneAndMergeAllUserAndMessages_NoCglibCheck()
+	{
+	//	Disable beanlib CGLIB check
+	//
+		UnEnhancer.setDefaultCheckCGLib(false);
+		
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Load users
+	//
+		List<IUser> userList = userDAO.loadAllUserAndMessages();
+
+	//	Clone user
+	//
+		long start = System.currentTimeMillis();
+		List<IUser> cloneUserList = (List<IUser>) _beanManager.clone(userList);
+		long end = System.currentTimeMillis();
+		assertNotNull(cloneUserList);
+		
+		_log.info("[CGLIB check disabled]Clone user list took " + (end - start) + " ms.");
+		
+	//	Merge user
+	//
+		start = System.currentTimeMillis();
+		List<IUser> mergeUserList = (List<IUser>) _beanManager.merge(cloneUserList);
+		_log.info("[CGLIB check disabled]Merge user list took " + (System.currentTimeMillis() - start) + " ms.");
 		
 	//	Test merged user
 	//
