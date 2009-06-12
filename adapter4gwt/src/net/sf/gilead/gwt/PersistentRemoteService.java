@@ -19,6 +19,7 @@ package net.sf.gilead.gwt;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.beanlib.mapper.ProxyClassMapper;
@@ -28,6 +29,7 @@ import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RPCCopy;
 import com.google.gwt.user.server.rpc.RPCRequest;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.gwt.user.server.rpc.SerializationPolicy;
 
 /**
  * Abstract class for GWT remote service using persistent POJO 
@@ -112,6 +114,13 @@ public abstract class PersistentRemoteService extends RemoteServiceServlet
 	// Remote service servlet override
 	//
 	//-------------------------------------------------------------------------
+	@Override
+	protected SerializationPolicy doGetSerializationPolicy(
+			HttpServletRequest request, String moduleBaseURL, String strongName) 
+	{
+		GileadRPCHelper.initClassLoader();
+		return super.doGetSerializationPolicy(request, moduleBaseURL, strongName);
+	}
 	/**
 	 * Servlet initialisation
 	 */
