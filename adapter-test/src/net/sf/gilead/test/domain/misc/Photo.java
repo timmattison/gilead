@@ -21,7 +21,7 @@ public class Photo extends LightEntity
 	private Integer version;
     
     private String url;
-
+    
     private Page page;
         
     // Properties
@@ -54,6 +54,21 @@ public class Photo extends LightEntity
 		this.url = url;
 	}
 	
+	/**
+	 * @return the pageIndex
+	 */
+	public int getPageIndex()
+	{
+		return this.getPage().getPhotoList().indexOf(this);
+	}
+
+	/**
+	 * @param pageIndex the pageIndex to set
+	 */
+	public void setPageIndex(int pageIndex) {
+		// not used, calculated value, see getIndex() method
+	}
+
 	public Page getPage() {
 		return page;
 	}

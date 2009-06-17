@@ -16,6 +16,8 @@
             <column name="URL" length="255" not-null="true" />
         </property>
         
+        <property name="pageIndex" column="PAGE_INDEX" type="int" update="true" insert="true"/>
+        
         <many-to-one name="page" class="net.sf.gilead.test.domain.misc.Page" column="PAGE_ID"/>
         
     </class>

@@ -31,6 +31,7 @@ public class CollectionOrderTest extends TestCase
 	//	Create test page
 	//
 		Page testPage = createTestPage();
+		testPage = loadPage(testPage.getName());
 		
 	//	Clone test page
 	//
@@ -68,6 +69,7 @@ public class CollectionOrderTest extends TestCase
 		
 		assertNotNull(loadPage);
 		assertNotNull(loadPage.getPhotoList());
+		assertEquals(3, loadPage.getPhotoList().size());
 		assertEquals(photo3.getUrl(), loadPage.getPhotoList().get(0).getUrl());
 		assertEquals(photo2.getUrl(), loadPage.getPhotoList().get(1).getUrl());
 		assertEquals(photo1.getUrl(), loadPage.getPhotoList().get(2).getUrl());
@@ -125,6 +127,7 @@ public class CollectionOrderTest extends TestCase
 		//
 			session.saveOrUpdate(page);
 			transaction.commit();
+			
 		}
 		catch (RuntimeException e)
 		{

@@ -1026,6 +1026,9 @@ public class HibernateUtil implements IPersistenceUtil
 					else
 					{
 						// TODO non persistent entity handling ?
+						deleted.object = Class.forName(sid.getEntityName()).newInstance();
+						deleted.index = idList.indexOf(sid);
+						deletedItems.add(deleted);
 					}
 				}
 				catch(Exception e)
