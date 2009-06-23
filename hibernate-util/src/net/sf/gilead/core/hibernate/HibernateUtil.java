@@ -1425,7 +1425,8 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 		//	Not found
 		//
-			return null;
+			_log.warn("Unable to find entity name for persistent class " + clazz.getName());
+			return clazz.getName();
 		}
 		else if (entityNames.size() == 1)
 		{
