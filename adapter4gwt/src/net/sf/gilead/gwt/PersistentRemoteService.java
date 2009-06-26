@@ -42,6 +42,11 @@ public abstract class PersistentRemoteService extends RemoteServiceServlet
 	// Attribute
 	//----
 	/**
+	 * Serialization ID
+	 */
+	private static final long serialVersionUID = 7432874379586734765L;
+	
+	/**
 	 * The Hibernate lazy manager
 	 */
 	protected PersistentBeanManager _beanManager;
@@ -170,19 +175,25 @@ public abstract class PersistentRemoteService extends RemoteServiceServlet
 	    } 
 		catch (InvocationTargetException e)
 		{
+			// Clone exception if needed
+			Exception exception = (Exception) GileadRPCHelper.parseReturnValue(e.getCause(), _beanManager);
+			
 			return RPCCopy.getInstance().encodeResponseForFailure(rpcRequest.getMethod(), 
-																  e.getCause(),
+																  exception,
 																  rpcRequest.getSerializationPolicy());
 		}
 		catch (IncompatibleRemoteServiceException ex)
 		{
+			// Clone exception if needed
+			Exception exception = (Exception) GileadRPCHelper.parseReturnValue(ex, _beanManager);
+			
 			if (rpcRequest != null)
 			{
-				return RPCCopy.getInstance().encodeResponseForFailure(null, ex, rpcRequest.getSerializationPolicy());
+				return RPCCopy.getInstance().encodeResponseForFailure(null, exception, rpcRequest.getSerializationPolicy());
 			}
 			else
 			{
-				return RPCCopy.getInstance().encodeResponseForFailure(null, ex);
+				return RPCCopy.getInstance().encodeResponseForFailure(null, exception);
 			}
 	    } 
 	}

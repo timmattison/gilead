@@ -68,9 +68,10 @@ public class CustomTransformersFactory
 		_cloneTransformersList = new ArrayList<Constructor<CustomBeanTransformerSpi>>();
 		_mergeTransformersList = new ArrayList<Constructor<CustomBeanTransformerSpi>>();
 		
-	//	Timestamp transformer is needed for Gilead
+	//	Transformers needed for Gilead
 	//
 		addCustomBeanTransformer(TimestampCustomTransformer.class);
+		addCustomBeanTransformer(StackTraceElementCustomTransformer.class);
 	}
 	
 	//-------------------------------------------------------------------------
