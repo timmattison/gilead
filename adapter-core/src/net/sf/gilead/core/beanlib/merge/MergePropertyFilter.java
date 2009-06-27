@@ -110,10 +110,10 @@ public class MergePropertyFilter implements DetailedPropertyFilter
 	 * @see net.sf.beanlib.spi.DetailedBeanPopulatable#shouldPopulate(java.lang.String, java.lang.Object, java.lang.reflect.Method, java.lang.Object, java.lang.reflect.Method)
 	 */
 	public boolean propagate(String propertyName, 
-								  Object cloneBean, 
-								  Method readerMethod, 
-								  Object persistentBean, 
-								  Method setterMethod)
+							 Object cloneBean, 
+							 Method readerMethod, 
+							 Object persistentBean, 
+							 Method setterMethod)
 	{
 		try
 		{
@@ -170,7 +170,7 @@ public class MergePropertyFilter implements DetailedPropertyFilter
 				{
 				//	Set collection proxy
 				//
-					Object persistentCollection = _persistenceUtil.createPersistentCollection(proxyInformations, null);
+					Object persistentCollection = _persistenceUtil.createPersistentCollection(persistentBean, proxyInformations, null);
 					writePropertyValue(persistentBean, persistentCollection, 
 									   setterMethod.getName(), setterMethod.getParameterTypes());
 				}

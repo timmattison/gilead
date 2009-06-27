@@ -125,9 +125,9 @@ public class CloneClassBeanReplicator extends Hibernate3JavaBeanReplicator
 		_persistenceUtil.isPersistentPojo(from);
 		
 		
-		BeanlibThreadLocal.getBeanStack().push(from);
+		BeanlibThreadLocal.getFromBeanStack().push(from);
 		T result = super.replicateBean(from, toClass);
-		BeanlibThreadLocal.getBeanStack().pop();
+		BeanlibThreadLocal.getFromBeanStack().pop();
 		return result;
 	}
 	

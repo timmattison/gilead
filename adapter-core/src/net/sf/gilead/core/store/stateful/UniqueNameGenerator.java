@@ -80,7 +80,7 @@ public class UniqueNameGenerator
 		{
 		//	Component type : search parent in bean stack
 		//
-			Stack<Object> stack = BeanlibThreadLocal.getBeanStack();
+			Stack<Object> stack = BeanlibThreadLocal.getFromBeanStack();
 			for(int index = stack.size() - 1 ; index >= 0; index --)
 			{
 				Object object = stack.get(index);

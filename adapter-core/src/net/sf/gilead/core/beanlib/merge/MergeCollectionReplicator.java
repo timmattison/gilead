@@ -113,7 +113,8 @@ public class MergeCollectionReplicator extends Hibernate3CollectionReplicator {
 	//
 		if (proxyInformations != null)
 		{
-			return (T) _persistenceUtil.createPersistentCollection(proxyInformations, collection);
+			Object parent = BeanlibThreadLocal.getToBeanStack().peek();
+			return (T) _persistenceUtil.createPersistentCollection(parent, proxyInformations, collection);
 		}
 		else
 		{

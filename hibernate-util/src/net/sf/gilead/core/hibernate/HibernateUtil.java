@@ -533,13 +533,18 @@ public class HibernateUtil implements IPersistenceUtil
 	 * @param underlyingCollection the filled underlying collection
 	 * @return
 	 */
-	public Object createPersistentCollection(Map<String, Serializable> proxyInformations,
+	public Object createPersistentCollection(Object parent,
+											 Map<String, Serializable> proxyInformations,
 											 Object underlyingCollection)
 	{
 	//	Get added and deleted items
 	//
 		Object addedItems = removeNewItems(proxyInformations, underlyingCollection);
 		Collection<?> deletedItems = addDeletedItems(proxyInformations, underlyingCollection);
+		
+	//	Reorder snapshot if needed
+	//
+		Object orderedCollection = reorderCollection(proxyInformations, underlyingCollection);
 		
 	//	Create collection for the class name
 	//
@@ -558,7 +563,7 @@ public class HibernateUtil implements IPersistenceUtil
 			else
 			{
 				collection =  new PersistentBag((SessionImpl) session,
-										 		(Collection<?>) underlyingCollection);
+										 		(Collection<?>) orderedCollection);
 			}
 		}
 		else if (PersistentList.class.getName().equals(className))
@@ -572,7 +577,7 @@ public class HibernateUtil implements IPersistenceUtil
 			else
 			{
 				collection = new PersistentList((SessionImpl) session,
-										  		(List<?>) underlyingCollection);
+										  		(List<?>) orderedCollection);
 			}
 		}
 		else if (PersistentSet.class.getName().equals(className))
@@ -586,7 +591,7 @@ public class HibernateUtil implements IPersistenceUtil
 			else
 			{
 				collection = new PersistentSet((SessionImpl) session,
-						 				 	   (Set<?>) underlyingCollection);
+						 				 	   (Set<?>) orderedCollection);
 			}
 		}
 		else if (PersistentSortedSet.class.getName().equals(className))
@@ -600,7 +605,7 @@ public class HibernateUtil implements IPersistenceUtil
 			else
 			{
 				collection = new PersistentSortedSet((SessionImpl) session,
-						 				 	   		 (SortedSet<?>) underlyingCollection);
+						 				 	   		 (SortedSet<?>) orderedCollection);
 			}
 		}
 		else if (PersistentMap.class.getName().equals(className))
@@ -614,7 +619,7 @@ public class HibernateUtil implements IPersistenceUtil
 			else
 			{
 				collection = new PersistentMap((SessionImpl) session,
-						 				 	   (Map<?, ?>) underlyingCollection);
+						 				 	   (Map<?, ?>) orderedCollection);
 			}
 		}
 		else if (PersistentSortedMap.class.getName().equals(className))
@@ -628,7 +633,7 @@ public class HibernateUtil implements IPersistenceUtil
 			else
 			{
 				collection = new PersistentSortedMap((SessionImpl) session,
-						 				 	   		 (SortedMap<?, ?>) underlyingCollection);
+						 				 	   		 (SortedMap<?, ?>) orderedCollection);
 			}
 		}
 		else
@@ -642,7 +647,7 @@ public class HibernateUtil implements IPersistenceUtil
 		Serializable snapshot = null;
 		if (underlyingCollection != null)
 		{
-		//	Create snpashot
+		//	Create snapshot
 		//
 			CollectionPersister collectionPersister = _sessionFactory.getCollectionPersister(role);
 			snapshot = collection.getSnapshot(collectionPersister);
@@ -650,6 +655,19 @@ public class HibernateUtil implements IPersistenceUtil
 		
 		collection.setSnapshot(proxyInformations.get(KEY), 
 							   role, snapshot);
+		
+	//	Owner
+	//
+		collection.setOwner(parent);
+		
+	//	Reorder collection if needed
+	//
+		if (orderedCollection != underlyingCollection)
+		{
+			// Set back the new order
+			((PersistentList)collection).clear();
+			((PersistentList)collection).addAll((List)underlyingCollection);
+		}
 		
 	//	Remove deleted items
 	//
@@ -1464,6 +1482,81 @@ public class HibernateUtil implements IPersistenceUtil
 		}
 		
 		return entityNames;
+	}
+	
+	/**
+	 * Reorder snapshot back to previously stored order.
+	 * @param proxyInformations
+	 * @param underlyingCollection
+	 * @return the reordered collection
+	 */
+	@SuppressWarnings("unchecked")
+	private Object reorderCollection(Map<String, Serializable> proxyInformations,
+								  Object underlyingCollection)
+	{
+	// Precondition checking
+	//
+		if (underlyingCollection instanceof List == false)
+		{
+			// Nothing to do...
+			return underlyingCollection;
+		}
+		
+	//	Get collection and previously stored id list
+	//
+		_log.info("reordering list...");
+		List<Object> collection = (List<Object>) underlyingCollection;
+		ArrayList<SerializableId> collectionID = createIdList(collection);
+		ArrayList<SerializableId> idList = (ArrayList<SerializableId>) proxyInformations.get(ID_LIST);
+		if (idList == null)
+		{
+			idList = new ArrayList<SerializableId>();
+		}
+		
+	//	Reorder collection back to previous order
+	//
+		try
+		{
+			List<Object> orderedCollection = collection.getClass().newInstance();
+			int oldIndex = 0;
+			boolean orderChanged = false;
+			for (SerializableId sid : idList)
+			{
+				int newIndex = collectionID.indexOf(sid);
+				if (newIndex != -1)
+				{
+					orderedCollection.add(collection.get(newIndex));
+					
+					if (oldIndex != newIndex)
+					{
+						orderChanged = true;
+					}
+				}
+				else
+				{
+					// Should not happen
+					_log.warn("Cannot find item " + sid + " giving up ordering...");
+					return underlyingCollection;
+				}
+				
+				oldIndex++;
+			}
+			
+		//	If order did not change, return underlying collection
+		//
+			if (orderChanged == false)
+			{
+				return underlyingCollection;
+			}
+			else
+			{
+				return orderedCollection;
+			}
+		}
+		catch(Exception ex)
+		{
+			throw new RuntimeException(ex);
+		}
 	}
 	
 }

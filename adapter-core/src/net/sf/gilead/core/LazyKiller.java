@@ -252,8 +252,9 @@ public class LazyKiller
 																	   _proxyStore);
 	//	Store root pojo on bean stack
 	//
-		BeanlibThreadLocal.getBeanStack().clear();
-		BeanlibThreadLocal.getBeanStack().push(clonePojo);
+		BeanlibThreadLocal.getFromBeanStack().clear();
+		BeanlibThreadLocal.getFromBeanStack().push(clonePojo);
+		BeanlibThreadLocal.getToBeanStack().push(hibernatePojo);
 		
 		replicator.populate();
 	}

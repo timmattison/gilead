@@ -133,10 +133,12 @@ public interface IPersistenceUtil
 	
 	/**
 	 * Create a persistent collection from serialized informations
+	 * @param parent the parent bean of the collection
 	 * @param serialized form of the persistent collection informations
 	 * @param underlyingCollection the filled underlying collection
 	 * @return the created persistent collection
 	 */
-	public abstract Object createPersistentCollection(Map<String,Serializable> proxyInformations,
+	public abstract Object createPersistentCollection(Object parent, 
+													  Map<String,Serializable> proxyInformations,
 													  Object underlyingCollection);
 }

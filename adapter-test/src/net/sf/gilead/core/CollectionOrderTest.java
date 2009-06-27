@@ -30,7 +30,7 @@ public class CollectionOrderTest extends TestCase
 		
 	//	Create test page
 	//
-		Page testPage = createTestPage();
+		Page testPage = createTestPage("Test page");
 		testPage = loadPage(testPage.getName());
 		
 	//	Clone test page
@@ -76,6 +76,61 @@ public class CollectionOrderTest extends TestCase
 		
 	}
 	
+	/**
+	 * Other change order algorithm on client side
+	 */
+	public void testChangeOrder2()
+	{
+		PersistentBeanManager beanManager = TestHelper.initStatelessBeanManager();
+		
+	//	Create test page
+	//
+		Page testPage = createTestPage("Test page 2");
+		testPage = loadPage(testPage.getName());
+		
+	//	Clone test page
+	//
+		Page clonePage = (Page) beanManager.clone(testPage);
+		
+		// clone page checking
+		assertNotNull(clonePage);
+		assertNotNull(clonePage.getPhotoList());
+		
+	//	Change order
+	//
+		Photo photo1 = clonePage.getPhotoList().get(0);
+		Photo photo2 = clonePage.getPhotoList().get(1);
+		Photo photo3 = clonePage.getPhotoList().get(2);
+		clonePage.getPhotoList().set(0,photo3);
+		clonePage.getPhotoList().set(1,photo2);
+		clonePage.getPhotoList().set(2,photo1);
+		
+	//	Merge test page
+	//
+		Page mergePage = (Page) beanManager.merge(clonePage);
+		
+		// merge page checking
+		assertNotNull(mergePage);
+		assertNotNull(mergePage.getPhotoList());
+		assertEquals(photo3.getUrl(), mergePage.getPhotoList().get(0).getUrl());
+		assertEquals(photo2.getUrl(), mergePage.getPhotoList().get(1).getUrl());
+		assertEquals(photo1.getUrl(), mergePage.getPhotoList().get(2).getUrl());
+		
+	//	Test ordering after save
+	//
+		savePage(mergePage);
+		assertNotNull(mergePage);
+		Page loadPage = loadPage(mergePage.getName());
+		
+		assertNotNull(loadPage);
+		assertNotNull(loadPage.getPhotoList());
+		assertEquals(3, loadPage.getPhotoList().size());
+		assertEquals(photo3.getUrl(), loadPage.getPhotoList().get(0).getUrl());
+		assertEquals(photo2.getUrl(), loadPage.getPhotoList().get(1).getUrl());
+		assertEquals(photo1.getUrl(), loadPage.getPhotoList().get(2).getUrl());
+		
+	}
+	
 	//-------------------------------------------------------------------------
 	//
 	// Internal methods
@@ -84,11 +139,11 @@ public class CollectionOrderTest extends TestCase
 	/**
 	 * Create a test page
 	 */
-	private Page createTestPage()
+	private Page createTestPage(String name)
 	{
 		// Page
 		Page page = new Page();
-		page.setName("Test page");
+		page.setName(name);
 		
 		// Photos
 		Photo photo1 = new Photo();
@@ -157,7 +212,6 @@ public class CollectionOrderTest extends TestCase
 	    	StringBuffer hqlQuery = new StringBuffer();
 	    	hqlQuery.append("select distinct page");
 	    	hqlQuery.append(" from Page page");
-	    	hqlQuery.append(" left outer join page.photoList");
 	    	hqlQuery.append(" where page.name=:name");
 	    	
 	    //	Fill query
@@ -169,6 +223,7 @@ public class CollectionOrderTest extends TestCase
 		//
 			Page page = (Page) query.uniqueResult();
 			page.getPhotoList().size();
+			session.evict(page);
 			transaction.commit();
 			
 			return page;

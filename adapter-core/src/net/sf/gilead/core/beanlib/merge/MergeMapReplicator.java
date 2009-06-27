@@ -145,7 +145,8 @@ public class MergeMapReplicator extends Hibernate3MapReplicator {
 	//
 		if (proxyInformations != null)
 		{
-			return (T) _persistenceUtil.createPersistentCollection(proxyInformations, map);
+			Object parent = BeanlibThreadLocal.getToBeanStack().peek();
+			return (T) _persistenceUtil.createPersistentCollection(parent, proxyInformations, map);
 		}
 		else
 		{
