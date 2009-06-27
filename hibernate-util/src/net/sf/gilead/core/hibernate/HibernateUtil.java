@@ -541,11 +541,7 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		Object addedItems = removeNewItems(proxyInformations, underlyingCollection);
 		Collection<?> deletedItems = addDeletedItems(proxyInformations, underlyingCollection);
-		
-	//	Reorder snapshot if needed
-	//
-		Object orderedCollection = reorderCollection(proxyInformations, underlyingCollection);
-		
+				
 	//	Create collection for the class name
 	//
 		String className = (String) proxyInformations.get(CLASS_NAME);
@@ -563,7 +559,7 @@ public class HibernateUtil implements IPersistenceUtil
 			else
 			{
 				collection =  new PersistentBag((SessionImpl) session,
-										 		(Collection<?>) orderedCollection);
+										 		(Collection<?>) underlyingCollection);
 			}
 		}
 		else if (PersistentList.class.getName().equals(className))
@@ -577,7 +573,7 @@ public class HibernateUtil implements IPersistenceUtil
 			else
 			{
 				collection = new PersistentList((SessionImpl) session,
-										  		(List<?>) orderedCollection);
+										  		(List<?>) underlyingCollection);
 			}
 		}
 		else if (PersistentSet.class.getName().equals(className))
@@ -591,7 +587,7 @@ public class HibernateUtil implements IPersistenceUtil
 			else
 			{
 				collection = new PersistentSet((SessionImpl) session,
-						 				 	   (Set<?>) orderedCollection);
+						 				 	   (Set<?>) underlyingCollection);
 			}
 		}
 		else if (PersistentSortedSet.class.getName().equals(className))
@@ -605,7 +601,7 @@ public class HibernateUtil implements IPersistenceUtil
 			else
 			{
 				collection = new PersistentSortedSet((SessionImpl) session,
-						 				 	   		 (SortedSet<?>) orderedCollection);
+						 				 	   		 (SortedSet<?>) underlyingCollection);
 			}
 		}
 		else if (PersistentMap.class.getName().equals(className))
@@ -619,7 +615,7 @@ public class HibernateUtil implements IPersistenceUtil
 			else
 			{
 				collection = new PersistentMap((SessionImpl) session,
-						 				 	   (Map<?, ?>) orderedCollection);
+						 				 	   (Map<?, ?>) underlyingCollection);
 			}
 		}
 		else if (PersistentSortedMap.class.getName().equals(className))
@@ -633,7 +629,7 @@ public class HibernateUtil implements IPersistenceUtil
 			else
 			{
 				collection = new PersistentSortedMap((SessionImpl) session,
-						 				 	   		 (SortedMap<?, ?>) orderedCollection);
+						 				 	   		 (SortedMap<?, ?>) underlyingCollection);
 			}
 		}
 		else
@@ -659,15 +655,6 @@ public class HibernateUtil implements IPersistenceUtil
 	//	Owner
 	//
 		collection.setOwner(parent);
-		
-	//	Reorder collection if needed
-	//
-		if (orderedCollection != underlyingCollection)
-		{
-			// Set back the new order
-			((PersistentList)collection).clear();
-			((PersistentList)collection).addAll((List)underlyingCollection);
-		}
 		
 	//	Remove deleted items
 	//
@@ -1483,82 +1470,6 @@ public class HibernateUtil implements IPersistenceUtil
 		
 		return entityNames;
 	}
-	
-	/**
-	 * Reorder snapshot back to previously stored order.
-	 * @param proxyInformations
-	 * @param underlyingCollection
-	 * @return the reordered collection
-	 */
-	@SuppressWarnings("unchecked")
-	private Object reorderCollection(Map<String, Serializable> proxyInformations,
-								  Object underlyingCollection)
-	{
-	// Precondition checking
-	//
-		if (underlyingCollection instanceof List == false)
-		{
-			// Nothing to do...
-			return underlyingCollection;
-		}
-		
-	//	Get collection and previously stored id list
-	//
-		_log.info("reordering list...");
-		List<Object> collection = (List<Object>) underlyingCollection;
-		ArrayList<SerializableId> collectionID = createIdList(collection);
-		ArrayList<SerializableId> idList = (ArrayList<SerializableId>) proxyInformations.get(ID_LIST);
-		if (idList == null)
-		{
-			idList = new ArrayList<SerializableId>();
-		}
-		
-	//	Reorder collection back to previous order
-	//
-		try
-		{
-			List<Object> orderedCollection = collection.getClass().newInstance();
-			int oldIndex = 0;
-			boolean orderChanged = false;
-			for (SerializableId sid : idList)
-			{
-				int newIndex = collectionID.indexOf(sid);
-				if (newIndex != -1)
-				{
-					orderedCollection.add(collection.get(newIndex));
-					
-					if (oldIndex != newIndex)
-					{
-						orderChanged = true;
-					}
-				}
-				else
-				{
-					// Should not happen
-					_log.warn("Cannot find item " + sid + " giving up ordering...");
-					return underlyingCollection;
-				}
-				
-				oldIndex++;
-			}
-			
-		//	If order did not change, return underlying collection
-		//
-			if (orderChanged == false)
-			{
-				return underlyingCollection;
-			}
-			else
-			{
-				return orderedCollection;
-			}
-		}
-		catch(Exception ex)
-		{
-			throw new RuntimeException(ex);
-		}
-	}
-	
 }
 
 /**
