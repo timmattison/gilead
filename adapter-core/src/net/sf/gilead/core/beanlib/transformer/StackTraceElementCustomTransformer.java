@@ -16,8 +16,6 @@
 
 package net.sf.gilead.core.beanlib.transformer;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Map;
 
 import net.sf.beanlib.PropertyInfo;
@@ -50,7 +48,6 @@ public class StackTraceElementCustomTransformer implements CustomBeanTransformer
 	 * Filter method
 	 */
 
-	@Override
 	public boolean isTransformable(Object from, Class<?> toClass, PropertyInfo info) 
 	{
 		return (toClass == StackTraceElement.class);
