@@ -104,7 +104,14 @@ public class SerializableId implements Serializable
 		// Check id or hashcode
 		if (id == null)
 		{
-			return (((SerializableId)other).hashCode.equals(hashCode));
+			if (hashCode != null)
+			{
+				return hashCode.equals(((SerializableId)other).hashCode);
+			}
+			else
+			{
+				return ((SerializableId)other).hashCode == null;
+			}
 		}
 		else 
 		{
