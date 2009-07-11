@@ -626,25 +626,7 @@ public class PersistentBeanManager
 		{
 		//	Create a basic collection
 		//
-			if (pojoCollection instanceof List)
-			{
-				return new ArrayList<Object>(pojoCollection.size());
-			}
-			else if (pojoCollection instanceof Set)
-			{
-				if (pojoCollection instanceof SortedSet)
-				{
-					return new TreeSet<Object>();
-				}
-				else
-				{
-					return new HashSet<Object>(pojoCollection.size());
-				}
-			}
-			else
-			{
-				throw new CloneException("Unhandled collection type : " + pojoCollection.getClass().toString());
-			}
+			return createBasicCollection(pojoCollection);
 		}
 		else
 		{
@@ -661,10 +643,19 @@ public class PersistentBeanManager
 			catch(NoSuchMethodException e)
 			{
 			//	No such constructor, so search the empty one
+			//
 				try
 				{
 					Constructor<?> constructor = collectionClass.getConstructor((Class[]) null); 
 					result = (Collection<Object>) constructor.newInstance();
+				}
+				catch(NoSuchMethodException ex)
+				{
+				//	No empty or simple constructor : fallback on basic collection
+				//
+					_log.warn("Unable to find basic constructor for " + collectionClass.getName() 
+							  + " : falling back to basic collection");
+					return createBasicCollection(pojoCollection);
 				}
 				catch(Exception ex)
 				{
@@ -684,6 +675,34 @@ public class PersistentBeanManager
 			}
 			
 			return result;
+		}
+	}
+	
+	/**
+	 * Creation of basic collection
+	 * @param pojoCollection
+	 * @return
+	 */
+	protected Collection<Object> createBasicCollection(Collection<?> pojoCollection)
+	{
+		if (pojoCollection instanceof List)
+		{
+			return new ArrayList<Object>(pojoCollection.size());
+		}
+		else if (pojoCollection instanceof Set)
+		{
+			if (pojoCollection instanceof SortedSet)
+			{
+				return new TreeSet<Object>();
+			}
+			else
+			{
+				return new HashSet<Object>(pojoCollection.size());
+			}
+		}
+		else
+		{
+			throw new CloneException("Unhandled collection type : " + pojoCollection.getClass().toString());
 		}
 	}
 	

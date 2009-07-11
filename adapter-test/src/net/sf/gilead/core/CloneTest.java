@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import junit.framework.TestCase;
@@ -463,6 +462,32 @@ public abstract class CloneTest extends TestCase
 			assertTrue(_cloneUserClass.equals(user.getClass()) ||
 					   _cloneEmployeeClass.equals(user.getClass()));
 		}
+	}
+	
+	/**
+	 * Test clone of a loaded user sub list 
+	 * (a collection class with no empty constructor)
+	 */
+	public void testCloneUserSubList()
+	{
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Load user
+	//
+		List<IUser> userList = userDAO.loadAll();
+		assertNotNull(userList);
+		assertFalse(userList.isEmpty());
+		
+	//	Clone user
+	//
+		List<IUser> cloneUserList = (List<IUser>) _beanManager.clone(userList.subList(1, 2));
+		
+	//	Test cloned user
+	//
+		assertNotNull(cloneUserList);
 	}
 	
 	/**
