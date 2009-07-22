@@ -614,6 +614,23 @@ public class HibernateUtil implements IPersistenceUtil
 			}
 			else
 			{
+				// BM start of debug code
+				Map<?,?> map = (Map<?, ?>) underlyingCollection;
+				_log.info("Merging map of type " + map.getClass().getName());
+				for (Map.Entry<?, ?> entry : map.entrySet())
+				{
+					_log.info("Key is '" + entry.getKey() + "' of type " + entry.getKey().getClass());
+					if (entry.getValue() == null)
+					{
+						_log.info("Value is null");
+					}
+					else
+					{
+						_log.info("Value is '" + entry.getValue() + "' of type " + entry.getValue().getClass());
+					}
+				}
+				// BM end of debugging code
+				
 				collection = new PersistentMap((SessionImpl) session,
 						 				 	   (Map<?, ?>) underlyingCollection);
 			}
@@ -963,21 +980,23 @@ public class HibernateUtil implements IPersistenceUtil
 		while(iterator.hasNext())
 		{
 			Object item = iterator.next();
-			
-			SerializableId id = new SerializableId();
-			
-			if (isPersistentPojo(item))
+			if (item != null)
 			{
-				id.setEntityName(getEntityName(item.getClass(), item));
-				id.setId(getId(item));
+				SerializableId id = new SerializableId();
+				
+				if (isPersistentPojo(item))
+				{
+					id.setEntityName(getEntityName(item.getClass(), item));
+					id.setId(getId(item));
+				}
+				else
+				{
+					id.setEntityName(item.getClass().getName());
+					id.setHashCode(item.hashCode());
+				}
+				
+				idList.add(id);
 			}
-			else
-			{
-				id.setEntityName(item.getClass().getName());
-				id.setHashCode(item.hashCode());
-			}
-			
-			idList.add(id);
 		}
 		
 		if (idList.isEmpty())
