@@ -1449,7 +1449,7 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 		//	Not found
 		//
-			return clazz.getName();
+			return getUnenhancedClass(clazz).getName();
 		}
 		else if (entityNames.size() == 1)
 		{
