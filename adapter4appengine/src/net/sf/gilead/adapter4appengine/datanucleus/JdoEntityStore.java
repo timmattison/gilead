@@ -40,7 +40,7 @@ public class JdoEntityStore
 	 */
 	private JdoEntityStore()
 	{
-		
+		_httpSession = new ThreadLocal<HttpSession>();
 	}
 	
 	//----
