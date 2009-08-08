@@ -3,7 +3,7 @@
 	
 	<!-- Properties -->
     <property environment="env"/>
-    <property name="version" value="1.0M2"/>
+    <property name="version" value="1.0M3"/>
 	<property name="appengine.jar" value="adapter4appengine-${version}.jar" />
 	
 	<property name="source.dir" value="src"/>
