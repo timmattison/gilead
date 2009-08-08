@@ -12,7 +12,9 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.Map.Entry;
 
+import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.spi.PersistenceCapable;
+import javax.persistence.Id;
 
 import com.google.appengine.repackaged.org.apache.commons.logging.Log;
 import com.google.appengine.repackaged.org.apache.commons.logging.LogFactory;
@@ -83,6 +85,7 @@ public class JdoReadSerializationFilter implements ISerializationFilter
 			Map<String, Object> fieldValues = fieldValuesStack.pop();
 			
 		//	Restore JDO detached state
+		//	Cannot use jdoGetObjectId because it seems based on jdoDetachedState !
 		//
 			Object id = getId(obj, fieldValues);
 			if (id == null)
@@ -178,8 +181,19 @@ public class JdoReadSerializationFilter implements ISerializationFilter
 	 */
 	protected Object getId(Object obj, Map<String, Object> fieldValues)
 	{
-		// TODO get ID field name (stored in LightEntity ????)
-		return fieldValues.get("id");
+		Field[] fields = obj.getClass().getDeclaredFields();
+		for (Field field : fields)
+		{
+			if ((field.getAnnotation(PrimaryKey.class) != null) ||
+				(field.getAnnotation(Id.class) != null))
+			{
+			//	Id field
+			//
+				return fieldValues.get(field.getName());
+			}
+		}
+		
+		throw new RuntimeException("Id field not found for class " + obj.getClass().getName());
 	}
 	
 	/**

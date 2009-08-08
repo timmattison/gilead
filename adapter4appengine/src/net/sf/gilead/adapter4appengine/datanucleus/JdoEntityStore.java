@@ -21,18 +21,18 @@ public class JdoEntityStore
 	/**
 	 * The unique instance of the singleton
 	 */
-	private static JdoEntityStore instance = null;
+	private static JdoEntityStore _instance = null;
 
 	/**
 	 * @return the unique instance of the singleton
 	 */
 	public static JdoEntityStore getInstance() 
 	{
-		if (instance == null)
+		if (_instance == null)
 		{
-			instance = new JdoEntityStore();
+			_instance = new JdoEntityStore();
 		}
-		return instance;
+		return _instance;
 	}
 	
 	/**
@@ -49,12 +49,12 @@ public class JdoEntityStore
 	/**
 	 * Log channel
 	 */
-	private static Log log = LogFactory.getLog(JdoEntityStore.class);
+	private static Log _log = LogFactory.getLog(JdoEntityStore.class);
 	
 	/**
 	 * The current HTTP session
 	 */
-	private HttpSession httpSession;
+	private ThreadLocal<HttpSession> _httpSession;
 
 	//----
 	// Properties
@@ -64,7 +64,7 @@ public class JdoEntityStore
 	 */
 	public HttpSession getHttpSession()
 	{
-		return httpSession;
+		return _httpSession.get();
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class JdoEntityStore
 	 */
 	public void setHttpSession(HttpSession httpSession)
 	{
-		this.httpSession = httpSession;
+		_httpSession.set(httpSession);
 	}
 	
 	//-------------------------------------------------------------------------
@@ -87,6 +87,7 @@ public class JdoEntityStore
 	{
 	//	Precondition checking
 	//
+		HttpSession httpSession = getHttpSession();
 		if (httpSession == null)
 		{
 			throw new NullPointerException("HTTP session not set !");
@@ -99,7 +100,7 @@ public class JdoEntityStore
 		{
 		//	Store JDO in HTTP session
 		//
-			log.info("Storing entity " + entity + " with ID " + id);
+			_log.info("Storing entity " + entity + " with ID " + id);
 			String idKey = computeIdKey(id);
 			httpSession.setAttribute(idKey, entity);
 		}
@@ -112,6 +113,7 @@ public class JdoEntityStore
 	{
 	//	Precondition checking
 	//
+		HttpSession httpSession = getHttpSession();
 		if (httpSession == null)
 		{
 			throw new NullPointerException("HTTP session not set !");
@@ -123,7 +125,7 @@ public class JdoEntityStore
 		
 	//	Get entity from HTTP session
 	//
-		log.info("Search entity with ID " + id);
+		_log.info("Search entity with ID " + id);
 		String idKey = computeIdKey(id);
 		return (PersistenceCapable) httpSession.getAttribute(idKey);
 	}
