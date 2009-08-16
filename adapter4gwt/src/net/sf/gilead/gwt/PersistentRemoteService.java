@@ -19,6 +19,7 @@ package net.sf.gilead.gwt;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.beanlib.mapper.ProxyClassMapper;
@@ -28,6 +29,7 @@ import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RPCCopy;
 import com.google.gwt.user.server.rpc.RPCRequest;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.gwt.user.server.rpc.SerializationPolicy;
 
 /**
  * Abstract class for GWT remote service using persistent POJO 
@@ -39,6 +41,11 @@ public abstract class PersistentRemoteService extends RemoteServiceServlet
 	//----
 	// Attribute
 	//----
+	/**
+	 * Serialization ID
+	 */
+	private static final long serialVersionUID = 7432874379586734765L;
+	
 	/**
 	 * The Hibernate lazy manager
 	 */
@@ -112,6 +119,13 @@ public abstract class PersistentRemoteService extends RemoteServiceServlet
 	// Remote service servlet override
 	//
 	//-------------------------------------------------------------------------
+	@Override
+	protected SerializationPolicy doGetSerializationPolicy(
+			HttpServletRequest request, String moduleBaseURL, String strongName) 
+	{
+		GileadRPCHelper.initClassLoader();
+		return super.doGetSerializationPolicy(request, moduleBaseURL, strongName);
+	}
 	/**
 	 * Servlet initialisation
 	 */
@@ -161,19 +175,25 @@ public abstract class PersistentRemoteService extends RemoteServiceServlet
 	    } 
 		catch (InvocationTargetException e)
 		{
+			// Clone exception if needed
+			Exception exception = (Exception) GileadRPCHelper.parseReturnValue(e.getCause(), _beanManager);
+			
 			return RPCCopy.getInstance().encodeResponseForFailure(rpcRequest.getMethod(), 
-																  e.getCause(),
+																  exception,
 																  rpcRequest.getSerializationPolicy());
 		}
 		catch (IncompatibleRemoteServiceException ex)
 		{
+			// Clone exception if needed
+			Exception exception = (Exception) GileadRPCHelper.parseReturnValue(ex, _beanManager);
+			
 			if (rpcRequest != null)
 			{
-				return RPCCopy.getInstance().encodeResponseForFailure(null, ex, rpcRequest.getSerializationPolicy());
+				return RPCCopy.getInstance().encodeResponseForFailure(null, exception, rpcRequest.getSerializationPolicy());
 			}
 			else
 			{
-				return RPCCopy.getInstance().encodeResponseForFailure(null, ex);
+				return RPCCopy.getInstance().encodeResponseForFailure(null, exception);
 			}
 	    } 
 	}

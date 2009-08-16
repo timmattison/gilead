@@ -65,7 +65,7 @@ public class GileadRPCHelper
 	 * @param beanManager the Hibernate bean manager
 	 * @param session the HTTP session (for HTTP Pojo store)
 	 */
-	public static void parseInputParameters(RPCRequest rpcRequest, 
+	public static void parseInputParameters(Object[] parameters, 
 											PersistentBeanManager beanManager,
 											HttpSession session)
 	{
@@ -82,10 +82,8 @@ public class GileadRPCHelper
 		
 	//	Merge parameters if needed
 	//
-		if ((rpcRequest != null) &&
-			(rpcRequest.getParameters() != null))
+		if (parameters != null)
 		{
-			Object[] parameters = rpcRequest.getParameters();
 			for (int index = 0 ; index < parameters.length; index ++)
 			{
 				if (parameters[index] != null)
@@ -105,6 +103,32 @@ public class GileadRPCHelper
 				}
 			}
 		}
+	}
+	
+	
+	/**
+	 * Parse RPC input parameters.
+	 * Must be called before GWT service invocation.
+	 * @param rpcRequest the input GWT RPC request
+	 * @param beanManager the Hibernate bean manager
+	 * @param session the HTTP session (for HTTP Pojo store)
+	 */
+	public static void parseInputParameters(RPCRequest rpcRequest, 
+											PersistentBeanManager beanManager,
+											HttpSession session)
+	{
+	//	Extract object parameters
+	//
+		Object[] parameters = null;
+		if ((rpcRequest != null) &&
+			(rpcRequest.getParameters() != null))
+		{
+			parameters = rpcRequest.getParameters();
+		}
+		
+	//	Parse input parameters
+	//
+		parseInputParameters(parameters, beanManager, session);
 	}
 	
 	/**

@@ -24,7 +24,8 @@ public class RPCCopy
 	enum Version
 	{
 		GWT14,
-		GWT15
+		GWT15,
+		GWT16
 	}
 	
 	//----
@@ -65,11 +66,13 @@ public class RPCCopy
 	 */
 	private RPCCopy()
 	{
-		_version = Version.GWT15;
-		
 	//	GWT version detection, based on RPC method parsing
 	//	(findInterfaceMethod is present in GWT 1.4 and not 1.5)
+	//	and on RemoteServiceServlet class 
+	//  (onAfterRequestDeserialized is present in GWT 1.6)
 	//
+		boolean findInterfaceMethod = false;
+		boolean onAfterRequestDeserialized = false;
 		try
 		{
 			Method[] methods = RPC.class.getDeclaredMethods();
@@ -77,14 +80,35 @@ public class RPCCopy
 			{
 				if ("findInterfaceMethod".equals(methods[index].getName()))
 				{
-					_version = Version.GWT14;
-					break;
+					findInterfaceMethod = true;
+				}
+			}
+			
+			methods = RemoteServiceServlet.class.getDeclaredMethods();
+			for (int index = 0; index < methods.length; index++)
+			{
+				if ("onAfterRequestDeserialized".equals(methods[index].getName()))
+				{
+					onAfterRequestDeserialized = true;
 				}
 			}
 		} 
 		catch (SecurityException e)
 		{
 			e.printStackTrace();
+		}
+		
+		if (findInterfaceMethod == true)
+		{
+			_version = Version.GWT14;
+		}
+		else if (onAfterRequestDeserialized == true)
+		{
+			_version = Version.GWT16;
+		}
+		else
+		{
+			_version = Version.GWT15;
 		}
 		
 		System.out.println(_version.toString());
@@ -107,9 +131,14 @@ public class RPCCopy
 			return RPCCopy_GWT14.decodeRequest(encodedRequest, type, 
 											   serializationPolicyProvider);
 		}
-		else
+		else if  (_version == Version.GWT15)
 		{
 			return RPCCopy_GWT15.decodeRequest(encodedRequest, type, 
+											   serializationPolicyProvider);
+		}
+		else // if  (_version == Version.GWT16)
+		{
+			return RPCCopy_GWT16.decodeRequest(encodedRequest, type, 
 											   serializationPolicyProvider);
 		}
 	}
@@ -129,9 +158,14 @@ public class RPCCopy
 			return RPCCopy_GWT14.invoke(target, serviceMethod, 
 										args, serializationPolicy);
 		}
-		else
+		else  if  (_version == Version.GWT15)
 		{
 			return RPCCopy_GWT15.invoke(target, serviceMethod, 
+					args, serializationPolicy);
+		}
+		else // if  (_version == Version.GWT16)
+		{
+			return RPCCopy_GWT16.invoke(target, serviceMethod, 
 					args, serializationPolicy);
 		}
 	}
@@ -149,10 +183,15 @@ public class RPCCopy
 			return RPCCopy_GWT14.encodeResponseForSuccess(serviceMethod, object, 
 														  serializationPolicy);
 		}
-		else
+		else  if  (_version == Version.GWT15)
 		{
 			return RPCCopy_GWT15.encodeResponseForSuccess(serviceMethod, object, 
 					  									  serializationPolicy);
+		}
+		else // if  (_version == Version.GWT16)
+		{
+			return RPCCopy_GWT16.encodeResponseForSuccess(serviceMethod, object, 
+					  serializationPolicy);
 		}
 	}
 
@@ -168,9 +207,13 @@ public class RPCCopy
 		{
 			return RPCCopy_GWT14.encodeResponseForFailure(serviceMethod, cause, serializationPolicy);
 		}
-		else
+		else  if  (_version == Version.GWT15)
 		{
 			return RPCCopy_GWT15.encodeResponseForFailure(serviceMethod, cause, serializationPolicy);
+		}
+		else // if  (_version == Version.GWT16)
+		{
+			return RPCCopy_GWT16.encodeResponseForFailure(serviceMethod, cause, serializationPolicy);
 		}
 	}
 	
@@ -185,9 +228,13 @@ public class RPCCopy
 		{
 			return RPCCopy_GWT14.encodeResponseForFailure(serviceMethod, cause);
 		}
-		else
+		else  if  (_version == Version.GWT15)
 		{
 			return RPCCopy_GWT15.encodeResponseForFailure(serviceMethod, cause);
+		}
+		else // if  (_version == Version.GWT16)
+		{
+			return RPCCopy_GWT16.encodeResponseForFailure(serviceMethod, cause);
 		}
 	}
 	
