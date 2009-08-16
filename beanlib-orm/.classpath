@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/hibernate/hibernate-3.2.4.sp1.jar" sourcepath="C:/Playground/hibernate/3.2/ga/src"/>
-	<classpathentry kind="lib" path="lib/spring/spring.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/adapter-core/lib/beanlib-5.0.1beta.jar"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>

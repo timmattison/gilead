@@ -34,5 +34,9 @@
         <mapping class="net.sf.gilead.test.domain.java5.Employee"/>
 		<mapping class="net.sf.gilead.test.domain.java5.Group"/>
 		<mapping class="net.sf.gilead.test.domain.java5.Country"/>
+		<mapping class="net.sf.gilead.test.domain.misc.Utente"/>
+		<mapping class="net.sf.gilead.test.domain.misc.Preference"/>
+		<mapping class="net.sf.gilead.test.domain.misc.Client"/>
+		<mapping class="net.sf.gilead.test.domain.misc.Project"/>
     </session-factory>
 </hibernate-configuration>

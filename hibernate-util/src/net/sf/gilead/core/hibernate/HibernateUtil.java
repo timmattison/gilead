@@ -544,14 +544,15 @@ public class HibernateUtil implements IPersistenceUtil
 	 * @param underlyingCollection the filled underlying collection
 	 * @return
 	 */
-	public Object createPersistentCollection(Map<String, Serializable> proxyInformations,
+	public Object createPersistentCollection(Object parent,
+											 Map<String, Serializable> proxyInformations,
 											 Object underlyingCollection)
 	{
 	//	Get added and deleted items
 	//
 		Object addedItems = removeNewItems(proxyInformations, underlyingCollection);
 		Collection<?> deletedItems = addDeletedItems(proxyInformations, underlyingCollection);
-		
+				
 	//	Create collection for the class name
 	//
 		String className = (String) proxyInformations.get(CLASS_NAME);
@@ -624,6 +625,23 @@ public class HibernateUtil implements IPersistenceUtil
 			}
 			else
 			{
+				// BM start of debug code
+				Map<?,?> map = (Map<?, ?>) underlyingCollection;
+				_log.info("Merging map of type " + map.getClass().getName());
+				for (Map.Entry<?, ?> entry : map.entrySet())
+				{
+					_log.info("Key is '" + entry.getKey() + "' of type " + entry.getKey().getClass());
+					if (entry.getValue() == null)
+					{
+						_log.info("Value is null");
+					}
+					else
+					{
+						_log.info("Value is '" + entry.getValue() + "' of type " + entry.getValue().getClass());
+					}
+				}
+				// BM end of debugging code
+				
 				collection = new PersistentMap((SessionImpl) session,
 						 				 	   (Map<?, ?>) underlyingCollection);
 			}
@@ -653,7 +671,7 @@ public class HibernateUtil implements IPersistenceUtil
 		Serializable snapshot = null;
 		if (underlyingCollection != null)
 		{
-		//	Create snpashot
+		//	Create snapshot
 		//
 			CollectionPersister collectionPersister = _sessionFactory.getCollectionPersister(role);
 			snapshot = collection.getSnapshot(collectionPersister);
@@ -661,6 +679,10 @@ public class HibernateUtil implements IPersistenceUtil
 		
 		collection.setSnapshot(proxyInformations.get(KEY), 
 							   role, snapshot);
+		
+	//	Owner
+	//
+		collection.setOwner(parent);
 		
 	//	Remove deleted items
 	//
@@ -969,20 +991,21 @@ public class HibernateUtil implements IPersistenceUtil
 		while(iterator.hasNext())
 		{
 			Object item = iterator.next();
-			
-			SerializableId id = new SerializableId();
-			
-			if (isPersistentPojo(item))
+			if (item != null)
 			{
 				id.setEntityName(getEntityName(item.getClass(), item));
-				id.setId(getId(item));
-			}
-			else
-			{
-				id.setEntityName(item.getClass().getName());
-				id.setHashCode(item.hashCode());
-			}
-			
+				
+				if (isPersistentPojo(item))
+				{
+					id.setEntityName(getEntityName(item.getClass(), item));
+					id.setId(getId(item));
+				}
+				else
+				{
+					id.setEntityName(item.getClass().getName());
+					id.setHashCode(item.hashCode());
+				}
+				
 			idList.add(id);
 		}
 		
@@ -1037,6 +1060,9 @@ public class HibernateUtil implements IPersistenceUtil
 					else
 					{
 						// TODO non persistent entity handling ?
+						deleted.object = Class.forName(sid.getEntityName()).newInstance();
+						deleted.index = idList.indexOf(sid);
+						deletedItems.add(deleted);
 					}
 				}
 				catch(Exception e)
@@ -1076,53 +1102,81 @@ public class HibernateUtil implements IPersistenceUtil
         while (iterator.hasNext())
         {
             Object currentItem = iterator.next();
-            try
+            if (currentItem != null)
             {
-                Serializable id = getId(currentItem);
-           
-            //  Search this id in id list
-            //
-                boolean found = false;
-                for (SerializableId sid : idList)
-                {
-                    if (sid.getId().equals(id))
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-               
-                if (found == false)
-                {
-                //    New item
-                //
-                	addedItems.add(createNewItem(currentItem, collection));
-                }
-            }
-            catch(TransientObjectException ex)
-            {
-                // Transient objet
-            	int hashCode = currentItem.hashCode();
-                
-            //  Search this iitem in id list
-            //
-                boolean found = false;
-                for (SerializableId sid : idList)
-                {
-                    if ((sid.getHashCode() != null) &&
-                    	(sid.getHashCode() == hashCode))
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-               
-                if (found == false)
-                {
-                //    New item
-                //
-                	addedItems.add(createNewItem(currentItem, collection));
-                }
+            	try
+	            {
+	                Serializable id = getId(currentItem);
+	           
+	            //  Search this id in id list
+	            //
+	                boolean found = false;
+	                for (SerializableId sid : idList)
+	                {
+	                    if (sid.getId().equals(id))
+	                    {
+	                        found = true;
+	                        break;
+	                    }
+	                }
+	               
+	                if (found == false)
+	                {
+	                //    New item
+	                //
+	                	addedItems.add(createNewItem(currentItem, collection));
+	                }
+	            }
+	            catch(TransientObjectException ex)
+	            {
+	                // Transient objet
+	            	int hashCode = currentItem.hashCode();
+	                
+	            //  Search this iitem in id list
+	            //
+	                boolean found = false;
+	                for (SerializableId sid : idList)
+	                {
+	                    if ((sid.getHashCode() != null) &&
+	                    	(sid.getHashCode() == hashCode))
+	                    {
+	                        found = true;
+	                        break;
+	                    }
+	                }
+	               
+	                if (found == false)
+	                {
+	                //    New item
+	                //
+	                	addedItems.add(createNewItem(currentItem, collection));
+	                }
+	            }
+	            catch(NotPersistentObjectException ex2)
+	            {
+	            	// Non persistent objet
+	            	int hashCode = currentItem.hashCode();
+	            
+	            //  Search this iitem in id list
+	            //
+	                boolean found = false;
+	                for (SerializableId sid : idList)
+	                {
+	                	if ((sid.getHashCode() != null) &&
+	                        (sid.getHashCode() == hashCode))
+	                    {
+	                        found = true;
+	                        break;
+	                    }
+	                }
+	               
+	                if (found == false)
+	                {
+	                //    New item
+	                //
+	                	addedItems.add(createNewItem(currentItem, collection));
+	                }
+	            }
             }
             catch(NotPersistentObjectException ex2)
             {
@@ -1433,7 +1487,7 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 		//	Not found
 		//
-			return null;
+			return getUnenhancedClass(clazz).getName();
 		}
 		else if (entityNames.size() == 1)
 		{
@@ -1446,14 +1500,8 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		if (pojo != null)
 		{
-			// Need to attach the pojo to the current session to retrieve its entity name...
-			Session session = _sessionFactory.getCurrentSession();
-			if (session == null)
-			{
-				session = getSession();
-			}
-			session.lock(pojo, LockMode.NONE);
-			return session.getEntityName(pojo);
+			// Get entity name
+			return ((SessionImpl)getSession()).bestGuessEntityName(pojo);
 		}
 		else
 		{
@@ -1479,7 +1527,6 @@ public class HibernateUtil implements IPersistenceUtil
 		
 		return entityNames;
 	}
-	
 }
 
 /**

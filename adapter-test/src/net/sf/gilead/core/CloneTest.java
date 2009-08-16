@@ -5,11 +5,11 @@ package net.sf.gilead.core;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import junit.framework.TestCase;
@@ -465,6 +465,32 @@ public abstract class CloneTest extends TestCase
 	}
 	
 	/**
+	 * Test clone of a loaded user sub list 
+	 * (a collection class with no empty constructor)
+	 */
+	public void testCloneUserSubList()
+	{
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Load user
+	//
+		List<IUser> userList = userDAO.loadAll();
+		assertNotNull(userList);
+		assertFalse(userList.isEmpty());
+		
+	//	Clone user
+	//
+		List<IUser> cloneUserList = (List<IUser>) _beanManager.clone(userList.subList(1, 2));
+		
+	//	Test cloned user
+	//
+		assertNotNull(cloneUserList);
+	}
+	
+	/**
 	 * Test modification of the last posted message
 	 */
 	public void testModifyLastMessage()
@@ -606,7 +632,7 @@ public abstract class CloneTest extends TestCase
 		
 	//	Create a map with all users and message
 	//
-		Map<IUser, Set<IMessage>> userMap = new HashMap<IUser, Set<IMessage>>();
+		Map<IUser, Collection<IMessage>> userMap = new HashMap<IUser, Collection<IMessage>>();
 		List<IUser> userList = userDAO.loadAll();
 		for (IUser user : userList)
 		{
@@ -616,13 +642,13 @@ public abstract class CloneTest extends TestCase
 		
 	//	Clone map
 	//
-		Map<IUser, Set<IMessage>> cloneMap = (Map<IUser, Set<IMessage>>) _beanManager.clone(userMap);
+		Map<IUser, Collection<IMessage>> cloneMap = (Map<IUser, Collection<IMessage>>) _beanManager.clone(userMap);
 		assertNotNull(cloneMap);
 		assertEquals(cloneMap.size(), userMap.size());
 		
 	//	Clone verification
 	//
-		for (Entry<IUser, Set<IMessage>> entry : cloneMap.entrySet())
+		for (Entry<IUser, Collection<IMessage>> entry : cloneMap.entrySet())
 		{
 		//	User checking
 		//
@@ -642,13 +668,13 @@ public abstract class CloneTest extends TestCase
 		
 	//	Merge map
 	//
-		Map<IUser, Set<IMessage>> mergeMap = (Map<IUser, Set<IMessage>>) _beanManager.merge(cloneMap);
+		Map<IUser, Collection<IMessage>> mergeMap = (Map<IUser, Collection<IMessage>>) _beanManager.merge(cloneMap);
 		assertNotNull(mergeMap);
 		assertEquals(mergeMap.size(), cloneMap.size());
 		
 	//	Merge verification
 	//
-		for (Entry<IUser, Set<IMessage>> entry : mergeMap.entrySet())
+		for (Entry<IUser, Collection<IMessage>> entry : mergeMap.entrySet())
 		{
 		//	User checking
 		//

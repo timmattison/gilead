@@ -40,7 +40,9 @@
 		</repository>
 		<repository>
 			<id>gwt-maven</id>
-			<url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+			<url>
+				http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/
+			</url>
 		</repository>
 		<repository>
 			<id>maven2-repository.dev.java.net</id>
@@ -57,18 +59,29 @@
 		</repository>
 		<repository>
 			<id>hibernat4gwt-repo</id>
-			<url>https://hibernate4gwt.svn.sourceforge.net/svnroot/hibernate4gwt/branches/jens_meiss/maven/</url>
+			<url>
+				https://hibernate4gwt.svn.sourceforge.net/svnroot/hibernate4gwt/branches/jens_meiss/maven/
+			</url>
 		</repository>
 		<repository>
 			<id>gilead-repo</id>
 			<name>Gilead Maven Repository</name>
 			<url>https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo</url>
 		</repository>
+		<repository>
+			<id>gilead-repo</id>
+			<name>Gilead Maven Repository</name>
+			<url>
+				https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo
+			</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>gwt-maven-plugins</id>
-			<url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+			<url>
+				http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/
+			</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<scm>
@@ -211,7 +224,7 @@
 				<groupId>com.google.gwt</groupId>
 				<artifactId>gwt-user</artifactId>
 				<version>1.5.3</version>
-			</dependency>  
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -221,14 +234,14 @@
 			<version>3.8.1</version>
 		</dependency>
 	</dependencies>
-	
+
 	<properties>
 		<maven.test.skip>true</maven.test.skip>
 		<catalina.version>6.0.18</catalina.version>
 	</properties>
-	
+
 	<!-- Tests currently not available -->
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -266,17 +279,21 @@
 		</extensions>
 	</build>
 	<distributionManagement>
-                <!-- use the following if you're not using a snapshot version. -->
-                <repository>
-                        <id>releases</id>
-                        <name>releases</name>
-                        <url>svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo</url>
-                </repository>
-                <!-- use the following if you ARE using a snapshot version. -->
-                <snapshotRepository>
-                        <id>snapshots</id>
-                        <name>snapshots</name>
-                        <url>svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-snapshots-repo</url>
-                </snapshotRepository>
-     </distributionManagement>
+		<!-- use the following if you're not using a snapshot version. -->
+		<repository>
+			<id>releases</id>
+			<name>releases</name>
+			<url>
+				svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo
+			</url>
+		</repository>
+		<!-- use the following if you ARE using a snapshot version. -->
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>snapshots</name>
+			<url>
+				svn:https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-snapshots-repo
+			</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
