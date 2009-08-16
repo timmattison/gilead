@@ -1,14 +1,17 @@
 package net.sf.gilead.core;
 
 import java.io.FileNotFoundException;
+import java.util.Collection;
 import java.util.List;
 
 import junit.framework.TestCase;
 import net.sf.gilead.test.HibernateContext;
+import net.sf.gilead.test.domain.misc.Client;
 import net.sf.gilead.test.domain.misc.Page;
 import net.sf.gilead.test.domain.misc.PersistentException;
 import net.sf.gilead.test.domain.misc.Photo;
 import net.sf.gilead.test.domain.misc.Preference;
+import net.sf.gilead.test.domain.misc.Project;
 import net.sf.gilead.test.domain.misc.Utente;
 
 import org.hibernate.Query;
@@ -90,6 +93,42 @@ public class NonRegressionTest extends TestCase
 		PersistentException cloneException = (PersistentException) beanManager.clone(exception);
 		assertNotNull(cloneException);
 		assertNotNull(cloneException.getPage());
+	}
+	
+	/**
+	 * Test merge on many to many
+	 */
+	public void testMergeManyToMany() throws FileNotFoundException
+	{
+	//	Init bean manager
+	//
+		PersistentBeanManager beanManager = TestHelper.initJava5SupportBeanManager();
+		
+	//	Create test client
+	//
+		Client client = createTestClient();
+		
+	//	Clone client
+	//
+		client = (Client) beanManager.clone(client);
+		
+	//	Update projects
+	//
+		Collection<Project> projects = client.getProjects(); 
+		for(Project p:projects)
+		{ 
+			p.getClients().remove(client);  
+		} 
+		projects.clear(); 
+		
+		Project p1 = new Project(); 
+		p1.getClients().add(client); 
+		projects.add(p1); 
+		
+	//	Merge client
+	//
+		client = (Client) beanManager.merge(client);
+		assertEquals(1, client.getProjects().size());
 	}
 	
 	//-------------------------------------------------------------------------
@@ -274,5 +313,55 @@ public class NonRegressionTest extends TestCase
 			throw e;
 		}
 	}
+    
+    /**
+	 * Create a test entity
+	 */
+	private Client createTestClient()
+	{
+		// Client
+		Client client = new Client();
+		
+		// Projects
+		Project project1 = new Project();
+		project1.getClients().add(client);
+		client.getProjects().add(project1);
+		
+		Project project2 = new Project();
+		project2.getClients().add(client);
+		client.getProjects().add(project2);
+		
+		// Save client
+		saveClient(client);
+		
+		return client;
+	}
+	
+	/**
+	 * Save Client
+	 */
+	private void saveClient(Client client)
+	{
+		Session session = null;
+		Transaction transaction = null;
+		try
+		{
+		//	Get session
+		//
+			session = HibernateContext.getSessionFactory().getCurrentSession();
+			transaction = session.beginTransaction();
 
+		//	Save user
+		//
+			session.saveOrUpdate(client);
+			transaction.commit();
+		}
+		catch (RuntimeException e)
+		{
+		//	Rollback
+		//
+			transaction.rollback();
+			throw e;
+		}
+	}
 }
