@@ -73,7 +73,7 @@ public class CloneBeanReplicator extends HibernateBeanReplicator
 		{
 			public CustomBeanTransformerSpi newCustomBeanTransformer(final BeanTransformerSpi beanTransformer)
 			{
-				return CustomTransformersFactory.getInstance().createUnionCustomBeanTransformer(beanTransformer);
+				return CustomTransformersFactory.getInstance().createUnionCustomBeanTransformerForClone(beanTransformer);
 			}
 		});
 		

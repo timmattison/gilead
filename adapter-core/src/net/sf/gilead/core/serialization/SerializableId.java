@@ -91,13 +91,27 @@ public class SerializableId implements Serializable
 			return false;
 		}
 		
-		if (entityName.equals(((SerializableId)other).entityName) == false)
+		// Check entity name
+		if (entityName == null)
+		{
+			return (((SerializableId)other).entityName == null);
+		}
+		else if (entityName.equals(((SerializableId)other).entityName) == false)
 		{
 			return false;
 		}
+		
+		// Check id or hashcode
 		if (id == null)
 		{
-			return (((SerializableId)other).hashCode == hashCode);
+			if (hashCode != null)
+			{
+				return hashCode.equals(((SerializableId)other).hashCode);
+			}
+			else
+			{
+				return ((SerializableId)other).hashCode == null;
+			}
 		}
 		else 
 		{

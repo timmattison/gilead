@@ -24,11 +24,17 @@ public class BeanlibThreadLocal
 															new ThreadLocal<Map<String,Serializable>>();
 	
 	/**
-	 * Current clone and merge bean stack.
+	 * Current from bean stack.
 	 * It is used to get embedded entities (component type) parent to determine unique ID in stateful
 	 * mode.
 	 */
-	private static ThreadLocal<Stack<Object>> beanStack = new ThreadLocal<Stack<Object>>();
+	private static ThreadLocal<Stack<Object>> fromBeanStack = new ThreadLocal<Stack<Object>>();
+
+	/**
+	 * Current target bean stack.
+	 * It is used for persistent collections, that need to know their parent entity.
+	 */
+	private static ThreadLocal<Stack<Object>> toBeanStack = new ThreadLocal<Stack<Object>>();
 
 	//----
 	// Properties
@@ -50,15 +56,29 @@ public class BeanlibThreadLocal
 	}
 	
 	/**
-	 * @return the bean stack
+	 * @return the from bean stack
 	 */
-	public static Stack<Object> getBeanStack()
+	public static Stack<Object> getFromBeanStack()
 	{
-		Stack<Object> stack = beanStack.get();
+		Stack<Object> stack = fromBeanStack.get();
 		if (stack == null)
 		{
 			stack = new Stack<Object>();
-			beanStack.set(stack);
+			fromBeanStack.set(stack);
+		}
+		return stack;
+	}
+	
+	/**
+	 * @return the to bean stack
+	 */
+	public static Stack<Object> getToBeanStack()
+	{
+		Stack<Object> stack = toBeanStack.get();
+		if (stack == null)
+		{
+			stack = new Stack<Object>();
+			toBeanStack.set(stack);
 		}
 		return stack;
 	}

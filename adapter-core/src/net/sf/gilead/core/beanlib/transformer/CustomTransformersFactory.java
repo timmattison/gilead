@@ -31,9 +31,14 @@ public class CustomTransformersFactory
 	private static CustomTransformersFactory _instance = null;
 	
 	/**
-	 * List of custom bean transformers constructors
+	 * List of custom bean transformers constructors for clone operation
 	 */
-	private List<Constructor<CustomBeanTransformerSpi>> _constructorList;
+	private List<Constructor<CustomBeanTransformerSpi>> _cloneTransformersList;
+	
+	/**
+	 * List of custom bean transformers constructors for merge operation
+	 */
+	private List<Constructor<CustomBeanTransformerSpi>> _mergeTransformersList;
 	
 	//----
 	// Singleton
@@ -60,12 +65,13 @@ public class CustomTransformersFactory
 	 */
 	private CustomTransformersFactory()
 	{
-		_constructorList = new ArrayList<Constructor<CustomBeanTransformerSpi>>();
+		_cloneTransformersList = new ArrayList<Constructor<CustomBeanTransformerSpi>>();
+		_mergeTransformersList = new ArrayList<Constructor<CustomBeanTransformerSpi>>();
 		
-	//	Timestamp transformer is needed for Gilead
+	//	Transformers needed for Gilead
 	//
 		addCustomBeanTransformer(TimestampCustomTransformer.class);
-
+		addCustomBeanTransformer(StackTraceElementCustomTransformer.class);
 	}
 	
 	//-------------------------------------------------------------------------
@@ -73,38 +79,59 @@ public class CustomTransformersFactory
 	// Public interface
 	//
 	//-------------------------------------------------------------------------
-	
 	/**
-	 * Add a custom bean transformer
+	 * Add a custom bean transformer for both clone and merge
 	 */
 	@SuppressWarnings("unchecked")
 	public void addCustomBeanTransformer(Class transformerClass)
 	{
-		_constructorList.add(getConstructorFor(transformerClass));
+		Constructor<CustomBeanTransformerSpi> constructor = getConstructorFor(transformerClass);
+		_cloneTransformersList.add(constructor);
+		_mergeTransformersList.add(constructor);
 	}
 	
 	/**
-	 * Create a union transformer if needed
+	 * Add a custom bean transformer for clone operation
+	 */
+	@SuppressWarnings("unchecked")
+	public void addCloneCustomBeanTransformer(Class transformerClass)
+	{
+		Constructor<CustomBeanTransformerSpi> constructor = getConstructorFor(transformerClass);
+		_cloneTransformersList.add(constructor);
+	}
+	
+	/**
+	 * Add a custom bean transformer for merge operation
+	 */
+	@SuppressWarnings("unchecked")
+	public void addMergeCustomBeanTransformer(Class transformerClass)
+	{
+		Constructor<CustomBeanTransformerSpi> constructor = getConstructorFor(transformerClass);
+		_mergeTransformersList.add(constructor);
+	}
+	
+	/**
+	 * Create a union transformer for clone if needed
 	 * @param beanTransformer the input bean transformer
 	 * @return the beanlib CustomBeanTransformer.
 	 */
-	public CustomBeanTransformerSpi createUnionCustomBeanTransformer(BeanTransformerSpi beanTransformer)
+	public CustomBeanTransformerSpi createUnionCustomBeanTransformerForClone(BeanTransformerSpi beanTransformer)
 	{
-		int transformerCount = _constructorList.size();
+		int transformerCount = _cloneTransformersList.size();
 		if (transformerCount == 1)
 		{
 		//	No additional custom transformer defined : just use the one
 		//
-			return instantiate(_constructorList.get(0), beanTransformer);
+			return instantiate(_cloneTransformersList.get(0), beanTransformer);
 		}
 		else
 		{
-		//	Create each trasnformer
+		//	Create each transformer
 		//
 			CustomBeanTransformerSpi[] customBeanTransformers = new CustomBeanTransformerSpi[transformerCount];
 			for (int index = 0 ; index < transformerCount ; index ++)
 			{
-				customBeanTransformers[index] = instantiate(_constructorList.get(index), 
+				customBeanTransformers[index] = instantiate(_cloneTransformersList.get(index), 
 															beanTransformer);
 			}
 			
@@ -112,6 +139,34 @@ public class CustomTransformersFactory
 		}
 	}
 	
+	/**
+	 * Create a union transformer for merge if needed
+	 * @param beanTransformer the input bean transformer
+	 * @return the beanlib CustomBeanTransformer.
+	 */
+	public CustomBeanTransformerSpi createUnionCustomBeanTransformerForMerge(BeanTransformerSpi beanTransformer)
+	{
+		int transformerCount = _mergeTransformersList.size();
+		if (transformerCount == 1)
+		{
+		//	No additional custom transformer defined : just use the one
+		//
+			return instantiate(_mergeTransformersList.get(0), beanTransformer);
+		}
+		else
+		{
+		//	Create each transformer
+		//
+			CustomBeanTransformerSpi[] customBeanTransformers = new CustomBeanTransformerSpi[transformerCount];
+			for (int index = 0 ; index < transformerCount ; index ++)
+			{
+				customBeanTransformers[index] = instantiate(_mergeTransformersList.get(index), 
+															beanTransformer);
+			}
+			
+			return new UnionCustomBeanTransformer(customBeanTransformers);
+		}
+	}
 	//-------------------------------------------------------------------------
 	//
 	// Internal methods

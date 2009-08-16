@@ -16,8 +16,6 @@
 
 package net.sf.gilead.core.beanlib.transformer;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Map;
 
 import net.sf.beanlib.PropertyInfo;
@@ -25,13 +23,12 @@ import net.sf.beanlib.spi.BeanTransformerSpi;
 import net.sf.beanlib.spi.CustomBeanTransformerSpi;
 
 /**
- * Timestamp transformer.
- * Needed to keep nanoseconds part (by default, beanLib will convert it to simple
- * Date if the setter only declares an argument of type java.util.Date)
+ * StackTraceElement transformer.
+ * Used to clone an exception that contains a persistent POJO
  * @author BMARCHESSON
  *
  */
-public class TimestampCustomTransformer implements CustomBeanTransformerSpi
+public class StackTraceElementCustomTransformer implements CustomBeanTransformerSpi
 {
 	//----
 	// Attributes
@@ -42,7 +39,7 @@ public class TimestampCustomTransformer implements CustomBeanTransformerSpi
 	 * Constructor
 	 * @param beanTransformer
 	 */
-	public TimestampCustomTransformer(final BeanTransformerSpi beanTransformer)
+	public StackTraceElementCustomTransformer(final BeanTransformerSpi beanTransformer)
 	{
 		_beanTransformer = beanTransformer;
 	}
@@ -53,8 +50,7 @@ public class TimestampCustomTransformer implements CustomBeanTransformerSpi
 
 	public boolean isTransformable(Object from, Class<?> toClass, PropertyInfo info) 
 	{
-		return ((from instanceof Timestamp) && 
-			    (toClass == Date.class));
+		return (toClass == StackTraceElement.class);
 	}
 
 	/**
@@ -71,10 +67,12 @@ public class TimestampCustomTransformer implements CustomBeanTransformerSpi
 			return (T)clone;
 		}
 		
-		Timestamp date = (Timestamp)in;
-		clone = new Timestamp(date.getTime());
+		StackTraceElement stackTraceElement = (StackTraceElement)in;
+		clone = new StackTraceElement(stackTraceElement.getClassName(),
+									  stackTraceElement.getMethodName(),
+									  stackTraceElement.getFileName(),
+									  stackTraceElement.getLineNumber());
 		
-		((Timestamp)clone).setNanos(date.getNanos());
 		cloneMap.put(in, clone);
 		
 		return (T)clone;

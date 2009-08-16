@@ -157,9 +157,10 @@ public class MergeClassBeanReplicator extends Hibernate3JavaBeanReplicator
 		
 	//	Add current bean to stack
 	//
-		BeanlibThreadLocal.getBeanStack().push(from);
+		BeanlibThreadLocal.getFromBeanStack().push(from);
 		T result = super.replicateBean(from, toClass);
-		BeanlibThreadLocal.getBeanStack().pop();
+		BeanlibThreadLocal.getFromBeanStack().pop();
+		BeanlibThreadLocal.getToBeanStack().pop();
 		
 		return result;
 	}
@@ -223,11 +224,7 @@ public class MergeClassBeanReplicator extends Hibernate3JavaBeanReplicator
         	}
         }
     	
-    	if (result != null)
-    	{
-    		return result;
-    	}
-    	else
+    	if (result == null)
     	{
     		result = super.createToInstance(from, toClass);
     		
@@ -238,9 +235,12 @@ public class MergeClassBeanReplicator extends Hibernate3JavaBeanReplicator
     		if ((_classMapper != null) &&
     			(_classMapper.getSourceClass(result.getClass()) != null))
     		{
-    			return newInstanceAsPrivileged(toClass);
+    			result = newInstanceAsPrivileged(toClass);
     		}
-    		return result;
     	}
+    	
+    	// Add the bean to stack
+    	BeanlibThreadLocal.getToBeanStack().push(result);
+    	return result;
     }
 }

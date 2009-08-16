@@ -1,3 +1,23 @@
+Release 1.2.3 (05/2009)
+-----------------------
+Bug fixed :
+    - Invalid inheritance for GWT 1.4 LightEntity
+    - Missing null condition checking on createIdList
+    - Fix enhancement detection in holdPersistentObject
+    - Fix collection ordering with delete items (OutOfBoundsException)
+    - NullPointerException fix on holdPersistentObject
+    - Persistent Sorted set and map handling
+    - StackOverflow exception on initializing AdditionalCodeManager from ProxyClassLoader
+    - Bad exception fix (issue 2663344)
+    - ServerOnly on association lead to TransientObjectException (bug 2685748)
+          
+Improvements : 
+	- Distinction of clone and merge CustomBeanTransformers
+	- Usage of entity name instead of entity class
+	
+Other :
+    - Use beanlib-5.0.1beta
+    
 Release 1.2.2 (03/2009)
 -----------------------
 Bug fixed :

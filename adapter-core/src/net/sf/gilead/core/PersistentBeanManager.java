@@ -290,6 +290,13 @@ public class PersistentBeanManager
 		}
 		else if (object.getClass().isArray())
 		{
+		//	Check primitive type
+		//
+			if (object.getClass().getComponentType().isPrimitive())
+			{ 
+				return object; 
+			} 
+			
 		//	Merge as a collection
 		//
 			Object[] array = (Object[]) object;
@@ -620,25 +627,7 @@ public class PersistentBeanManager
 		{
 		//	Create a basic collection
 		//
-			if (pojoCollection instanceof List)
-			{
-				return new ArrayList<Object>(pojoCollection.size());
-			}
-			else if (pojoCollection instanceof Set)
-			{
-				if (pojoCollection instanceof SortedSet)
-				{
-					return new TreeSet<Object>();
-				}
-				else
-				{
-					return new HashSet<Object>(pojoCollection.size());
-				}
-			}
-			else
-			{
-				throw new CloneException("Unhandled collection type : " + pojoCollection.getClass().toString());
-			}
+			return createBasicCollection(pojoCollection);
 		}
 		else
 		{
@@ -655,10 +644,19 @@ public class PersistentBeanManager
 			catch(NoSuchMethodException e)
 			{
 			//	No such constructor, so search the empty one
+			//
 				try
 				{
 					Constructor<?> constructor = collectionClass.getConstructor((Class[]) null); 
 					result = (Collection<Object>) constructor.newInstance();
+				}
+				catch(NoSuchMethodException ex)
+				{
+				//	No empty or simple constructor : fallback on basic collection
+				//
+					_log.warn("Unable to find basic constructor for " + collectionClass.getName() 
+							  + " : falling back to basic collection");
+					return createBasicCollection(pojoCollection);
 				}
 				catch(Exception ex)
 				{
@@ -678,6 +676,34 @@ public class PersistentBeanManager
 			}
 			
 			return result;
+		}
+	}
+	
+	/**
+	 * Creation of basic collection
+	 * @param pojoCollection
+	 * @return
+	 */
+	protected Collection<Object> createBasicCollection(Collection<?> pojoCollection)
+	{
+		if (pojoCollection instanceof List)
+		{
+			return new ArrayList<Object>(pojoCollection.size());
+		}
+		else if (pojoCollection instanceof Set)
+		{
+			if (pojoCollection instanceof SortedSet)
+			{
+				return new TreeSet<Object>();
+			}
+			else
+			{
+				return new HashSet<Object>(pojoCollection.size());
+			}
+		}
+		else
+		{
+			throw new CloneException("Unhandled collection type : " + pojoCollection.getClass().toString());
 		}
 	}
 	
@@ -764,18 +790,123 @@ public class PersistentBeanManager
 				return true;
 			}
 			
+			if (pojo instanceof Collection) 
+			{
+			    Collection<Object> pojoCollection = (Collection) pojo;
+			    for (Object item : pojoCollection)
+			    {
+			        if (holdPersistentObject(item, alreadyChecked))
+			        {
+			            return true;
+			        }
+			    }
+			    
+			    return false;
+			}
 			
 		//	Iterate over properties
 		//
 			
 			if (pojo instanceof Collection) 
 			{
-			    Collection<Object> pojoCollection = (Collection) pojo;
-			    Iterator<Object> iter = pojoCollection.iterator();
-			    while(iter.hasNext()) {
-			        if (holdPersistentObject(iter.next(), alreadyChecked))
-			            return true;
-			    }
+				PropertyDescriptor descriptor = descriptors[index];
+				Class<?> propertyClass = descriptor.getPropertyType();
+				if (propertyClass == null)
+				{
+				//	Indexed property
+				//
+					propertyClass  = ((IndexedPropertyDescriptor) descriptor).getPropertyType();
+				}
+				if (propertyClass == null)
+				{
+				//	Can do nothing with this...
+				//
+					continue;
+				}
+				
+				// Check needed for collection or property declared as bare Object
+				boolean isCollection = Collection.class.isAssignableFrom(propertyClass) ||
+									   Map.class.isAssignableFrom(propertyClass);
+				boolean isObject = propertyClass.equals(Object.class);
+				
+				if ((ClassUtils.immutable(propertyClass) == true) ||
+				   ((ClassUtils.isJavaPackage(propertyClass) == true) &&
+					(isCollection == false) && (isObject == false)))
+				{
+				//	Basic type : no check needed
+				//
+					continue;
+				}
+				
+			// 	Not a basic type, so a check is needed
+			//
+				// collection and recursive search handling
+				Method readMethod = descriptor.getReadMethod();
+				if (readMethod == null)
+				{
+					continue;
+				}
+				readMethod.setAccessible(true);
+				Object propertyValue = readMethod.invoke(pojo, (Object[])null);
+				
+				if (propertyValue == null)
+				{
+					continue;
+				}
+				
+				// Get real property class
+				propertyClass = propertyValue.getClass();
+				
+				if ((_classMapper != null) &&
+					(_classMapper.getSourceClass(propertyClass) != null))
+				{
+					propertyClass = _classMapper.getSourceClass(propertyClass);
+				}
+				
+				if ((_persistenceUtil.isPersistentClass(propertyClass) == true) ||
+					(_persistenceUtil.isPersistentCollection(propertyClass) == true))
+				{
+					return true;
+				}
+				
+			//	Check property value
+			//
+				if (propertyValue instanceof Collection<?>)
+				{
+				//	Check collection values
+				//
+					Collection<?> propertyCollection = (Collection<?>)propertyValue;
+					for(Object value : propertyCollection)
+					{
+						if (holdPersistentObject(value, alreadyChecked) == true)
+						{
+							return true;
+						}
+					}
+				}
+				else if (propertyValue instanceof Map<?, ?>)
+				{
+				//	Check map entry and values
+				//
+					Map<?,?> propertyMap = (Map<?, ?>) propertyValue;
+					for(Map.Entry<?, ?> value : propertyMap.entrySet())
+					{
+						if ((holdPersistentObject(value.getKey(), alreadyChecked) == true) ||
+							(holdPersistentObject(value.getValue(), alreadyChecked) == true))
+						{
+							return true;
+						}
+					}
+				}
+				else
+				{
+				//	Recursive search
+				//
+					if (holdPersistentObject(propertyValue, alreadyChecked) == true)
+					{
+						return true;
+					}
+				}
 			}
 			else
 			{
