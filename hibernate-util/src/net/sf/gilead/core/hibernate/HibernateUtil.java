@@ -993,7 +993,7 @@ public class HibernateUtil implements IPersistenceUtil
 			Object item = iterator.next();
 			if (item != null)
 			{
-				id.setEntityName(getEntityName(item.getClass(), item));
+				SerializableId id = new SerializableId();
 				
 				if (isPersistentPojo(item))
 				{
@@ -1006,7 +1006,8 @@ public class HibernateUtil implements IPersistenceUtil
 					id.setHashCode(item.hashCode());
 				}
 				
-			idList.add(id);
+				idList.add(id);
+			}
 		}
 		
 		if (idList.isEmpty())
@@ -1092,132 +1093,107 @@ public class HibernateUtil implements IPersistenceUtil
      * @param idList
      * @return a map with new items and index (for list)
      */
-    private List<NewItem> getNewItemsForCollection(Collection collection,
-                                                   ArrayList<SerializableId> idList)
+	private List<NewItem> getNewItemsForCollection(Collection collection,
+            ArrayList<SerializableId> idList)
     {
-    //  Iterate over collection elements
-    //
-        List<NewItem> addedItems = new ArrayList<NewItem>();
-        Iterator iterator = collection.iterator();
-        while (iterator.hasNext())
-        {
-            Object currentItem = iterator.next();
-            if (currentItem != null)
-            {
-            	try
-	            {
-	                Serializable id = getId(currentItem);
-	           
-	            //  Search this id in id list
-	            //
-	                boolean found = false;
-	                for (SerializableId sid : idList)
-	                {
-	                    if (sid.getId().equals(id))
-	                    {
-	                        found = true;
-	                        break;
-	                    }
-	                }
-	               
-	                if (found == false)
-	                {
-	                //    New item
-	                //
-	                	addedItems.add(createNewItem(currentItem, collection));
-	                }
-	            }
-	            catch(TransientObjectException ex)
-	            {
-	                // Transient objet
-	            	int hashCode = currentItem.hashCode();
-	                
-	            //  Search this iitem in id list
-	            //
-	                boolean found = false;
-	                for (SerializableId sid : idList)
-	                {
-	                    if ((sid.getHashCode() != null) &&
-	                    	(sid.getHashCode() == hashCode))
-	                    {
-	                        found = true;
-	                        break;
-	                    }
-	                }
-	               
-	                if (found == false)
-	                {
-	                //    New item
-	                //
-	                	addedItems.add(createNewItem(currentItem, collection));
-	                }
-	            }
-	            catch(NotPersistentObjectException ex2)
-	            {
-	            	// Non persistent objet
-	            	int hashCode = currentItem.hashCode();
-	            
-	            //  Search this iitem in id list
-	            //
-	                boolean found = false;
-	                for (SerializableId sid : idList)
-	                {
-	                	if ((sid.getHashCode() != null) &&
-	                        (sid.getHashCode() == hashCode))
-	                    {
-	                        found = true;
-	                        break;
-	                    }
-	                }
-	               
-	                if (found == false)
-	                {
-	                //    New item
-	                //
-	                	addedItems.add(createNewItem(currentItem, collection));
-	                }
-	            }
-            }
-            catch(NotPersistentObjectException ex2)
-            {
-            	// Non persistent objet
-            	int hashCode = currentItem.hashCode();
-            
-            //  Search this iitem in id list
-            //
-                boolean found = false;
-                for (SerializableId sid : idList)
-                {
-                	if ((sid.getHashCode() != null) &&
-                        (sid.getHashCode() == hashCode))
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-               
-                if (found == false)
-                {
-                //    New item
-                //
-                	addedItems.add(createNewItem(currentItem, collection));
-                }
-            }
-        }
-       
-        if (addedItems.isEmpty())
-        {
-            return null;
-        }
-        else
-        {
-        	if (_log.isDebugEnabled())
+	//  Iterate over collection elements
+	//
+		List<NewItem> addedItems = new ArrayList<NewItem>();
+		Iterator iterator = collection.iterator();
+		while (iterator.hasNext())
+		{
+			Object currentItem = iterator.next();
+			if (currentItem != null)
+			{
+				try
+				{
+					Serializable id = getId(currentItem);
+					
+					//  Search this id in id list
+					//
+					boolean found = false;
+					for (SerializableId sid : idList)
+					{
+						if (sid.getId().equals(id))
+						{
+							found = true;
+							break;
+						}
+					}
+					
+					if (found == false)
+					{
+					//    New item
+					//
+						addedItems.add(createNewItem(currentItem, collection));
+					}
+				}
+				catch(TransientObjectException ex)
+				{
+					// Transient objet
+					int hashCode = currentItem.hashCode();
+					
+					//  Search this iitem in id list
+					//
+					boolean found = false;
+					for (SerializableId sid : idList)
+					{
+						if ((sid.getHashCode() != null) &&
+							(sid.getHashCode() == hashCode))
+						{
+							found = true;
+							break;
+						}
+					}
+				
+					if (found == false)
+					{
+					//    New item
+					//
+						addedItems.add(createNewItem(currentItem, collection));
+					}
+				}
+				catch(NotPersistentObjectException ex2)
+				{
+					// Non persistent objet
+					int hashCode = currentItem.hashCode();
+					
+				//  Search this iitem in id list
+				//
+					boolean found = false;
+					for (SerializableId sid : idList)
+					{
+						if ((sid.getHashCode() != null) &&
+							(sid.getHashCode() == hashCode))
+						{
+							found = true;
+							break;
+						}
+					}
+				
+					if (found == false)
+					{
+					//    New item
+					//
+						addedItems.add(createNewItem(currentItem, collection));
+					}
+				}
+			}
+		}
+				
+		if (addedItems.isEmpty())
+		{
+			return null;
+		}
+		else
+		{
+			if (_log.isDebugEnabled())
 			{
 				_log.debug("Found " + addedItems.size() + " new item(s)");
 			}
-            return addedItems;
-        }
-    }
+			return addedItems;
+		}
+	}
     
     /**
      * Create a new item

@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -806,8 +805,9 @@ public class PersistentBeanManager
 			
 		//	Iterate over properties
 		//
-			
-			if (pojo instanceof Collection) 
+			BeanInfo info = Introspector.getBeanInfo(pojo.getClass());
+			PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
+			for (int index = 0; index < descriptors.length; index++)
 			{
 				PropertyDescriptor descriptor = descriptors[index];
 				Class<?> propertyClass = descriptor.getPropertyType();
@@ -908,112 +908,7 @@ public class PersistentBeanManager
 					}
 				}
 			}
-			else
-			{
-    			BeanInfo info = Introspector.getBeanInfo(pojo.getClass());
-    			PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
-    			for (int index = 0; index < descriptors.length; index++)
-    			{
-    				PropertyDescriptor descriptor = descriptors[index];
-    				Class<?> propertyClass = descriptor.getPropertyType();
-    				if (propertyClass == null)
-    				{
-    				//	Indexed property
-    				//
-    					propertyClass  = ((IndexedPropertyDescriptor) descriptor).getPropertyType();
-    				}
-    				if (propertyClass == null)
-    				{
-    				//	Can do nothing with this...
-    				//
-    					continue;
-    				}
-    				
-    				// Check needed for collection or property declared as bare Object
-    				boolean isCollection = Collection.class.isAssignableFrom(propertyClass) ||
-    									   Map.class.isAssignableFrom(propertyClass);
-    				boolean isObject = propertyClass.equals(Object.class);
-    				
-    				if ((ClassUtils.immutable(propertyClass) == true) ||
-    				   ((ClassUtils.isJavaPackage(propertyClass) == true) &&
-    					(isCollection == false) && (isObject == false)))
-    				{
-    				//	Basic type : no check needed
-    				//
-    					continue;
-    				}
-    				
-    			// 	Not a basic type, so a check is needed
-    			//
-    				// collection and recursive search handling
-    				Method readMethod = descriptor.getReadMethod();
-    				if (readMethod == null)
-    				{
-    					continue;
-    				}
-    				readMethod.setAccessible(true);
-    				Object propertyValue = readMethod.invoke(pojo, (Object[])null);
-    				
-    				if (propertyValue == null)
-    				{
-    					continue;
-    				}
-    				
-    				// Get real property class
-    				propertyClass = propertyValue.getClass();
-    				
-    				if ((_classMapper != null) &&
-    					(_classMapper.getSourceClass(propertyClass) != null))
-    				{
-    					propertyClass = _classMapper.getSourceClass(propertyClass);
-    				}
-    				
-    				if ((_persistenceUtil.isPersistentClass(propertyClass) == true) ||
-    					(_persistenceUtil.isPersistentCollection(propertyClass) == true))
-    				{
-    					return true;
-    				}
-    				
-    			//	Check property value
-    			//
-    				if (propertyValue instanceof Collection<?>)
-    				{
-    				//	Check collection values
-    				//
-    					Collection<?> propertyCollection = (Collection<?>)propertyValue;
-    					for(Object value : propertyCollection)
-    					{
-    						if (holdPersistentObject(value, alreadyChecked) == true)
-    						{
-    							return true;
-    						}
-    					}
-    				}
-    				else if (propertyValue instanceof Map<?, ?>)
-    				{
-    				//	Check map entry and values
-    				//
-    					Map<?,?> propertyMap = (Map<?, ?>) propertyValue;
-    					for(Map.Entry<?, ?> value : propertyMap.entrySet())
-    					{
-    						if ((holdPersistentObject(value.getKey(), alreadyChecked) == true) ||
-    							(holdPersistentObject(value.getValue(), alreadyChecked) == true))
-    						{
-    							return true;
-    						}
-    					}
-    				}
-    				else
-    				{
-    				//	Recursive search
-    				//
-    					if (holdPersistentObject(propertyValue, alreadyChecked) == true)
-    					{
-    						return true;
-    					}
-    				}
-    			}
-			}
+			
 			// No persistent property
 			return false;
 		}

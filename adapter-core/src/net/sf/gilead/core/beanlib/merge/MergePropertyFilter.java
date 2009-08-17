@@ -170,7 +170,7 @@ public class MergePropertyFilter implements DetailedPropertyFilter
 				{
 				//	Set collection proxy
 				//
-					Object persistentCollection = _persistenceUtil.createPersistentCollection(proxyInformations, null);
+					Object persistentCollection = _persistenceUtil.createPersistentCollection(persistentBean, proxyInformations, null);
 					writePropertyValue(persistentBean, persistentCollection, 
 									   setterMethod.getName(), setterMethod.getParameterTypes());
 				}

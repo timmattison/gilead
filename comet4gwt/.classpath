@@ -8,7 +8,7 @@
 	<classpathentry kind="lib" path="/adapter4gwt/lib/gwt-user.jar"/>
 	<classpathentry kind="lib" path="lib/catalina.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/adapter-core"/>
-	<classpathentry kind="lib" path="/adapter-core/lib/beanlib-5.0.1beta.jar"/>
-	<classpathentry kind="lib" path="/adapter-core/lib/beanlib-hibernate-5.0.1beta.jar"/>
+	<classpathentry kind="lib" path="/adapter-core/lib/beanlib-5.0.2beta.jar"/>
+	<classpathentry kind="lib" path="/adapter-core/lib/beanlib-hibernate-5.0.2beta.jar" sourcepath="D:/OpenSource/beanlib-5.0.2beta/beanlib-hibernate-5.0.2beta-sources.jar"/>
 	<classpathentry kind="output" path="build/WEB-INF/classes"/>
 </classpath>
