@@ -1,0 +1,13 @@
+<module>
+
+	<!-- Inherit the core Web Toolkit stuff.                  -->
+	<inherits name='com.google.gwt.user.User'/>
+	<inherits name='net.sf.gilead.adapter4appengine.Adapter4AppEngine' /> 
+
+	<!-- Source path -->
+	<source path="server/domain"/>
+	<source path="client"/>
+  
+  	<!-- Servlets -->
+  	<servlet path="/TransfertService" class="net.sf.gilead.adapter4appengine.server.TransfertServiceImpl"/>
+</module>

@@ -16,11 +16,6 @@ public class Blob implements Serializable {
 	private final byte[] bytes;
 	
 	/**
-	 * Default constructor (private because it is only needed by serialization api)
-	 */
-	private Blob () {}
-	
-	/**
 	 * Constructor ({@link #bytes} field is treated as <code>final</code>)
 	 * @param bytes
 	 */

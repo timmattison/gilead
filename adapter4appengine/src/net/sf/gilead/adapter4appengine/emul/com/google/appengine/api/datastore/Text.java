@@ -15,11 +15,6 @@ public final class Text implements Serializable {
 	private final String value;
 
 	/**
-	 * Default constructor (private because it is only needed by serialization api)
-	 */
-	private Text () {}
-	
-	/**
 	 * Constructor ({@link #value} field is treated as <code>final</code>)
 	 * @param value
 	 */
