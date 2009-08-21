@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/datastore/Key.java" kind="src" path="src"/>
+	<classpathentry excluding="net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/datastore/Blob.java|net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/datastore/Key.java|net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/users/User.java|net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/datastore/Text.java" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/gwt-dev-windows.jar"/>
 	<classpathentry kind="lib" path="lib/gwt-servlet.jar" sourcepath="/opt/gwt/gwt-servlet.jar"/>
@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="lib/datanucleus-core-1.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/appengine-api-1.0-sdk-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="src/net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/datastore/Text.java"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

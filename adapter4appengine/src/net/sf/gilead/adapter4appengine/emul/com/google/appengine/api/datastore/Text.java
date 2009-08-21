@@ -12,7 +12,7 @@ public final class Text implements Serializable {
 	/**
 	 * The value
 	 */
-	private String value;
+	private final String value;
 
 	/**
 	 * Default constructor (private because it is only needed by serialization api)

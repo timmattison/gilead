@@ -13,7 +13,7 @@ public class Blob implements Serializable {
 	/**
 	 * The bytes representing this BLOB object.
 	 */
-	private byte[] bytes;
+	private final byte[] bytes;
 	
 	/**
 	 * Default constructor (private because it is only needed by serialization api)
