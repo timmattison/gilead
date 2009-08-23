@@ -10,6 +10,7 @@ import net.sf.gilead.exception.TransientObjectException;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.HibernateContext;
 import net.sf.gilead.test.HibernateContext.Context;
+import net.sf.gilead.test.dao.IMessageDAO;
 import net.sf.gilead.test.dao.IUserDAO;
 import net.sf.gilead.test.domain.interfaces.IMessage;
 import net.sf.gilead.test.domain.interfaces.IUser;
@@ -135,55 +136,19 @@ public class HibernateUtilTest extends TestCase
 	}
 	
 	/**
-	 * Test entity loading
-	 * @param sessionFactory
-	 * @param hibernatePojo
+	 * Test association loading
 	 */
-	protected void testLoad(SessionFactory sessionFactory, Object hibernatePojo)
+	public void testSimpleAssociationLoad()
 	{
-	//	Hibernate helper init
+	//	Load test message
 	//
-		HibernateUtil.getInstance().setSessionFactory(sessionFactory);
+		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
+		IMessage message = messageDAO.loadLastMessage();
 		
-	//	Clone hibernate pojo
+	//	Test 'author' loading
 	//
-		Object clonePojo = new LazyKiller().detach(hibernatePojo);
+		IUser user = (IUser) HibernateUtil.getInstance().loadAssociation(message.getClass(), message.getId(), "author");
+		assertNotNull(user);
 		
-	//	Load the hibernate POJO from its clone
-	//
-		HibernateUtil.getInstance().openSession();
-		Serializable id = HibernateUtil.getInstance().getId(clonePojo, clonePojo.getClass());
-		assertNotNull(id);
-		
-		Object loadedPojo = HibernateUtil.getInstance().load(id, clonePojo.getClass());
-		HibernateUtil.getInstance().closeCurrentSession();
-		
-	//	Post test verification
-	//
-		assertEquals(loadedPojo, hibernatePojo);
 	}
-	
-	/**
-	 * Test ID retrieving
-	 */
-	/* public final void testGetIdPageElement()
-	{
-	//	Create PageElement
-	//
-		PageElement pageElement = new PageElement();
-		pageElement.setUidPk(Long.parseLong("1"));
-		
-	//	Test ID retrieving
-	//
-		assertEquals(pageElement.getUidPk(), HibernateUtil.getInstance().getId(pageElement));
-		
-	//	Create PageElement
-	//
-		TextElement textElement = new TextElement();
-		textElement.setUidPk(Long.parseLong("1"));
-		
-	//	Test ID retrieving
-	//
-		assertEquals(textElement.getUidPk(), HibernateUtil.getInstance().getId(textElement));
-	} */
 }

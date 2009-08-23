@@ -310,9 +310,10 @@ public class TestHelper
 		HibernateUtil persistenceUtil = new HibernateUtil(); 
 		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
 		
-		PersistentBeanManager beanManager = new PersistentBeanManager();
+		PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(new StatelessProxyStore());
+		beanManager.setClassMapper(null);
 		
 		return beanManager;
 	}
@@ -330,9 +331,10 @@ public class TestHelper
 		InMemoryProxyStore proxyStore = new InMemoryProxyStore();
 		proxyStore.setPersistenceUtil(persistenceUtil);
 		
-		PersistentBeanManager beanManager = new PersistentBeanManager();
+		PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(proxyStore);
+		beanManager.setClassMapper(null);
 		
 		return beanManager;
 	}
@@ -348,7 +350,7 @@ public class TestHelper
 		HibernateUtil persistenceUtil = new HibernateUtil(); 
 		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
 		
-		PersistentBeanManager beanManager = new PersistentBeanManager();
+		PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(new StatelessProxyStore());
 		
@@ -370,7 +372,7 @@ public class TestHelper
 		HibernateUtil persistenceUtil = new HibernateUtil(); 
 		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
 		
-		PersistentBeanManager beanManager = new PersistentBeanManager();
+		PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(new StatelessProxyStore());
 		
@@ -392,7 +394,7 @@ public class TestHelper
 		HibernateUtil persistenceUtil = new HibernateUtil(); 
 		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
 		
-		PersistentBeanManager beanManager = new PersistentBeanManager();
+		PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(new StatelessProxyStore());
 		
@@ -415,9 +417,10 @@ public class TestHelper
 		HibernateUtil persistenceUtil = new HibernateUtil(); 
 		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
 		
-		PersistentBeanManager beanManager = new PersistentBeanManager();
+		PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		beanManager.setProxyStore(new StatelessProxyStore());
+		beanManager.setClassMapper(null);
 		
 		return beanManager;
 	}

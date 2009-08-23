@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
-import org.hibernate.LockMode;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.collection.AbstractPersistentCollection;
@@ -770,6 +770,38 @@ public class HibernateUtil implements IPersistenceUtil
 	public void initialize(Object proxy)
 	{
 		Hibernate.initialize(proxy);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.core.IPersistenceUtil#loadAssociation(java.lang.Class, java.io.Serializable, java.lang.String)
+	 */
+	public Object loadAssociation(Class<?> parentClass, Serializable parentId,
+								  String propertyName)
+	{
+	//	Create query
+	//
+		StringBuilder queryString = new StringBuilder();
+		queryString.append("SELECT item.");
+		queryString.append(propertyName);
+		queryString.append(" FROM ");
+		queryString.append(parentClass.getSimpleName());
+		queryString.append(" item WHERE item.id = :id");
+		if (_log.isDebugEnabled())
+		{
+			_log.debug("Query is '" +queryString.toString() + "'");
+		}
+		
+	//	Fill query
+	//
+		Session session = getSession();
+		Query query = session.createQuery(queryString.toString());
+		query.setParameter("id", parentId);
+		
+	//	Execute query
+	//
+		return query.uniqueResult();
+		
 	}
 	
 	//-------------------------------------------------------------------------

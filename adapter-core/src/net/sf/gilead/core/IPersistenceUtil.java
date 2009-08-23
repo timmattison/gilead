@@ -141,4 +141,19 @@ public interface IPersistenceUtil
 	public abstract Object createPersistentCollection(Object parent, 
 													  Map<String,Serializable> proxyInformations,
 													  Object underlyingCollection);
+	
+	//-------------------------------------------------------------------------
+	//
+	// Loading management
+	//
+	//-------------------------------------------------------------------------
+	/**
+	 * Load an association from the parent object
+	 * @param parentClass class of the parent entity
+	 * @param parentId id of the parent entity
+	 * @param propertyName the name of the property to load
+	 */
+	public abstract Object loadAssociation(Class<?> parentClass, Serializable parentId, 
+										   String propertyName);
+	
 }
