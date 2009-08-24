@@ -8,10 +8,15 @@ import net.sf.gilead.core.loading.gwt.client.InitService;
 import net.sf.gilead.gwt.PersistentRemoteService;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.dao.IMessageDAO;
-import net.sf.gilead.test.domain.interfaces.IMessage;
+import net.sf.gilead.test.domain.stateless.Message;
 
 public class InitServiceImpl extends PersistentRemoteService implements InitService 
 {
+	/**
+	 * Serialization ID
+	 */
+	private static final long serialVersionUID = 9068940871396469148L;
+
 	//-------------------------------------------------------------------------
 	//
 	// Service init
@@ -43,12 +48,12 @@ public class InitServiceImpl extends PersistentRemoteService implements InitServ
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.core.loading.gwt.client.InitService#loadTestMessage()
 	 */
-	public IMessage loadTestMessage()
+	public Message loadTestMessage()
 	{
 	//	Load last message
 	//
 		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
-		return messageDAO.loadLastMessage();
+		return (Message) messageDAO.loadLastMessage();
 	}
 
 }

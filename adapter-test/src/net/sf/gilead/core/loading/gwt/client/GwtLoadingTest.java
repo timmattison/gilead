@@ -5,8 +5,8 @@ package net.sf.gilead.core.loading.gwt.client;
 
 import net.sf.gilead.gwt.client.LoadingService;
 import net.sf.gilead.gwt.client.LoadingServiceAsync;
-import net.sf.gilead.pojo.java5.LightEntity;
-import net.sf.gilead.test.domain.interfaces.IMessage;
+import net.sf.gilead.test.domain.stateless.Message;
+import net.sf.gilead.test.domain.stateless.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;
@@ -55,7 +55,7 @@ public class GwtLoadingTest extends GWTTestCase
 				InitServiceAsync remoteService = (InitServiceAsync) GWT.create(InitService.class);
 				((ServiceDefTarget) remoteService).setServiceEntryPoint( GWT.getModuleBaseURL() + "/InitService");
 				
-				remoteService.loadTestMessage(new AsyncCallback<IMessage>()
+				remoteService.loadTestMessage(new AsyncCallback<Message>()
 				{
 					public void onFailure(Throwable caught)
 					{
@@ -63,7 +63,7 @@ public class GwtLoadingTest extends GWTTestCase
 						finishTest();
 					}
 
-					public void onSuccess(IMessage result)
+					public void onSuccess(Message result)
 					{
 						testLoadSimpleAssociation(result);
 					}
@@ -83,7 +83,7 @@ public class GwtLoadingTest extends GWTTestCase
 	/**
 	 * Test load simple association
 	 */
-	protected void testLoadSimpleAssociation(final IMessage message)
+	protected void testLoadSimpleAssociation(final Message message)
 	{
 		// Setup an asynchronous event handler.
 		Timer timer = new Timer()
@@ -91,10 +91,10 @@ public class GwtLoadingTest extends GWTTestCase
 			public void run()
 			{
 				// Call remote loading service
-				LoadingServiceAsync remoteService = (LoadingServiceAsync) GWT.create(LoadingService.class);
+				LoadingServiceAsync<Message> remoteService = (LoadingServiceAsync<Message>) GWT.create(LoadingService.class);
 				((ServiceDefTarget) remoteService).setServiceEntryPoint( GWT.getModuleBaseURL() + "/LoadingService");
 				
-				remoteService.loadAssociation((LightEntity)message, "author", new AsyncCallback<LightEntity>()
+				remoteService.loadEntityAssociation(message, "author", new AsyncCallback<User>()
 				{
 					public void onFailure(Throwable caught)
 					{
@@ -104,7 +104,7 @@ public class GwtLoadingTest extends GWTTestCase
 						finishTest();
 					}
 
-					public void onSuccess(LightEntity result)
+					public void onSuccess(User result)
 					{
 						assertNotNull(result);
 						

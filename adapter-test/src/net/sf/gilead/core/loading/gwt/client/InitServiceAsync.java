@@ -3,7 +3,7 @@
  */
 package net.sf.gilead.core.loading.gwt.client;
 
-import net.sf.gilead.test.domain.interfaces.IMessage;
+import net.sf.gilead.test.domain.stateless.Message;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -20,6 +20,6 @@ public interface InitServiceAsync {
 	 * @param  callback the callback that will be called to receive the return value
 	 * @generated generated method with asynchronous callback parameter to be used on the client side
 	 */
-	void loadTestMessage(AsyncCallback<IMessage> callback);
+	void loadTestMessage(AsyncCallback<Message> callback);
 
 }

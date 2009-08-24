@@ -6,7 +6,7 @@ import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.gwt.PersistentRemoteService;
 import net.sf.gilead.gwt.client.LoadingService;
-import net.sf.gilead.pojo.java5.LightEntity;
+import net.sf.gilead.pojo.base.ILightEntity;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,8 +16,8 @@ import org.apache.commons.logging.LogFactory;
  * @author bruno.marchesson
  *
  */
-public class LoadingServiceImpl extends PersistentRemoteService
-									implements LoadingService
+public class LoadingServiceImpl<T extends ILightEntity> extends PersistentRemoteService
+								implements LoadingService<T>
 {
 	//----
 	// Attributes
@@ -68,7 +68,7 @@ public class LoadingServiceImpl extends PersistentRemoteService
 	 * @param property the name of the property to load
 	 * @return the loaded entity
 	 */
-	public LightEntity loadAssociation(LightEntity parent, String propertyName)
+	public <K extends ILightEntity> K loadEntityAssociation(T parent, String propertyName)
 	{
 	//	Precondition checking
 	//
@@ -95,12 +95,17 @@ public class LoadingServiceImpl extends PersistentRemoteService
 			throw new NullPointerException("Persistence util not set on beanManager field !");
 		}
 		
+		if (_log.isDebugEnabled())
+		{
+			_log.debug("Loading property " + propertyName + " for entity " + parent);
+		}
+		
 	//	Get Id
 	//
 		Serializable id = persistenceUtil.getId(parent);
 		
 	//	Load assocation
 	//
-		return (LightEntity) persistenceUtil.loadAssociation(parent.getClass(), id, propertyName);
+		return (K) persistenceUtil.loadAssociation(parent.getClass(), id, propertyName);
 	}
 }

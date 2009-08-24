@@ -3,7 +3,7 @@
  */
 package net.sf.gilead.gwt.client;
 
-import net.sf.gilead.pojo.java5.LightEntity;
+import net.sf.gilead.pojo.base.ILightEntity;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -14,14 +14,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  *
  */
 
-public interface LoadingServiceAsync {
+public interface LoadingServiceAsync<T extends ILightEntity> {
 
 	/**
 	 * Load an association from the parent entity
+	 * @param <K>
 	 * @param parent the entity
 	 * @param property the name of the property to load
 	 * @return the loaded entity
 	 */
-	void loadAssociation(LightEntity parent, String propertyName, AsyncCallback<LightEntity> callback);
-
+	public <K extends ILightEntity> void loadEntityAssociation(T parent, String propertyName, AsyncCallback<K> callback);
 }

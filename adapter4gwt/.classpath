@@ -5,8 +5,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/adapter-core"/>
 	<classpathentry kind="lib" path="/adapter-core/lib/commons-logging-1.1.jar"/>
 	<classpathentry kind="lib" path="/adapter-core/lib/servlet-api.jar"/>
-	<classpathentry kind="lib" path="lib/gwt-dev-windows.jar"/>
-	<classpathentry kind="lib" path="lib/gwt-user.jar"/>
 	<classpathentry kind="lib" path="lib/proxy/commons-lang-2.2.jar"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/GWT (1)"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

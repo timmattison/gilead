@@ -1,6 +1,6 @@
 package net.sf.gilead.gwt.client;
 
-import net.sf.gilead.pojo.java5.LightEntity;
+import net.sf.gilead.pojo.base.ILightEntity;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -11,7 +11,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  *
  */
 @RemoteServiceRelativePath("LoadingService")
-public interface LoadingService extends RemoteService
+public interface LoadingService<T extends ILightEntity> extends RemoteService
 {
 	/**
 	 * Load an association from the parent entity
@@ -19,5 +19,5 @@ public interface LoadingService extends RemoteService
 	 * @param property the name of the property to load
 	 * @return the loaded entity
 	 */
-	public LightEntity loadAssociation(LightEntity parent, String propertyName);
+	public <K extends ILightEntity> K loadEntityAssociation(T parent, String propertyName);
 }
