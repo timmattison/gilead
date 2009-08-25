@@ -3,6 +3,9 @@
  */
 package net.sf.gilead.core.loading.gwt.client;
 
+import java.util.List;
+import java.util.Set;
+
 import net.sf.gilead.gwt.client.LoadingService;
 import net.sf.gilead.gwt.client.LoadingServiceAsync;
 import net.sf.gilead.test.domain.stateless.Message;
@@ -81,6 +84,52 @@ public class GwtLoadingTest extends GWTTestCase
 	}
 	
 	/**
+	 * Test loading of a list association
+	 */
+	public void testLoadSetAssociation()
+	{
+	//	1. Load test user
+	//
+		// Setup an asynchronous event handler.
+		Timer timer = new Timer()
+		{
+			public void run()
+			{
+				// Call remote init service
+				InitServiceAsync remoteService = (InitServiceAsync) GWT.create(InitService.class);
+				((ServiceDefTarget) remoteService).setServiceEntryPoint( GWT.getModuleBaseURL() + "/InitService");
+				
+				remoteService.loadTestUser(new AsyncCallback<User>()
+				{
+					public void onFailure(Throwable caught)
+					{
+						fail(caught.toString());
+						finishTest();
+					}
+
+					public void onSuccess(User result)
+					{
+						testLoadSetAssociation(result);
+					}
+			
+				});
+			}
+		};
+
+		// Set a delay period significantly longer than the
+		// event is expected to take.
+		delayTestFinish(60000);
+
+		// Schedule the event and return control to the test system.
+		timer.schedule(100);
+	}
+	
+	//-------------------------------------------------------------------------
+	//
+	// Internal methods
+	//
+	//-------------------------------------------------------------------------
+	/**
 	 * Test load simple association
 	 */
 	protected void testLoadSimpleAssociation(final Message message)
@@ -107,6 +156,48 @@ public class GwtLoadingTest extends GWTTestCase
 					public void onSuccess(User result)
 					{
 						assertNotNull(result);
+						
+						// tell the test system the test is now done
+						finishTest();
+					}
+			
+				});
+
+			}
+		};
+
+		// Schedule the event and return control to the test system.
+		timer.schedule(100);
+	}
+	
+	/**
+	 * Test load list association
+	 */
+	protected void testLoadSetAssociation(final User user)
+	{
+		// Setup an asynchronous event handler.
+		Timer timer = new Timer()
+		{
+			public void run()
+			{
+				// Call remote loading service
+				LoadingServiceAsync<User> remoteService = (LoadingServiceAsync<User>) GWT.create(LoadingService.class);
+				((ServiceDefTarget) remoteService).setServiceEntryPoint( GWT.getModuleBaseURL() + "/LoadingService");
+				
+				remoteService.loadSetAssociation(user, "messageList", new AsyncCallback<Set<Message>>()
+				{
+					public void onFailure(Throwable caught)
+					{
+						fail(caught.toString());
+
+						// tell the test system the test is now done
+						finishTest();
+					}
+
+					public void onSuccess(Set<Message> result)
+					{
+						assertNotNull(result);
+						assertFalse(result.isEmpty());
 						
 						// tell the test system the test is now done
 						finishTest();

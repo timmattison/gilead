@@ -1,12 +1,16 @@
 package net.sf.gilead.gwt.server;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Set;
 
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.gwt.PersistentRemoteService;
 import net.sf.gilead.gwt.client.LoadingService;
 import net.sf.gilead.pojo.base.ILightEntity;
+import net.sf.gilead.util.IntrospectionHelper;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,7 +72,43 @@ public class LoadingServiceImpl<T extends ILightEntity> extends PersistentRemote
 	 * @param property the name of the property to load
 	 * @return the loaded entity
 	 */
+	@SuppressWarnings("unchecked")
 	public <K extends ILightEntity> K loadEntityAssociation(T parent, String propertyName)
+	{
+		return (K) loadAssociation(parent, propertyName);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.gwt.client.LoadingService#loadAssociationList(net.sf.gilead.pojo.base.ILightEntity, java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	public <K extends ILightEntity> List<K> loadListAssociation(T parent,
+																String propertyName)
+	{
+		return (List<K>) loadAssociation(parent, propertyName);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.gwt.client.LoadingService#loadSetAssociation(net.sf.gilead.pojo.base.ILightEntity, java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	public <K extends ILightEntity> Set<K> loadSetAssociation(T parent,
+															  String propertyName)
+	{
+	return (Set<K>) loadAssociation(parent, propertyName);
+	}
+	
+	//-------------------------------------------------------------------------
+	//
+	// Internal methods
+	//
+	//-------------------------------------------------------------------------
+	/**
+	 * Loads an association 
+	 */
+	protected Object loadAssociation(T parent, String propertyName)
 	{
 	//	Precondition checking
 	//
@@ -104,8 +144,23 @@ public class LoadingServiceImpl<T extends ILightEntity> extends PersistentRemote
 	//
 		Serializable id = persistenceUtil.getId(parent);
 		
-	//	Load assocation
+	//	Load entity and assocation
 	//
-		return (K) persistenceUtil.loadAssociation(parent.getClass(), id, propertyName);
+		Object entity = persistenceUtil.loadAssociation(parent.getClass(), id, propertyName);
+		
+	//	Get getter for the property
+	//
+		Object association = null;
+		try
+		{
+			Method reader = IntrospectionHelper.getReaderMethodForProperty(entity.getClass(), propertyName);
+			association = reader.invoke(entity, (Object[]) null);
+		}
+		catch(Exception ex)
+		{
+			throw new RuntimeException("Error during lazy loading invocation !", ex);
+		}
+		
+		return beanManager.clone(association);
 	}
 }

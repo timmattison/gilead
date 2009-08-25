@@ -80,6 +80,32 @@ public class IntrospectionHelper
 		return method;
 	}
 	
+	/**
+	 * Return the getter for the named property
+	 * @param clazz
+	 * @param propertyName
+	 * @return
+	 * @throws NoSuchMethodException
+	 */
+	public static Method getReaderMethodForProperty(Class<?> clazz, String propertyName) 
+													throws NoSuchMethodException
+	{
+	//	Compute method name
+	//
+		String s= propertyName;
+		
+		if (Character.isLowerCase(propertyName.charAt(0)))
+		{
+			s = propertyName.substring(0, 1).toUpperCase();
+			
+			if (propertyName.length() > 1)
+			{
+				s += propertyName.substring(1);
+			}
+		}
+		
+		return getRecursiveDeclaredMethod(clazz, "get"+s, (Class[])null);
+	}
 	
 	/**
 	 * Search nested class from the attributes of the argument

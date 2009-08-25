@@ -8,7 +8,9 @@ import net.sf.gilead.core.loading.gwt.client.InitService;
 import net.sf.gilead.gwt.PersistentRemoteService;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.dao.IMessageDAO;
+import net.sf.gilead.test.dao.IUserDAO;
 import net.sf.gilead.test.domain.stateless.Message;
+import net.sf.gilead.test.domain.stateless.User;
 
 public class InitServiceImpl extends PersistentRemoteService implements InitService 
 {
@@ -55,5 +57,19 @@ public class InitServiceImpl extends PersistentRemoteService implements InitServ
 		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
 		return (Message) messageDAO.loadLastMessage();
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.core.loading.gwt.client.InitService#loadTestUser()
+	 */
+	public User loadTestUser()
+	{
+	//	Load test user
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		return (User) userDAO.loadUserByLogin(TestHelper.JUNIT_LOGIN);
+	}
+	
+	
 
 }

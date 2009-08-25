@@ -782,11 +782,11 @@ public class HibernateUtil implements IPersistenceUtil
 	//	Create query
 	//
 		StringBuilder queryString = new StringBuilder();
-		queryString.append("SELECT item.");
-		queryString.append(propertyName);
-		queryString.append(" FROM ");
+		queryString.append("SELECT item FROM ");
 		queryString.append(parentClass.getSimpleName());
-		queryString.append(" item WHERE item.id = :id");
+		queryString.append(" item JOIN FETCH item.");
+		queryString.append(propertyName);
+		queryString.append(" WHERE item.id = :id");
 		if (_log.isDebugEnabled())
 		{
 			_log.debug("Query is '" +queryString.toString() + "'");
@@ -801,7 +801,6 @@ public class HibernateUtil implements IPersistenceUtil
 	//	Execute query
 	//
 		return query.uniqueResult();
-		
 	}
 	
 	//-------------------------------------------------------------------------
