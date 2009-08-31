@@ -2,6 +2,7 @@ package net.sf.gilead.gwt.server;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Set;
 
@@ -42,6 +43,11 @@ public class LoadingServiceImpl<T extends ILightEntity> extends PersistentRemote
 	 */
 	private PersistentBeanManager beanManager = PersistentBeanManager.getInstance();
 	
+	/**
+	 * The associated persistent class
+	 */
+	private Class<T> persistentClass;
+	
 	//----
 	// Properties
 	//---
@@ -60,10 +66,24 @@ public class LoadingServiceImpl<T extends ILightEntity> extends PersistentRemote
 	{
 		this.beanManager = beanManager;
 	}
+	
+	//-----------------------------------------------------------------------
+	//
+	// Constructors
+	//
+	//-----------------------------------------------------------------------
+	/**
+	 * Constructor
+	 */
+	@SuppressWarnings("unchedked")
+	public LoadingServiceImpl()
+	{
+		persistentClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+	}
 
 	//-------------------------------------------------------------------------
 	//
-	// Service implementation
+	// Association loading implementation
 	//
 	//-------------------------------------------------------------------------
 	/**
@@ -98,6 +118,48 @@ public class LoadingServiceImpl<T extends ILightEntity> extends PersistentRemote
 															  String propertyName)
 	{
 	return (Set<K>) loadAssociation(parent, propertyName);
+	}
+	
+	//-------------------------------------------------------------------------
+	//
+	// Entity loading methods
+	//
+	//-------------------------------------------------------------------------
+
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.gwt.client.LoadingService#loadEntity(java.lang.Integer)
+	 */
+	public T loadEntity(Integer id)
+	{
+		return loadEntity((Serializable)id);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.gwt.client.LoadingService#loadEntity(java.lang.Long)
+	 */
+	public T loadEntity(Long id)
+	{
+		return loadEntity((Serializable)id);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.gwt.client.LoadingService#loadEntity(java.lang.String)
+	 */
+	public T loadEntity(String id)
+	{
+		return loadEntity((Serializable)id);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.gwt.client.LoadingService#loadEntity(net.sf.gilead.pojo.base.ILightEntity)
+	 */
+	public <K extends ILightEntity> T loadEntity(K compositeId)
+	{
+		return loadEntity((Serializable)compositeId);
 	}
 	
 	//-------------------------------------------------------------------------
@@ -162,5 +224,43 @@ public class LoadingServiceImpl<T extends ILightEntity> extends PersistentRemote
 		}
 		
 		return beanManager.clone(association);
+	}
+	
+	/**
+	 * Loads an entity
+	 */
+	@SuppressWarnings("unchecked")
+	protected T loadEntity(Serializable id)
+	{
+	//	Precondition checking
+	//
+		if (id == null)
+		{
+			throw new NullPointerException("Missing id!");
+		}
+		
+		if (beanManager == null)
+		{
+			throw new NullPointerException("Bean manager not set !");
+		}
+		
+	//	Get Persistence util
+	//
+		IPersistenceUtil persistenceUtil = beanManager.getPersistenceUtil();
+		if (persistenceUtil == null)
+		{
+			throw new NullPointerException("Persistence util not set on beanManager field !");
+		}
+		
+		if (_log.isDebugEnabled())
+		{
+			_log.debug("Loading entity " + persistentClass + " with ID" + id);
+		}
+	
+	//	Load entity and clone it
+	//
+		Object entity = persistenceUtil.load(id, persistentClass);
+		return (T) beanManager.clone(entity);
+	
 	}
 }

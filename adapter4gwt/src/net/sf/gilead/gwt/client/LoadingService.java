@@ -17,6 +17,36 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("LoadingService")
 public interface LoadingService<T extends ILightEntity> extends RemoteService
 {
+	//-------------------------------------------------------------------------
+	//
+	// Entity loading
+	//
+	//-------------------------------------------------------------------------
+	/**
+	 * Load an entity from its id
+	 */
+	public T loadEntity(Integer id);
+	
+	/**
+	 * Load an entity from its id
+	 */
+	public T loadEntity(Long id);
+	
+	/**
+	 * Load an entity from its id
+	 */
+	public T loadEntity(String id);
+	
+	/**
+	 * Load an entity from its composite id
+	 */
+	public <K extends ILightEntity> T loadEntity(K compositeId);
+	
+	//-------------------------------------------------------------------------
+	//
+	// Association loading
+	//
+	//-------------------------------------------------------------------------
 	/**
 	 * Load an association entity from the parent entity
 	 * @param parent the entity

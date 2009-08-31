@@ -17,8 +17,39 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  *
  */
 
-public interface LoadingServiceAsync<T extends ILightEntity> {
+public interface LoadingServiceAsync<T extends ILightEntity>
+{
+	//-------------------------------------------------------------------------
+	//
+	// Entity loading
+	//
+	//-------------------------------------------------------------------------
+	/**
+	 * Load an entity from its id
+	 */
+	public void loadEntity(Integer id, AsyncCallback<ILightEntity> callback);
 
+	/**
+	 * Load an entity from its id
+	 */
+	public void loadEntity(Long id, AsyncCallback<ILightEntity> callback);
+
+	/**
+	 * Load an entity from its id
+	 */
+	public void loadEntity(String id, AsyncCallback<ILightEntity> callback);
+
+	/**
+	 * Load an entity from its composite id
+	 */
+	public <K extends ILightEntity> void loadEntity(ILightEntity compositeId,
+			AsyncCallback<K> callback);
+	
+	//-------------------------------------------------------------------------
+	//
+	// Association loading
+	//
+	//-------------------------------------------------------------------------
 	/**
 	 * Load an association from the parent entity
 	 * @param <K>
