@@ -6,6 +6,7 @@ package net.sf.gilead.gwt.client;
 import java.util.List;
 import java.util.Set;
 
+import net.sf.gilead.gwt.client.parameters.IRequestParameter;
 import net.sf.gilead.pojo.base.ILightEntity;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -27,23 +28,7 @@ public interface LoadingServiceAsync<T extends ILightEntity>
 	/**
 	 * Load an entity from its id
 	 */
-	public void loadEntity(Integer id, AsyncCallback<ILightEntity> callback);
-
-	/**
-	 * Load an entity from its id
-	 */
-	public void loadEntity(Long id, AsyncCallback<ILightEntity> callback);
-
-	/**
-	 * Load an entity from its id
-	 */
-	public void loadEntity(String id, AsyncCallback<ILightEntity> callback);
-
-	/**
-	 * Load an entity from its composite id
-	 */
-	public <K extends ILightEntity> void loadEntity(ILightEntity compositeId,
-			AsyncCallback<K> callback);
+	public void loadEntity(String className, IRequestParameter id, AsyncCallback<T> callback);
 	
 	//-------------------------------------------------------------------------
 	//
@@ -78,4 +63,5 @@ public interface LoadingServiceAsync<T extends ILightEntity>
 	 */
 	public <K extends ILightEntity> void loadSetAssociation(ILightEntity parent, String propertyName,
 															AsyncCallback<Set<K>> callback);
+
 }

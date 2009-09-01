@@ -3,6 +3,7 @@ package net.sf.gilead.gwt.client;
 import java.util.List;
 import java.util.Set;
 
+import net.sf.gilead.gwt.client.parameters.IRequestParameter;
 import net.sf.gilead.pojo.base.ILightEntity;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -25,23 +26,8 @@ public interface LoadingService<T extends ILightEntity> extends RemoteService
 	/**
 	 * Load an entity from its id
 	 */
-	public T loadEntity(Integer id);
-	
-	/**
-	 * Load an entity from its id
-	 */
-	public T loadEntity(Long id);
-	
-	/**
-	 * Load an entity from its id
-	 */
-	public T loadEntity(String id);
-	
-	/**
-	 * Load an entity from its composite id
-	 */
-	public <K extends ILightEntity> T loadEntity(K compositeId);
-	
+	public T loadEntity(String className, IRequestParameter id);
+
 	//-------------------------------------------------------------------------
 	//
 	// Association loading

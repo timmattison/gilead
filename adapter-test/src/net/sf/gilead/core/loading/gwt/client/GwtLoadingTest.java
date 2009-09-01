@@ -8,6 +8,7 @@ import java.util.Set;
 
 import net.sf.gilead.gwt.client.LoadingService;
 import net.sf.gilead.gwt.client.LoadingServiceAsync;
+import net.sf.gilead.gwt.client.parameters.IntegerParameter;
 import net.sf.gilead.test.domain.stateless.Message;
 import net.sf.gilead.test.domain.stateless.User;
 
@@ -124,6 +125,47 @@ public class GwtLoadingTest extends GWTTestCase
 		timer.schedule(100);
 	}
 	
+	/**
+	 * Test loading of a simple entity
+	 */
+	public void testLoadEntity()
+	{
+	//	1. Load test message
+	//
+		// Setup an asynchronous event handler.
+		Timer timer = new Timer()
+		{
+			public void run()
+			{
+				// Call remote init service
+				InitServiceAsync remoteService = (InitServiceAsync) GWT.create(InitService.class);
+				((ServiceDefTarget) remoteService).setServiceEntryPoint( GWT.getModuleBaseURL() + "/InitService");
+				
+				remoteService.loadTestMessage(new AsyncCallback<Message>()
+				{
+					public void onFailure(Throwable caught)
+					{
+						fail(caught.toString());
+						finishTest();
+					}
+
+					public void onSuccess(Message result)
+					{
+						testLoadMessage(result.getId());
+					}
+			
+				});
+			}
+		};
+
+		// Set a delay period significantly longer than the
+		// event is expected to take.
+		delayTestFinish(60000);
+
+		// Schedule the event and return control to the test system.
+		timer.schedule(100);
+	}
+	
 	//-------------------------------------------------------------------------
 	//
 	// Internal methods
@@ -198,6 +240,48 @@ public class GwtLoadingTest extends GWTTestCase
 					{
 						assertNotNull(result);
 						assertFalse(result.isEmpty());
+						
+						// tell the test system the test is now done
+						finishTest();
+					}
+			
+				});
+
+			}
+		};
+
+		// Schedule the event and return control to the test system.
+		timer.schedule(100);
+	}
+	
+	/**
+	 * Test load simple association
+	 */
+	protected void testLoadMessage(final Integer id)
+	{
+		// Setup an asynchronous event handler.
+		Timer timer = new Timer()
+		{
+			public void run()
+			{
+				// Call remote loading service
+				LoadingServiceAsync<Message> remoteService = (LoadingServiceAsync<Message>) GWT.create(LoadingService.class);
+				((ServiceDefTarget) remoteService).setServiceEntryPoint( GWT.getModuleBaseURL() + "/LoadingService");
+				
+				remoteService.loadEntity(Message.class.getName(), new IntegerParameter(id), new AsyncCallback<Message>()
+				{
+					public void onFailure(Throwable caught)
+					{
+						fail(caught.toString());
+
+						// tell the test system the test is now done
+						finishTest();
+					}
+
+					public void onSuccess(Message result)
+					{
+						assertNotNull(result);
+						assertEquals(id, Integer.valueOf(result.getId()));
 						
 						// tell the test system the test is now done
 						finishTest();
