@@ -3,9 +3,13 @@
  */
 package net.sf.gilead.adapter4appengine.client;
 
-import net.sf.gilead.adapter4appengine.server.domain.TestEntity;
+import java.util.Arrays;
 
-import com.google.appengine.api.datastore.Text;
+import net.sf.gilead.adapter4appengine.server.domain.TestEntity2;
+
+
+import com.google.appengine.api.datastore.Blob;
+import com.google.appengine.api.datastore.Link;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.Timer;
@@ -42,9 +46,14 @@ public class GwtEmulationTest extends GWTTestCase
 	 */
 	public void testEmulationSupport()
 	{
-		// Create test entity
-		final TestEntity entity = new TestEntity();
-		entity.setText(new Text("test text"));
+		final byte[] contents = new byte [128]; Arrays.fill (contents, (byte) 15);
+		final String linkContent = "test clone user and messages in stateful mode";
+		
+		final TestEntity2 entity = new TestEntity2 ();
+		
+		entity.setTextBytes (new Blob(contents));
+		entity.setLink (new Link (linkContent));
+		entity.setKey (null);
 		
 		// Setup an asynchronous event handler.
 		Timer timer = new Timer()
@@ -55,22 +64,27 @@ public class GwtEmulationTest extends GWTTestCase
 				TransfertServiceAsync remoteService = (TransfertServiceAsync) GWT.create(TransfertService.class);
 				((ServiceDefTarget) remoteService).setServiceEntryPoint( GWT.getModuleBaseURL() + "/TransfertService");
 				
-				remoteService.sendAndReceive(entity, new AsyncCallback<TestEntity>()
+				remoteService.sendAndReceiveNew (entity, new AsyncCallback<TestEntity2>()
 				{
 					public void onFailure(Throwable caught)
 					{
 						assertFalse(caught.toString(), false);
 
+						
 						// tell the test system the test is now done
 						finishTest();
 					}
 
-					public void onSuccess(TestEntity result)
+					public void onSuccess(TestEntity2 result)
 					{
-						assertNotNull(result);
-						assertNotNull(result.getText());
-						assertEquals(entity.getText(), result.getText());
-						assertEquals(entity.getText().getValue(), result.getText().getValue());
+						assertNotNull (result);
+						assertNotNull (result.getTextBytes());
+						assertNotNull (result.getTextThumb()); // textThumb has no setter
+						assertNotNull (result.getLink());
+
+						
+						//assertEquals (result.getTextBytes().getBytes(), contents.getBytes());
+						assertEquals (result.getLink().getValue(), linkContent);
 						
 						// tell the test system the test is now done
 						finishTest();

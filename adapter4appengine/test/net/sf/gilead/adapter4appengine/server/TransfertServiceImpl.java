@@ -7,6 +7,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import net.sf.gilead.adapter4appengine.client.TransfertService;
 import net.sf.gilead.adapter4appengine.server.domain.TestEntity;
+import net.sf.gilead.adapter4appengine.server.domain.TestEntity2;
 
 /**
  * Transfert remote service implementation
@@ -26,6 +27,12 @@ public class TransfertServiceImpl extends RemoteServiceServlet
 	 */
 	public TestEntity sendAndReceive(TestEntity entity)
 	{
+		return entity;
+	}
+
+	
+	public TestEntity2 sendAndReceiveNew(TestEntity2 entity) {
+		
 		return entity;
 	}
 

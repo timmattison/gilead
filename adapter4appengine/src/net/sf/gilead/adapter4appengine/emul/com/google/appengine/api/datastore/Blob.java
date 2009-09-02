@@ -1,68 +1,55 @@
 package com.google.appengine.api.datastore;
 
 import java.io.Serializable;
+
 import java.util.Arrays;
 
 /**
- * JSNI emulation of DataNucleus {@link com.google.appengine.api.datastore.Blob} class
- * @author Alex Dobjanschi
- *
+ * JSNI emulation of DataNucleus {@link com.google.appengine.api.datastore.Blob} class.
+ * This class has no default constructor, serialization is achieved using a <code>CustomFieldSerializer</code> 
+ * @author Alex Dobjanschi (alex.dobjanschi@gmail.com)
  */
-public class Blob implements Serializable {
-
-	/**
-	 * The bytes representing this BLOB object.
-	 */
-	private final byte[] bytes;
+public final class Blob implements Serializable {
 	
 	/**
-	 * Constructor ({@link #bytes} field is treated as <code>final</code>)
-	 * @param bytes
+	 * The bytes
 	 */
-	public Blob (byte[] bytes) {
-		this.bytes = bytes;
-	}
+    private final byte bytes[];	
 
-	/**
-	 * Getter for {@link #bytes} member
-	 * @return
-	 * 		The bytes representing this BLOB object
-	 */
-	public byte[] getBytes() {
-		return bytes;
-	}
+    
+    public Blob (byte bytes[]) {
+        this.bytes = bytes;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    /**
+     * 
+     * @return
+     * 		Returns the bytes held by this object
+     */
+    public byte[] getBytes() {
+        return bytes;
+    }
 
-		// check for null object
-		//
-		if (obj == null)
-			return false;
-		
-		// check same class signature
-		//
-		if ( !(obj instanceof Blob) )
-			return false;
-		
-		// cast
-		Blob other = (Blob) obj;
-		
-		//
-		return Arrays.equals(bytes, other.getBytes());
-	}
+    /**
+     * Calculate the hash
+     */
+    public int hashCode() {
+        return Arrays.hashCode(bytes);
+    }
 
-	@Override
-	public int hashCode() {		
-		return Arrays.hashCode(bytes);
-	}
+    public boolean equals(Object object) {
+        if(object instanceof Blob) {
+            Blob key = (Blob) object;
+            return Arrays.equals(bytes, key.bytes);
+        } else {
+            return false;
+        }
+    }
 
-	/**
-	 * Return a simple information about this blob (just the length of {@link bytes})
-	 */
-	@Override
-	public String toString() {
-		
-		return "<Blob: " + bytes.length + " bytes>";
-	}
+    /**
+     * Return a simple info about the object (just its length and type)
+     */
+    public String toString() {    	
+    	return "<Blob: " + bytes.length + " bytes>";
+    }
 }

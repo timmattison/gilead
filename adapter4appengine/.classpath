@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/datastore/Blob.java|net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/datastore/Key.java|net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/users/User.java|net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/datastore/Text.java" kind="src" path="src"/>
+	<classpathentry excluding="net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/datastore/AppIdNamespace.java|net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/datastore/Blob.java|net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/datastore/Entity.java|net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/datastore/Key.java|net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/datastore/Link.java|net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/datastore/ShortBlob.java|net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/datastore/Text.java|net/sf/gilead/adapter4appengine/emul/com/google/appengine/api/users/User.java" kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/gwt-dev-windows.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-dev-linux.jar"/>
 	<classpathentry kind="lib" path="lib/gwt-servlet.jar" sourcepath="/opt/gwt/gwt-servlet.jar"/>
 	<classpathentry kind="lib" path="lib/gwt-user.jar"/>
 	<classpathentry kind="lib" path="lib/jdo2-api-2.3-SNAPSHOT.jar"/>
