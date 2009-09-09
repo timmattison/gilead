@@ -1,12 +1,12 @@
 package net.sf.gilead.adapter4appengine.datanucleus;
 
+import java.util.logging.Logger;
+
 import javax.jdo.identity.ObjectIdentity;
 import javax.jdo.spi.PersistenceCapable;
 import javax.servlet.http.HttpSession;
 
 import com.google.appengine.api.datastore.Key;
-import com.google.appengine.repackaged.org.apache.commons.logging.Log;
-import com.google.appengine.repackaged.org.apache.commons.logging.LogFactory;
 
 /**
  * Store for persistent entity, based on HTTP session
@@ -49,7 +49,7 @@ public class JdoEntityStore
 	/**
 	 * Log channel
 	 */
-	private static Log _log = LogFactory.getLog(JdoEntityStore.class);
+	private static final Logger _log = Logger.getLogger(JdoEntityStore.class.getName());
 	
 	/**
 	 * The current HTTP session

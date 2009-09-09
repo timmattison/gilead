@@ -11,13 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.spi.PersistenceCapable;
 import javax.persistence.Id;
 
-import com.google.appengine.repackaged.org.apache.commons.logging.Log;
-import com.google.appengine.repackaged.org.apache.commons.logging.LogFactory;
 import com.google.gwt.user.server.rpc.ISerializationFilter;
 
 /**
@@ -33,7 +32,7 @@ public class JdoReadSerializationFilter implements ISerializationFilter
 	/**
 	 * Log channel
 	 */
-	private static Log log = LogFactory.getLog(JdoReadSerializationFilter.class);
+	private static final Logger log = Logger.getLogger(JdoReadSerializationFilter.class.getName());
 	
 	/**
 	 * Stack for field values. They while be set back to DataNucleus entity after
@@ -282,7 +281,7 @@ public class JdoReadSerializationFilter implements ISerializationFilter
 		
 	//	Not found
 	//
-		log.warn("No setter for " + fieldName);
+		log.warning("No setter for " + fieldName);
 		return null;
 	}
 	
