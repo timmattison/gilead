@@ -117,7 +117,8 @@ public class MergePropertyFilter implements DetailedPropertyFilter
 	{
 		try
 		{
-			if (CloneAndMergeConstants.PROXY_INFORMATIONS.equals(propertyName) == true)
+			if ((CloneAndMergeConstants.PROXY_INFORMATIONS.equals(propertyName) == true) ||
+				(CloneAndMergeConstants.INITIALIZATION_MAP.equals(propertyName) == true))
 			{
 				return false;
 			}

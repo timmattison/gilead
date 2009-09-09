@@ -13,6 +13,15 @@
     		]]>
     		</collectionType>
     	</attribute>
+    	<attribute name="_initializationMap" visibility="protected" 
+    			   type="java.util.Map" 
+    			   defaultValue="new java.util.HashMap()">
+    		<collectionType>
+    		<![CDATA[
+    			java.lang.String, java.lang.Boolean
+    		]]>
+    		</collectionType>
+    	</attribute>
     </attributes>
     
     <!--
@@ -31,7 +40,7 @@
     	</method>
     	
     	<!--  removeProxyInformation -->
-    	<method visibility="public" returnType="void" name="removeProxyInformation" javadoc="">
+    	<method visibility="public" returnType="void" name="removeProxyInformation" >
     		<parameters>
     			<parameter type="String" name="property" />
     		</parameters>
@@ -50,35 +59,39 @@
     		</code>
     	</method>
     	
-    	<!-- getLazyString -->
+    	<!-- getDebugString -->
     	<method visibility="public" returnType="String" name="getDebugString" javadoc="">
     		<code>
     		{ return _proxyInformations.toString(); }
 			</code>
     	</method>
     	
-    	<!-- getProxyInformations -->
-    	<method visibility="public" returnType="java.util.Map" name="getProxyInformations">
-    		<returnCollectionType>
-	    		<![CDATA[
-	    			java.lang.String, java.lang.String
-	    		]]>
-    		</returnCollectionType>
+    	<!-- isInitialized -->
+    	<method visibility="public" returnType="boolean" name="isInitialized">
+    		<parameters>
+    			<parameter type="String" name="property" />
+    		</parameters>
     		<code>
-    			{ return _proxyInformations; }
+    			{
+					Boolean initialized = (Boolean) _initializationMap.get(property);
+					if (initialized == null)
+					{
+						return true;
+					}
+					return initialized.booleanValue();
+				}
     		</code>
     	</method>
     	
-    	<!-- setProxyInformations-->
-    	<method visibility="public" returnType="void" name="setProxyInformations" >
+    	<!-- setInitialized -->
+    	<method visibility="public" returnType="void" name="setInitialized">
     		<parameters>
-    			<parameter type="java.util.Map" name="proxyInformations" />
+    			<parameter type="String" name="property" />
+    			<parameter type="boolean" name="initialized" />
     		</parameters>
     		<code>
-    		<![CDATA[
-    			{ _proxyInformations = proxyInformations; }
-    		]]>
+    			{ _initializationMap.put(property, Boolean.valueOf(initialized)); }
     		</code>
     	</method>
-    </methods>
+ 	</methods>
 </additionalCode>

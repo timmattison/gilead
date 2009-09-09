@@ -145,13 +145,13 @@ public class HibernateUtilTest extends TestCase
 		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
 		IMessage message = messageDAO.loadLastMessage();
 		assertNotNull(message);
-		assertNull(message.getAuthor());
+		assertFalse(HibernateUtil.getInstance().isInitialized(message.getAuthor()));
 		
 	//	Test 'author' loading
 	//
 		IMessage loadedMessage = (IMessage) HibernateUtil.getInstance().loadAssociation(message.getClass(), message.getId(), "author");
 		assertNotNull(loadedMessage);
-		assertNotNull(loadedMessage.getAuthor());
+		assertTrue(HibernateUtil.getInstance().isInitialized(loadedMessage.getAuthor()));
 		
 	}
 }

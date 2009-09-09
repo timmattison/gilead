@@ -16,7 +16,6 @@
 
 package net.sf.gilead.pojo.base;
 
-import java.util.Map;
 
 /**
  * Persistence info handler interface.
@@ -53,18 +52,22 @@ public interface ILightEntity
 	public String getProxyInformation(String property);
 
 	/**
+	 * Set the initialization state of a property.
+	 * @param property
+	 * @param initialised
+	 */
+	public abstract void setInitialized(String property, boolean initialised);
+	
+	/**
+	 * @param property
+	 * @return if the property was initialised, false otherwise
+	 */
+	public abstract boolean isInitialized(String property);
+
+
+	/**
 	 * Debug method : write the declared proxy information
 	 * @return a human readable description of proxy information
 	 */
 	public abstract String getDebugString();
-
-	/**
-	 * @return the proxy informations
-	 */
-	public Map getProxyInformations();
-
-	/**
-	 * @param proxyInformations the proxy informations to set
-	 */
-	public void setProxyInformations(Map proxyInformations);
 }

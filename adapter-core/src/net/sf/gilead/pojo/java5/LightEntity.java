@@ -46,26 +46,50 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	 */
 	protected Map<String, String> _proxyInformations;
 	
+	/**
+	 * Map of persistence initialisation state.
+	 * The key is the property name, the value is a map with
+	 * persistence informations filled by the persistence util
+	 * implementation
+	 */
+	protected Map<String, Boolean> _initializationMap;
+	
 	//----
 	// Properties
 	//----
 	/**
 	 * @return the proxy informations
 	 */
-	public Map<String, String> getProxyInformations()
-	{
-		return _proxyInformations;
-	}
+//	public Map<String, String> getProxyInformations()
+//	{
+//		return _proxyInformations;
+//	}
 
 	/**
 	 * @param informations the proxy Informations to set
 	 */
-	@SuppressWarnings("unchecked")
-	public void setProxyInformations(Map informations)
-	{
-		_proxyInformations = informations;
-	}
+//	@SuppressWarnings("unchecked")
+//	public void setProxyInformations(Map informations)
+//	{
+//		_proxyInformations = informations;
+//	}
 	
+	/**
+	 * @return the initialization map
+	 */
+//	public Map<String, Boolean> getInitializationMap()
+//	{
+//		return _initializationMap;
+//	}
+
+	/**
+	 * @param map the _initializationMap to set
+	 */
+//	public void setInitializationMap(Map<String, Boolean> map)
+//	{
+//		_initializationMap = map;
+//	}
+
 	//-------------------------------------------------------------------------
 	//
 	// Constructor
@@ -138,5 +162,37 @@ public abstract class LightEntity implements ILightEntity, Serializable
 		{
 			return null;
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.pojo.base.ILightEntity#isInitialized(java.lang.String)
+	 */
+	public boolean isInitialized(String property)
+	{
+		if (_initializationMap == null)
+		{
+			return true;
+		}
+		
+		Boolean initialized = _initializationMap.get(property);
+		if (initialized == null)
+		{
+			return true;
+		}
+		return initialized.booleanValue();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.pojo.base.ILightEntity#setInitialized(java.lang.String, boolean)
+	 */
+	public void setInitialized(String property, boolean initialized)
+	{
+		if (_initializationMap == null)
+		{
+			_initializationMap = new HashMap<String, Boolean>();
+		}
+		_initializationMap.put(property, initialized);	
 	}
 }

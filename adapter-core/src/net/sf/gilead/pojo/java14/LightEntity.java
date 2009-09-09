@@ -34,7 +34,7 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	// Attributes
 	//-----
 	/**
-	 * Serialization ID
+	 * erialization ID
 	 */
 	private static final long serialVersionUID = 535611044803301746L;
 
@@ -46,27 +46,36 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	 * @gwt.typeArgs <java.lang.String, java.lang.String>
 	 */
 	protected Map _proxyInformations;
+	
+	/**
+	 * Map of persistence initialisation state.
+	 * The key is the property name, the value is a map with
+	 * persistence informations filled by the persistence util
+	 * implementation
+	 * @gwt.typeArgs <java.lang.String, java.lang.Boolean>
+	 */
+	protected Map _initializationMap;
 
 	//----
 	// Properties
 	//----
-	/**
-	 * @return the persistent collections properties
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public Map getProxyInformations()
-	{
-		return _proxyInformations;
-	}
-
-	/**
-	 * @param properties the persistent collection properties to set
-	 * @gwt.typeArgs properties <java.lang.String, java.lang.String>
-	 */
-	public void setProxyInformations(Map properties)
-	{
-		_proxyInformations = properties;
-	}
+//	/**
+//	 * @return the persistent collections properties
+//	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+//	 */
+//	public Map getProxyInformations()
+//	{
+//		return _proxyInformations;
+//	}
+//
+//	/**
+//	 * @param properties the persistent collection properties to set
+//	 * @gwt.typeArgs properties <java.lang.String, java.lang.String>
+//	 */
+//	public void setProxyInformations(Map properties)
+//	{
+//		_proxyInformations = properties;
+//	}
 	
 	//-------------------------------------------------------------------------
 	//
@@ -142,5 +151,36 @@ public abstract class LightEntity implements ILightEntity, Serializable
 		{
 			return null;
 		}
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.pojo.base.ILightEntity#isInitialized(java.lang.String)
+	 */
+	public boolean isInitialized(String property)
+	{
+		if (_initializationMap == null)
+		{
+			return true;
+		}
+		
+		Boolean initialized = (Boolean) _initializationMap.get(property);
+		if (initialized == null)
+		{
+			return true;
+		}
+		return initialized.booleanValue();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.pojo.base.ILightEntity#setInitialized(java.lang.String, boolean)
+	 */
+	public void setInitialized(String property, boolean initialized)
+	{
+		if (_initializationMap == null)
+		{
+			_initializationMap = new HashMap();
+		}
+		_initializationMap.put(property, new Boolean(initialized));	
 	}
 }

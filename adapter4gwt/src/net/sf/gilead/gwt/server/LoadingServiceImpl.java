@@ -17,7 +17,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * GWT remote loading service implementation
+ * GWT remote loading service implementation.
+ * It does not extends PersistentRemoteService since merge operation is not needed.
  * @author bruno.marchesson
  *
  */

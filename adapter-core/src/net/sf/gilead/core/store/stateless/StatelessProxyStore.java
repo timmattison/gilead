@@ -135,6 +135,20 @@ public class StatelessProxyStore implements IProxyStore
 			throw new ProxyStoreException("Class " + cloneBean.getClass() + " must implements ILightEntity interface !", cloneBean);
 		}
 		
+	//	Extract initialization info
+	//
+		if (proxyInformations != null)
+		{
+			Boolean initialized = (Boolean) proxyInformations.get(ILightEntity.INITIALISED);
+			if (initialized != null)
+			{
+				((ILightEntity) cloneBean).setInitialized(property, initialized.booleanValue());
+				
+				// remove from map
+				proxyInformations.remove(ILightEntity.INITIALISED);
+			}
+		}
+		
 	//	Store information in the POJO
 	//
 		if (_useSerializationThread == false)
@@ -177,7 +191,17 @@ public class StatelessProxyStore implements IProxyStore
 			return null;
 		}
 		
-		return convertToSerializable(((ILightEntity)pojo).getProxyInformation(property));
+		Map<String, Serializable> proxyInformations = convertToSerializable(((ILightEntity)pojo).getProxyInformation(property));
+		
+	//	Add initialization information
+	//
+		boolean initialized = ((ILightEntity)pojo).isInitialized(property);
+		if (initialized == false)
+		{
+			proxyInformations.put(ILightEntity.INITIALISED, Boolean.valueOf(false));
+		}
+		
+		return proxyInformations;
 	}
 	
 	/**
