@@ -803,6 +803,70 @@ public class HibernateUtil implements IPersistenceUtil
 		return query.uniqueResult();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.core.IPersistenceUtil#executeQuery(java.lang.String, java.util.List)
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Object> executeQuery(String query, List<Object> parameters)
+	{
+		if (_log.isDebugEnabled())
+		{
+			_log.debug("Executing query '" +query+ "'");
+		}
+		
+	//	Fill query
+	//
+		Session session = getSession();
+		Query hqlQuery = session.createQuery(query);
+		
+	//	Fill parameters
+	//
+		if (parameters != null)
+		{
+			for (int index = 0; index < parameters.size() ; index ++)
+			{
+				hqlQuery.setParameter(index, parameters.get(index));
+			}
+		}
+		
+	//	Execute query
+	//
+		return (List<Object>) hqlQuery.list();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.core.IPersistenceUtil#executeQuery(java.lang.String, java.util.Map)
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Object> executeQuery(String query, Map<String, Object> parameters)
+	{
+		if (_log.isDebugEnabled())
+		{
+			_log.debug("Executing query '" +query+ "'");
+		}
+		
+	//	Fill query
+	//
+		Session session = getSession();
+		Query hqlQuery = session.createQuery(query);
+		
+	//	Fill parameters
+	//
+		if (parameters != null)
+		{
+			for (Map.Entry<String, Object> parameter : parameters.entrySet())
+			{
+				hqlQuery.setParameter(parameter.getKey(), parameter.getValue());
+			}
+		}
+		
+	//	Execute query
+	//
+		return (List<Object>) hqlQuery.list();
+	}
+	
 	//-------------------------------------------------------------------------
 	//
 	// Internal methods

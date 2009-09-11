@@ -1,6 +1,7 @@
 package net.sf.gilead.core;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -156,4 +157,20 @@ public interface IPersistenceUtil
 	public abstract Object loadAssociation(Class<?> parentClass, Serializable parentId, 
 										   String propertyName);
 	
+	/**
+	 * Executes an EJBQL query.
+	 * @param query the EJBQL query
+	 * @param parameters parameters list (can be null)
+	 * @return the query result list
+	 */
+	public abstract List<Object> executeQuery(String query, List<Object> parameters);
+	
+	
+	/**
+	 * Executes an EJBQL query.
+	 * @param query the EJBQL query
+	 * @param parameters parameters map (can be null)
+	 * @return the query result list
+	 */
+	public abstract List<Object> executeQuery(String query, Map<String, Object> parameters);
 }
