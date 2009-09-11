@@ -13,8 +13,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import junit.framework.TestCase;
+import net.sf.gilead.core.store.stateful.AbstractStatefulProxyStore;
 import net.sf.gilead.core.wrapper.WrappingClass;
 import net.sf.gilead.core.wrapper.WrappingClass.ErrorCode;
+import net.sf.gilead.pojo.base.ILightEntity;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.HibernateContext;
 import net.sf.gilead.test.dao.IEmployeeDAO;
@@ -1609,6 +1611,53 @@ public abstract class CloneTest extends TestCase
 		assertEquals(mergeMessage.countKeywords(), loadedMessage.countKeywords());
 	}
 	
+	/**
+	 * Test initialization map feature
+	 */
+	public void testInitializationMap()
+	{
+	//	Does not work on stateful mode
+	//
+		if (_beanManager.getProxyStore() instanceof AbstractStatefulProxyStore)
+		{
+			return;
+		}
+		
+	//	Test lazy property
+	//
+		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
+		assertNotNull(messageDAO);
+		
+	//	Load test message
+	//
+		IMessage message = messageDAO.loadLastMessage();
+		assertNotNull(message);
+		assertFalse(_beanManager.getPersistenceUtil().isInitialized(message.getAuthor()));		
+		
+	//	Clone message
+	//
+		IMessage cloneMessage = (IMessage) _beanManager.clone(message);
+		
+	//	Test cloned user
+	//
+		assertNotNull(cloneMessage);
+		assertFalse(((ILightEntity)cloneMessage).isInitialized("author"));
+		
+	//	Test with initialized property
+	//
+		message = messageDAO.loadDetailedMessage(TestHelper.getExistingMessageId());
+		assertNotNull(message);
+		assertTrue(_beanManager.getPersistenceUtil().isInitialized(message.getAuthor()));		
+		
+	//	Clone message
+	//
+		cloneMessage = (IMessage) _beanManager.clone(message);
+		
+	//	Test cloned user
+	//
+		assertNotNull(cloneMessage);
+		assertTrue(((ILightEntity)cloneMessage).isInitialized("author"));
+	}
 	//-------------------------------------------------------------------------
 	//
 	// Internal methods
