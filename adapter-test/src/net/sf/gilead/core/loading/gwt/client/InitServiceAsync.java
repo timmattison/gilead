@@ -9,10 +9,12 @@ import net.sf.gilead.test.domain.stateless.User;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
+ * Service for server side initialization (unit test purpose)
  * @author bruno.marchesson
  * @generated generated asynchronous callback interface to be used on the client side
  *
  */
+
 public interface InitServiceAsync {
 
 	/**

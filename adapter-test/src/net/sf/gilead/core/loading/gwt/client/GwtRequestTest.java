@@ -3,11 +3,14 @@
  */
 package net.sf.gilead.core.loading.gwt.client;
 
-import java.util.Set;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import net.sf.gilead.gwt.client.LoadingService;
-import net.sf.gilead.gwt.client.LoadingServiceAsync;
-import net.sf.gilead.gwt.client.parameters.IntegerParameter;
+import net.sf.gilead.gwt.client.RequestService;
+import net.sf.gilead.gwt.client.RequestServiceAsync;
+import net.sf.gilead.gwt.client.parameters.IRequestParameter;
+import net.sf.gilead.gwt.client.parameters.StringParameter;
 import net.sf.gilead.test.domain.stateless.Message;
 import net.sf.gilead.test.domain.stateless.User;
 
@@ -17,11 +20,11 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * Remote lazy loading test for GWT
+ * Remote request service test for GWT
  * @author bruno.marchesson
  *
  */
-public class GwtLoadingTest extends GWTTestCase
+public class GwtRequestTest extends GWTTestCase
 {
 	//-------------------------------------------------------------------------
 	//
@@ -42,9 +45,9 @@ public class GwtLoadingTest extends GWTTestCase
 	//
 	//-------------------------------------------------------------------------
 	/**
-	 * Test loading of a simple association
+	 * Test loading of a request without parameters
 	 */
-	public void testLoadSimpleAssociation()
+	public void testRequestWithoutParameters()
 	{
 	//	1. Load test message
 	//
@@ -65,7 +68,7 @@ public class GwtLoadingTest extends GWTTestCase
 
 					public void onSuccess(Message result)
 					{
-						testLoadSimpleAssociation(result);
+						simpleRequest();
 					}
 			
 				});
@@ -81,9 +84,9 @@ public class GwtLoadingTest extends GWTTestCase
 	}
 	
 	/**
-	 * Test loading of a list association
+	 * Test request with map parameters
 	 */
-	public void testLoadSetAssociation()
+	public void testRequestWithMapParameters()
 	{
 	//	1. Load test user
 	//
@@ -104,46 +107,7 @@ public class GwtLoadingTest extends GWTTestCase
 
 					public void onSuccess(User result)
 					{
-						testLoadSetAssociation(result);
-					}
-			
-				});
-			}
-		};
-
-		// Set a delay period significantly longer than the
-		// event is expected to take.
-		delayTestFinish(60000);
-
-		// Schedule the event and return control to the test system.
-		timer.schedule(100);
-	}
-	
-	/**
-	 * Test loading of a simple entity
-	 */
-	public void testLoadEntity()
-	{
-	//	1. Load test message
-	//
-		// Setup an asynchronous event handler.
-		Timer timer = new Timer()
-		{
-			public void run()
-			{
-				// Call remote init service
-				InitServiceAsync remoteService = (InitServiceAsync) GWT.create(InitService.class);
-				remoteService.loadTestMessage(new AsyncCallback<Message>()
-				{
-					public void onFailure(Throwable caught)
-					{
-						fail(caught.toString());
-						finishTest();
-					}
-
-					public void onSuccess(Message result)
-					{
-						testLoadMessage(result.getId());
+						requestWithParameters(result);
 					}
 			
 				});
@@ -166,7 +130,7 @@ public class GwtLoadingTest extends GWTTestCase
 	/**
 	 * Test load simple association
 	 */
-	protected void testLoadSimpleAssociation(final Message message)
+	protected void simpleRequest()
 	{
 		// Setup an asynchronous event handler.
 		Timer timer = new Timer()
@@ -174,8 +138,8 @@ public class GwtLoadingTest extends GWTTestCase
 			public void run()
 			{
 				// Call remote loading service
-				LoadingServiceAsync<Message> remoteService = (LoadingServiceAsync<Message>) GWT.create(LoadingService.class);
-				remoteService.loadEntityAssociation(message, "author", new AsyncCallback<User>()
+				RequestServiceAsync<User> remoteService = (RequestServiceAsync<User>) GWT.create(RequestService.class);
+				remoteService.executeRequest("from User", (List<IRequestParameter>) null, new AsyncCallback<List<User>>()
 				{
 					public void onFailure(Throwable caught)
 					{
@@ -185,9 +149,10 @@ public class GwtLoadingTest extends GWTTestCase
 						finishTest();
 					}
 
-					public void onSuccess(User result)
+					public void onSuccess(List<User> result)
 					{
 						assertNotNull(result);
+						assertTrue(result.size() > 0);
 						
 						// tell the test system the test is now done
 						finishTest();
@@ -205,7 +170,7 @@ public class GwtLoadingTest extends GWTTestCase
 	/**
 	 * Test load list association
 	 */
-	protected void testLoadSetAssociation(final User user)
+	protected void requestWithParameters(final User user)
 	{
 		// Setup an asynchronous event handler.
 		Timer timer = new Timer()
@@ -213,8 +178,13 @@ public class GwtLoadingTest extends GWTTestCase
 			public void run()
 			{
 				// Call remote loading service
-				LoadingServiceAsync<User> remoteService = (LoadingServiceAsync<User>) GWT.create(LoadingService.class);
-				remoteService.loadSetAssociation(user, "messageList", new AsyncCallback<Set<Message>>()
+				RequestServiceAsync<User> remoteService = (RequestServiceAsync<User>) GWT.create(RequestService.class);
+
+				// Parameters
+				Map<String, IRequestParameter> parameters = new HashMap<String, IRequestParameter>();
+				parameters.put("login", new StringParameter(user.getLogin()));
+				
+				remoteService.executeRequest("from User u where u.login = :login", parameters, new AsyncCallback<List<User>>()
 				{
 					public void onFailure(Throwable caught)
 					{
@@ -224,50 +194,11 @@ public class GwtLoadingTest extends GWTTestCase
 						finishTest();
 					}
 
-					public void onSuccess(Set<Message> result)
+					public void onSuccess(List<User> result)
 					{
 						assertNotNull(result);
 						assertFalse(result.isEmpty());
-						
-						// tell the test system the test is now done
-						finishTest();
-					}
-			
-				});
-
-			}
-		};
-
-		// Schedule the event and return control to the test system.
-		timer.schedule(100);
-	}
-	
-	/**
-	 * Test load simple association
-	 */
-	protected void testLoadMessage(final Integer id)
-	{
-		// Setup an asynchronous event handler.
-		Timer timer = new Timer()
-		{
-			public void run()
-			{
-				// Call remote loading service
-				LoadingServiceAsync<Message> remoteService = (LoadingServiceAsync<Message>) GWT.create(LoadingService.class);
-				remoteService.loadEntity(Message.class.getName(), new IntegerParameter(id), new AsyncCallback<Message>()
-				{
-					public void onFailure(Throwable caught)
-					{
-						fail(caught.toString());
-
-						// tell the test system the test is now done
-						finishTest();
-					}
-
-					public void onSuccess(Message result)
-					{
-						assertNotNull(result);
-						assertEquals(id, Integer.valueOf(result.getId()));
+						assertEquals(1,result.size());
 						
 						// tell the test system the test is now done
 						finishTest();

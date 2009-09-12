@@ -4,7 +4,14 @@ import net.sf.gilead.test.domain.stateless.Message;
 import net.sf.gilead.test.domain.stateless.User;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+/**
+ * Service for server side initialization (unit test purpose)
+ * @author bruno.marchesson
+ *
+ */
+@RemoteServiceRelativePath("InitService")
 public interface InitService extends RemoteService
 {
 	/**
