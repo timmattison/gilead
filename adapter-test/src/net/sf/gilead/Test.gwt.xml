@@ -20,5 +20,7 @@
   	<servlet path="/Java5PerformanceService" class="net.sf.gilead.performance.gwt.server.Java5PerformanceServiceImpl"/>
   	<servlet path="/LoadingService" class="net.sf.gilead.gwt.server.LoadingServiceImpl"/>
   	<servlet path="/RequestService" class="net.sf.gilead.gwt.server.RequestServiceImpl"/>
-  	<servlet path="/InitService" class="net.sf.gilead.core.loading.gwt.server.InitServiceImpl"/>
+  	<servlet path="/ProxyInformationService" class="net.sf.gilead.gwt.server.ProxyInformationServiceImpl"/>
+  	<servlet path="/StatelessInitService" class="net.sf.gilead.core.loading.gwt.server.StatelessInitServiceImpl"/>
+  	<servlet path="/StatefulInitService" class="net.sf.gilead.core.loading.gwt.server.StatefulInitServiceImpl"/>
 </module>

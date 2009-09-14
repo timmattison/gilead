@@ -55,20 +55,20 @@ public class HttpSessionProxyStore extends AbstractStatefulProxyStore
 	//
 	//-------------------------------------------------------------------------
 	@Override
-	protected void delete(String key)
+	public void delete(String key)
 	{
 		getSession().removeAttribute(key);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected Map<String, Serializable> get(String key)
+	public Map<String, Serializable> get(String key)
 	{
 		return (Map<String, Serializable>) getSession().getAttribute(key);
 	}
 
 	@Override
-	protected void store(String key, Map<String, Serializable> proxyInformation)
+	public void store(String key, Map<String, Serializable> proxyInformation)
 	{
 		getSession().setAttribute(key, proxyInformation);
 	}

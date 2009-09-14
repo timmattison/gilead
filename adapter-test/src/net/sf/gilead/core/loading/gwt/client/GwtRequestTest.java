@@ -57,7 +57,7 @@ public class GwtRequestTest extends GWTTestCase
 			public void run()
 			{
 				// Call remote init service
-				InitServiceAsync remoteService = (InitServiceAsync) GWT.create(InitService.class);
+				StatelessInitServiceAsync remoteService = (StatelessInitServiceAsync) GWT.create(StatelessInitService.class);
 				remoteService.loadTestMessage(new AsyncCallback<Message>()
 				{
 					public void onFailure(Throwable caught)
@@ -96,7 +96,7 @@ public class GwtRequestTest extends GWTTestCase
 			public void run()
 			{
 				// Call remote init service
-				InitServiceAsync remoteService = (InitServiceAsync) GWT.create(InitService.class);
+				StatelessInitServiceAsync remoteService = (StatelessInitServiceAsync) GWT.create(StatelessInitService.class);
 				remoteService.loadTestUser(new AsyncCallback<User>()
 				{
 					public void onFailure(Throwable caught)

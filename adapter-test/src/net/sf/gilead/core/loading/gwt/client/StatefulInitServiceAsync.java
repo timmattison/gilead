@@ -3,8 +3,8 @@
  */
 package net.sf.gilead.core.loading.gwt.client;
 
-import net.sf.gilead.test.domain.stateless.Message;
-import net.sf.gilead.test.domain.stateless.User;
+import net.sf.gilead.test.domain.stateful.Message;
+import net.sf.gilead.test.domain.stateful.User;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -15,7 +15,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  *
  */
 
-public interface InitServiceAsync {
+public interface StatefulInitServiceAsync {
 
 	/**
 	 * Initialize the test environment and load a test message

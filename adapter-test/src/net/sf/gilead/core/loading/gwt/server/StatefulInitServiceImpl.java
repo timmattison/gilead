@@ -4,15 +4,15 @@ package net.sf.gilead.core.loading.gwt.server;
 import javax.servlet.ServletException;
 
 import net.sf.gilead.core.TestHelper;
-import net.sf.gilead.core.loading.gwt.client.InitService;
+import net.sf.gilead.core.loading.gwt.client.StatefulInitService;
 import net.sf.gilead.gwt.PersistentRemoteService;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.dao.IMessageDAO;
 import net.sf.gilead.test.dao.IUserDAO;
-import net.sf.gilead.test.domain.stateless.Message;
-import net.sf.gilead.test.domain.stateless.User;
+import net.sf.gilead.test.domain.stateful.Message;
+import net.sf.gilead.test.domain.stateful.User;
 
-public class InitServiceImpl extends PersistentRemoteService implements InitService 
+public class StatefulInitServiceImpl extends PersistentRemoteService implements StatefulInitService 
 {
 	/**
 	 * Serialization ID
@@ -31,7 +31,7 @@ public class InitServiceImpl extends PersistentRemoteService implements InitServ
 		
 	//	Init Hibernate context
 	//
-		setBeanManager(TestHelper.initStatelessBeanManager());
+		setBeanManager(TestHelper.initStatefulBeanManager());
 		
 	//	Init DB if needed
 	//

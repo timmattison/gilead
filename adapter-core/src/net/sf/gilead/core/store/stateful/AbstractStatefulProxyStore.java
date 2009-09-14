@@ -111,23 +111,23 @@ public abstract class AbstractStatefulProxyStore implements IProxyStore
 	/**
 	 * Store the value in the map.
 	 */
-	protected abstract void store(String key, Map<String, Serializable> proxyInformation);
+	public abstract void store(String key, Map<String, Serializable> proxyInformation);
 	
 	/**
 	 * Get the proxy informations associated with the key
 	 * @return the value if found, null otherwise
 	 */
-	protected abstract Map<String, Serializable> get(String key);
+	public abstract Map<String, Serializable> get(String key);
 	
 	/**
 	 * Delete the key from the underlying storage
 	 * @param key
 	 */
-	protected abstract void delete(String key);
+	public abstract void delete(String key);
 	
 	//-------------------------------------------------------------------------
 	//
-	// Internal methods
+	// Other methods
 	//
 	//-------------------------------------------------------------------------
 	/**
@@ -136,10 +136,21 @@ public abstract class AbstractStatefulProxyStore implements IProxyStore
 	 * @param property
 	 * @return
 	 */
+	public String computeKey(Class<?> pojoClass, Serializable id, String property)
+	{
+		pojoClass = _persistenceUtil.getUnenhancedClass(pojoClass);
+		return UniqueNameGenerator.generateUniqueName(id, pojoClass) + '.' + property;
+	}
+	
+	/**
+	 * Compute the hashmap key
+	 * @param pojo
+	 * @param property
+	 * @return
+	 */
 	protected String computeKey(Object pojo, Serializable id, String property)
 	{
-		Class<?> pojoClass = _persistenceUtil.getUnenhancedClass(pojo.getClass());
-		return UniqueNameGenerator.generateUniqueName(id, pojoClass) + '.' + property;
+		return computeKey(pojo.getClass(), id, property);
 	}
 	
 	/**

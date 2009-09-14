@@ -1,7 +1,7 @@
 package net.sf.gilead.core.loading.gwt.client;
 
-import net.sf.gilead.test.domain.stateless.Message;
-import net.sf.gilead.test.domain.stateless.User;
+import net.sf.gilead.test.domain.stateful.Message;
+import net.sf.gilead.test.domain.stateful.User;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -11,8 +11,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * @author bruno.marchesson
  *
  */
-@RemoteServiceRelativePath("InitService")
-public interface InitService extends RemoteService
+@RemoteServiceRelativePath("StatefulInitService")
+public interface StatefulInitService extends RemoteService
 {
 	/**
 	 * Initialize the test environment and load a test message

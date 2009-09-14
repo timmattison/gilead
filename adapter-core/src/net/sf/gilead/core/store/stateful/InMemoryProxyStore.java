@@ -43,19 +43,19 @@ public class InMemoryProxyStore extends AbstractStatefulProxyStore
 	//
 	//-------------------------------------------------------------------------
 	@Override
-	protected void delete(String key)
+	public void delete(String key)
 	{
 		_map.remove(key);
 	}
 
 	@Override
-	protected Map<String, Serializable> get(String key)
+	public Map<String, Serializable> get(String key)
 	{
 		return _map.get(key);
 	}
 
 	@Override
-	protected void store(String key, Map<String, Serializable> proxyInformation)
+	public void store(String key, Map<String, Serializable> proxyInformation)
 	{
 		_map.put(key, proxyInformation);
 	}
