@@ -1,18 +1,19 @@
 /**
  * 
  */
-package net.sf.gilead.gwt.client.parameters;
+package net.sf.gilead.pojo.gwt.basic;
 
 import java.io.Serializable;
+import java.util.Date;
 
-import net.sf.gilead.pojo.base.ILightEntity;
+import net.sf.gilead.pojo.gwt.IRequestParameter;
 
 /**
- * Light Entity parameter.
+ * Date parameter.
  * @author bruno.marchesson
  *
  */
-public class LightEntityParameter implements IRequestParameter, Serializable
+public class DateParameter implements IRequestParameter, Serializable
 {
 	//----
 	// Attributes
@@ -25,7 +26,7 @@ public class LightEntityParameter implements IRequestParameter, Serializable
 	/**
 	 * The underlying value.
 	 */
-	private ILightEntity value;
+	private Date value;
 
 	//----
 	// Getter and setter
@@ -33,7 +34,7 @@ public class LightEntityParameter implements IRequestParameter, Serializable
 	/**
 	 * Change value.
 	 */
-	public void setValue(ILightEntity value)
+	public void setValue(Date value)
 	{
 		this.value = value;
 	}
@@ -52,7 +53,7 @@ public class LightEntityParameter implements IRequestParameter, Serializable
 	/**
 	 * Constructor.
 	 */
-	public LightEntityParameter(ILightEntity value)
+	public DateParameter(Date value)
 	{
 		this.value = value;
 	}
@@ -60,7 +61,19 @@ public class LightEntityParameter implements IRequestParameter, Serializable
 	/**
 	 * Empty constructor (needed by GWT)
 	 */
-	public LightEntityParameter()
+	public DateParameter()
 	{
+	}
+	
+	//----
+	// Public interface
+	//----
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.gwt.client.parameters.IRequestParameter#getParameterClass()
+	 */
+	public Class<?> getParameterClass() 
+	{
+		return Date.class;
 	}
 }

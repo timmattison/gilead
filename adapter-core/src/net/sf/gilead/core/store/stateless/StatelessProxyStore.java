@@ -244,7 +244,7 @@ public class StatelessProxyStore implements IProxyStore
 	/**
 	 * Convert Map<String,Serializable> to Map<String, Object>
 	 */
-	protected String convertMap(Map<String, Serializable> map)
+	protected Object convertMap(Map<String, Serializable> map)
 	{
 	//	Precondition checking
 	//
@@ -255,14 +255,14 @@ public class StatelessProxyStore implements IProxyStore
 		
 	//	Convert map
 	//
-		return (String) _proxySerializer.serialize((Serializable)map);
+		return _proxySerializer.serialize((Serializable)map);
 	}
 	
 
 	/**
 	 * Convert Map<String,bytes> to Map<String, Serializable>
 	 */
-	protected Map<String, Serializable> convertToSerializable(String serialized)
+	protected Map<String, Serializable> convertToSerializable(Object serialized)
 	{
 	//	Precondition checking
 	//

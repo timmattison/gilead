@@ -65,6 +65,17 @@ public class SerializationManagerTest extends TestCase
 		testMapConversion(proxySerialization);
 	}
 	
+	/**
+	 * Test GWT serialization
+	 */
+	public void testGwtProxySerialization()
+	{
+		IProxySerialization proxySerialization = new GwtProxySerialization();
+		testIntegerConversion(proxySerialization);
+		testLongConversion(proxySerialization);
+		testMapConversion(proxySerialization);
+	}
+	
 	//-------------------------------------------------------------------------
 	//
 	// Internal Test methods
@@ -78,28 +89,28 @@ public class SerializationManagerTest extends TestCase
 	//	Integer conversion
 	//
 		Integer value = new Integer(1);
-		long start = System.currentTimeMillis();
-		String serialized = proxySerialization.serialize(value);
-		long serialization = System.currentTimeMillis();
+		long start = System.nanoTime();
+		Object serialized = proxySerialization.serialize(value);
+		long serialization = System.nanoTime();
 		
 		assertNotNull(serialized);
 		assertEquals(value, proxySerialization.unserialize(serialized));
-		long end = System.currentTimeMillis();
+		long end = System.nanoTime();
 		
-		_log.info("Integer serialization took [" + (serialization-start) + ", " + (end-serialization) + "] ms");
+		_log.info("Integer serialization took [" + (serialization-start) + ", " + (end-serialization) + "] nanoseconds");
 		
 	//	int conversion
 	//
 		int intValue = 1;
-		start = System.currentTimeMillis();
+		start = System.nanoTime();
 		serialized = proxySerialization.serialize(intValue);
-		serialization = System.currentTimeMillis();
+		serialization = System.nanoTime();
 		
 		assertNotNull(serialized);
 		assertEquals(intValue, proxySerialization.unserialize(serialized));
-		end = System.currentTimeMillis();
+		end = System.nanoTime();
 		
-		_log.info("int serialization took [" + (serialization-start) + ", " + (end-serialization) + "] ms");
+		_log.info("int serialization took [" + (serialization-start) + ", " + (end-serialization) + "] nanoseconds");
 	}
 	
 	/**
@@ -110,26 +121,26 @@ public class SerializationManagerTest extends TestCase
 	//	Long conversion
 	//
 		Long value = new Long(1);
-		long start = System.currentTimeMillis();
-		String serialized = proxySerialization.serialize(value);
-		long serialization = System.currentTimeMillis();
+		long start = System.nanoTime();
+		Object serialized = proxySerialization.serialize(value);
+		long serialization = System.nanoTime();
 		
 		assertNotNull(serialized);
 		assertEquals(value, proxySerialization.unserialize(serialized));
-		long end = System.currentTimeMillis();
+		long end = System.nanoTime();
 		
 		_log.info("Long serialization took [" + (serialization-start) + ", " + (end-serialization) + "] ms");
 		
 	//	long conversion
 	//
 		long longValue = 1;
-		start = System.currentTimeMillis();
+		start = System.nanoTime();
 		serialized = proxySerialization.serialize(longValue);
-		serialization = System.currentTimeMillis();
+		serialization = System.nanoTime();
 		
 		assertNotNull(serialized);
 		assertEquals(longValue, proxySerialization.unserialize(serialized));
-		end = System.currentTimeMillis();
+		end = System.nanoTime();
 		
 		_log.info("long serialization took [" + (serialization-start) + ", " + (end-serialization) + "] ms");
 	}
@@ -137,6 +148,7 @@ public class SerializationManagerTest extends TestCase
 	/**
 	 * Test Map conversion
 	 */
+	@SuppressWarnings("unchecked")
 	protected void testMapConversion(IProxySerialization proxySerialization)
 	{
 	//	Map creation
@@ -152,14 +164,14 @@ public class SerializationManagerTest extends TestCase
 		
 	//	Test conversion
 	//
-		long start = System.currentTimeMillis();
-		String serialized = proxySerialization.serialize(map);
-		long serialization = System.currentTimeMillis();
+		long start = System.nanoTime();
+		Object serialized = proxySerialization.serialize(map);
+		long serialization = System.nanoTime();
 		
 		assertNotNull(serialized);
 		HashMap<String, Serializable> unserialized = (HashMap<String, Serializable>)
 													 proxySerialization.unserialize(serialized);
-		long end = System.currentTimeMillis();
+		long end = System.nanoTime();
 		
 		_log.info("Map serialization took [" + (serialization-start) + ", " + (end-serialization) + "] ms");
 		

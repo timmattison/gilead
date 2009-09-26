@@ -1,9 +1,11 @@
 /**
  * 
  */
-package net.sf.gilead.gwt.client.parameters;
+package net.sf.gilead.pojo.gwt.basic;
 
 import java.io.Serializable;
+
+import net.sf.gilead.pojo.gwt.IRequestParameter;
 
 /**
  * Long parameter.
@@ -60,5 +62,17 @@ public class LongParameter implements IRequestParameter, Serializable
 	 */
 	public LongParameter()
 	{
+	}
+	
+	//----
+	// Public interface
+	//----
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.gwt.client.parameters.IRequestParameter#getParameterClass()
+	 */
+	public Class<?> getParameterClass() 
+	{
+		return Long.class;
 	}
 }

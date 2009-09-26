@@ -9,6 +9,7 @@ import java.util.StringTokenizer;
 import net.sf.gilead.core.beanlib.mapper.DirectoryClassMapper;
 import net.sf.gilead.core.beanlib.mapper.ProxyClassMapper;
 import net.sf.gilead.core.hibernate.HibernateUtil;
+import net.sf.gilead.core.serialization.GwtProxySerialization;
 import net.sf.gilead.core.store.stateful.InMemoryProxyStore;
 import net.sf.gilead.core.store.stateless.StatelessProxyStore;
 import net.sf.gilead.test.DAOFactory;
@@ -319,6 +320,28 @@ public class TestHelper
 	}
 	
 	/**
+	 * Init bean manager for stateless mode for GWT
+	 */
+	public static PersistentBeanManager initGwtStatelessBeanManager()
+	{
+		HibernateContext.setContext(HibernateContext.Context.gwt);
+		
+		HibernateUtil persistenceUtil = new HibernateUtil(); 
+		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
+		
+		PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
+		beanManager.setPersistenceUtil(persistenceUtil);
+		
+		StatelessProxyStore proxyStore = new StatelessProxyStore();
+		proxyStore.setProxySerializer(new GwtProxySerialization());
+		beanManager.setProxyStore(proxyStore);
+		
+		beanManager.setClassMapper(null);
+		
+		return beanManager;
+	}
+	
+	/**
 	 * Init bean manager for stateless mode
 	 */
 	public static PersistentBeanManager initStatefulBeanManager()
@@ -442,6 +465,11 @@ public class TestHelper
 			// stateless
 			return new net.sf.gilead.test.domain.stateless.User();
 		}
+		else if (context == Context.gwt) 
+		{
+			// gwt stateless
+			return new net.sf.gilead.test.domain.gwt.User();
+		}
 		else if (context == Context.stateful) 
 		{
 			// stateful
@@ -475,6 +503,11 @@ public class TestHelper
 		{
 			// stateless
 			return new net.sf.gilead.test.domain.stateless.Employee();
+		}
+		else if (context == Context.gwt) 
+		{
+			// gwt stateless
+			return new net.sf.gilead.test.domain.gwt.Employee();
 		}
 		else if (context == Context.stateful) 
 		{
@@ -510,6 +543,11 @@ public class TestHelper
 			// stateless
 			return new net.sf.gilead.test.domain.stateless.Message();
 		}
+		else if (context == Context.gwt) 
+		{
+			// gwt stateless
+			return new net.sf.gilead.test.domain.gwt.Message();
+		}
 		else if (context == Context.stateful) 
 		{
 			// stateful
@@ -543,6 +581,11 @@ public class TestHelper
 		{
 			// stateless
 			return new net.sf.gilead.test.domain.stateless.Group();
+		}
+		else if (context == Context.gwt) 
+		{
+			// gwt stateless
+			return new net.sf.gilead.test.domain.gwt.Group();
 		}
 		else if (context == Context.stateful) 
 		{
@@ -578,6 +621,11 @@ public class TestHelper
 			// stateless
 			return new net.sf.gilead.test.domain.stateless.Address();
 		}
+		else if (context == Context.gwt) 
+		{
+			// gwt stateless
+			return new net.sf.gilead.test.domain.gwt.Address();
+		}
 		else if (context == Context.stateful) 
 		{
 			// stateful
@@ -611,6 +659,11 @@ public class TestHelper
 		{
 			// stateless
 			return new net.sf.gilead.test.domain.stateless.Country();
+		}
+		else if (context == Context.gwt) 
+		{
+			// gwt stateless
+			return new net.sf.gilead.test.domain.gwt.Country();
 		}
 		else if (context == Context.stateful) 
 		{

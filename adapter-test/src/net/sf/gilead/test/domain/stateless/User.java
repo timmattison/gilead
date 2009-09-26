@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.sf.gilead.pojo.java5.LightEntity;
+import net.sf.gilead.pojo.java5.legacy.LightEntity;
 import net.sf.gilead.test.domain.interfaces.IAddress;
 import net.sf.gilead.test.domain.interfaces.IGroup;
 import net.sf.gilead.test.domain.interfaces.IMessage;

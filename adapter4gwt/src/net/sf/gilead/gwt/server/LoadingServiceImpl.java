@@ -9,8 +9,8 @@ import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.gwt.PersistentRemoteService;
 import net.sf.gilead.gwt.client.LoadingService;
-import net.sf.gilead.gwt.client.parameters.IRequestParameter;
 import net.sf.gilead.pojo.base.ILightEntity;
+import net.sf.gilead.pojo.gwt.IRequestParameter;
 import net.sf.gilead.util.IntrospectionHelper;
 
 import org.apache.commons.logging.Log;

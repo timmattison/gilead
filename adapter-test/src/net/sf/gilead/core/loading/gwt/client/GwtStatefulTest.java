@@ -9,7 +9,7 @@ import net.sf.gilead.gwt.client.LoadingService;
 import net.sf.gilead.gwt.client.LoadingServiceAsync;
 import net.sf.gilead.gwt.client.ProxyInformationService;
 import net.sf.gilead.gwt.client.ProxyInformationServiceAsync;
-import net.sf.gilead.gwt.client.parameters.IntegerParameter;
+import net.sf.gilead.pojo.gwt.basic.IntegerParameter;
 import net.sf.gilead.test.domain.stateful.Message;
 import net.sf.gilead.test.domain.stateful.User;
 

@@ -53,42 +53,6 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	 * implementation
 	 */
 	protected Map<String, Boolean> _initializationMap;
-	
-	//----
-	// Properties
-	//----
-	/**
-	 * @return the proxy informations
-	 */
-//	public Map<String, String> getProxyInformations()
-//	{
-//		return _proxyInformations;
-//	}
-
-	/**
-	 * @param informations the proxy Informations to set
-	 */
-//	@SuppressWarnings("unchecked")
-//	public void setProxyInformations(Map informations)
-//	{
-//		_proxyInformations = informations;
-//	}
-	
-	/**
-	 * @return the initialization map
-	 */
-//	public Map<String, Boolean> getInitializationMap()
-//	{
-//		return _initializationMap;
-//	}
-
-	/**
-	 * @param map the _initializationMap to set
-	 */
-//	public void setInitializationMap(Map<String, Boolean> map)
-//	{
-//		_initializationMap = map;
-//	}
 
 	//-------------------------------------------------------------------------
 	//
@@ -112,13 +76,13 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	 * Add proxy information
 	 */
 	public void addProxyInformation(String property,
-									String proxyInfo)
+									Object proxyInfo)
 	{
 		if (_proxyInformations == null)
 		{
 			_proxyInformations = new HashMap<String, String>();
 		}
-		_proxyInformations.put(property, proxyInfo);
+		_proxyInformations.put(property, (String) proxyInfo);
 	}
 	
 	/*
@@ -137,7 +101,7 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.pojo.base.ILightEntity#getProxyInformation(java.lang.String)
 	 */
-	public String getProxyInformation(String property)
+	public Object getProxyInformation(String property)
 	{
 		if (_proxyInformations != null)
 		{

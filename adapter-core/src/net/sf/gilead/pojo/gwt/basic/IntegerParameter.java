@@ -1,9 +1,11 @@
 /**
  * 
  */
-package net.sf.gilead.gwt.client.parameters;
+package net.sf.gilead.pojo.gwt.basic;
 
 import java.io.Serializable;
+
+import net.sf.gilead.pojo.gwt.IRequestParameter;
 
 /**
  * Integer parameter.
@@ -60,5 +62,17 @@ public class IntegerParameter implements IRequestParameter, Serializable
 	 */
 	public IntegerParameter()
 	{
+	}
+	
+	//----
+	// Public interface
+	//----
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.gwt.client.parameters.IRequestParameter#getParameterClass()
+	 */
+	public Class<?> getParameterClass() 
+	{
+		return Integer.class;
 	}
 }

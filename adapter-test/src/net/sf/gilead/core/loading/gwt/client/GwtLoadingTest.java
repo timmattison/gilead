@@ -7,7 +7,7 @@ import java.util.Set;
 
 import net.sf.gilead.gwt.client.LoadingService;
 import net.sf.gilead.gwt.client.LoadingServiceAsync;
-import net.sf.gilead.gwt.client.parameters.IntegerParameter;
+import net.sf.gilead.pojo.gwt.basic.IntegerParameter;
 import net.sf.gilead.test.domain.stateless.Message;
 import net.sf.gilead.test.domain.stateless.User;
 

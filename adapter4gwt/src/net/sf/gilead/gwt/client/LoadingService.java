@@ -3,8 +3,8 @@ package net.sf.gilead.gwt.client;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.gilead.gwt.client.parameters.IRequestParameter;
 import net.sf.gilead.pojo.base.ILightEntity;
+import net.sf.gilead.pojo.gwt.IRequestParameter;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

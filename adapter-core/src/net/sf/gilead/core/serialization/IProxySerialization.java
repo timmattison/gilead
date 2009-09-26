@@ -18,11 +18,11 @@ public interface IProxySerialization
 	/**
 	 * Convert Serializable to target type.
 	 */
-	public abstract String serialize(Serializable serializable);
+	public abstract Object serialize(Serializable serializable);
 
 	/**
 	 * Regenerate Serializable from target type.
 	 */
-	public abstract Serializable unserialize(String serialized);
+	public abstract Serializable unserialize(Object serialized);
 
 }

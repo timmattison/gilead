@@ -37,7 +37,7 @@ public interface ILightEntity
 	 * @param proxyInformation map of proxy informations (string serialized form)
 	 */
 	public abstract void addProxyInformation(String property, 
-										 	 String proxyInfo);
+										 	 Object proxyInfo);
 	
 	/**
 	 * Remove a property proxy information
@@ -49,7 +49,7 @@ public interface ILightEntity
 	 * @param property the property name
 	 * @return the proxy informations for the property _ string serialized form(can be null)
 	 */
-	public String getProxyInformation(String property);
+	public Object getProxyInformation(String property);
 
 	/**
 	 * Set the initialization state of a property.

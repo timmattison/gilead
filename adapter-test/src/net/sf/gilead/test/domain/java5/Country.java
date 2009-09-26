@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import net.sf.gilead.pojo.java5.LightEntity;
+import net.sf.gilead.pojo.java5.legacy.LightEntity;
 import net.sf.gilead.test.domain.interfaces.ICountry;
 
 /**

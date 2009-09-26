@@ -1,17 +1,18 @@
 /**
  * 
  */
-package net.sf.gilead.gwt.client.parameters;
+package net.sf.gilead.pojo.gwt.basic;
 
 import java.io.Serializable;
-import java.util.Date;
+
+import net.sf.gilead.pojo.gwt.IRequestParameter;
 
 /**
- * Date parameter.
+ * Byte parameter.
  * @author bruno.marchesson
  *
  */
-public class DateParameter implements IRequestParameter, Serializable
+public class ByteParameter implements IRequestParameter, Serializable
 {
 	//----
 	// Attributes
@@ -24,7 +25,7 @@ public class DateParameter implements IRequestParameter, Serializable
 	/**
 	 * The underlying value.
 	 */
-	private Date value;
+	private Byte value;
 
 	//----
 	// Getter and setter
@@ -32,7 +33,7 @@ public class DateParameter implements IRequestParameter, Serializable
 	/**
 	 * Change value.
 	 */
-	public void setValue(Date value)
+	public void setValue(Byte value)
 	{
 		this.value = value;
 	}
@@ -51,7 +52,7 @@ public class DateParameter implements IRequestParameter, Serializable
 	/**
 	 * Constructor.
 	 */
-	public DateParameter(Date value)
+	public ByteParameter(Byte value)
 	{
 		this.value = value;
 	}
@@ -59,7 +60,19 @@ public class DateParameter implements IRequestParameter, Serializable
 	/**
 	 * Empty constructor (needed by GWT)
 	 */
-	public DateParameter()
+	public ByteParameter()
 	{
+	}
+	
+	//----
+	// Public interface
+	//----
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.gwt.client.parameters.IRequestParameter#getParameterClass()
+	 */
+	public Class<?> getParameterClass() 
+	{
+		return Byte.class;
 	}
 }

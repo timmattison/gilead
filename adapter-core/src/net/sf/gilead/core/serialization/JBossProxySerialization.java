@@ -15,7 +15,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.serial.io.JBossObjectInputStream;
 import org.jboss.serial.io.JBossObjectOutputStream;
-import org.jboss.serial.util.StringUtilBuffer;
 
 /**
  * Serialization manager singleton.
@@ -56,7 +55,7 @@ public class JBossProxySerialization implements IProxySerialization
 	/* (non-Javadoc)
 	 * @see net.sf.gilead.core.serialization.IProxySerialization#serializeToBytes(java.io.Serializable)
 	 */
-	public String serialize(Serializable serializable)
+	public Object serialize(Serializable serializable)
 	{
 		if (_log.isDebugEnabled())
 		{
@@ -89,11 +88,17 @@ public class JBossProxySerialization implements IProxySerialization
 	/* (non-Javadoc)
 	 * @see net.sf.gilead.core.serialization.IProxySerialization#unserializeFromBytes(byte[])
 	 */
-	public Serializable unserialize(String object)
+	public Serializable unserialize(Object object)
 	{
+	//	Precondition checking
+	//
 		if (object == null)
 		{
 			return null;
+		}
+		if (object instanceof String == false)
+		{
+			throw new RuntimeException("Cannot unserialize object : " +object + " (was expecting a String)");
 		}
 		
 		byte[] bytes = Base64.decodeFast((String) object);

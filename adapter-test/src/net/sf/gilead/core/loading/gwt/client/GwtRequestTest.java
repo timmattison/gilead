@@ -9,8 +9,8 @@ import java.util.Map;
 
 import net.sf.gilead.gwt.client.RequestService;
 import net.sf.gilead.gwt.client.RequestServiceAsync;
-import net.sf.gilead.gwt.client.parameters.IRequestParameter;
-import net.sf.gilead.gwt.client.parameters.StringParameter;
+import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.basic.StringParameter;
 import net.sf.gilead.test.domain.stateless.Message;
 import net.sf.gilead.test.domain.stateless.User;
 

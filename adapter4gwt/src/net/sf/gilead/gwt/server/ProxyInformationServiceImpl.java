@@ -11,8 +11,8 @@ import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.store.IProxyStore;
 import net.sf.gilead.core.store.stateful.AbstractStatefulProxyStore;
 import net.sf.gilead.gwt.client.ProxyInformationService;
-import net.sf.gilead.gwt.client.parameters.IRequestParameter;
 import net.sf.gilead.pojo.base.ILightEntity;
+import net.sf.gilead.pojo.gwt.IRequestParameter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

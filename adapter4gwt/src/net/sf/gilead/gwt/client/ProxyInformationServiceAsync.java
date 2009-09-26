@@ -3,7 +3,7 @@
  */
 package net.sf.gilead.gwt.client;
 
-import net.sf.gilead.gwt.client.parameters.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IRequestParameter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

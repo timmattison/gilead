@@ -10,6 +10,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import net.sf.gilead.core.serialization.IProxySerialization;
 import net.sf.gilead.pojo.base.ILightEntity;
 
@@ -24,6 +27,11 @@ public class SerializationThread implements Runnable
     //----
     // Attribute
     //-----
+	/**
+	 * Log channel
+	 */
+	private static final Log _log = LogFactory.getLog(SerializationThread.class);
+	
     /**
      * Serializer for proxy informations
      */
@@ -130,7 +138,7 @@ public class SerializationThread implements Runnable
                     }
                     else
                     {
-                        String serialized = _proxySerializer.serialize((HashMap<String, Serializable>)item.proxyInfo);
+                        Object serialized = _proxySerializer.serialize((HashMap<String, Serializable>)item.proxyInfo);
                         item.entity.addProxyInformation(item.propertyName, serialized);
                     }
                 }
@@ -138,6 +146,10 @@ public class SerializationThread implements Runnable
             catch (InterruptedException e)
             {
                     // Not matter
+            }
+            catch(Throwable ex)
+            {
+            	_log.error(ex.getMessage(), ex);
             }
         }
     }

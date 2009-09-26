@@ -280,7 +280,7 @@ public abstract class AbstractGwtProxyGenerator extends Generator
 	//
 		String superclassName = clazz.getSuperclass().getQualifiedSourceName();
 		if ((net.sf.gilead.pojo.java14.LightEntity.class.getCanonicalName().equals(superclassName)) ||
-			(net.sf.gilead.pojo.java5.LightEntity.class.getCanonicalName().equals(superclassName)))
+			(net.sf.gilead.pojo.java5.legacy.LightEntity.class.getCanonicalName().equals(superclassName)))
 		{
 			return true;
 		}

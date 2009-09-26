@@ -55,27 +55,6 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	 * @gwt.typeArgs <java.lang.String, java.lang.Boolean>
 	 */
 	protected Map _initializationMap;
-
-	//----
-	// Properties
-	//----
-//	/**
-//	 * @return the persistent collections properties
-//	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-//	 */
-//	public Map getProxyInformations()
-//	{
-//		return _proxyInformations;
-//	}
-//
-//	/**
-//	 * @param properties the persistent collection properties to set
-//	 * @gwt.typeArgs properties <java.lang.String, java.lang.String>
-//	 */
-//	public void setProxyInformations(Map properties)
-//	{
-//		_proxyInformations = properties;
-//	}
 	
 	//-------------------------------------------------------------------------
 	//
@@ -100,7 +79,7 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	 * @see net.sf.gilead.pojo.base.ILightEntity#addProxyInformations(java.lang.String, java.lang.Class)
 	 */
 	public void addProxyInformation(String property,
-									String proxyInformations)
+									Object proxyInformations)
 	{
 		if (_proxyInformations == null)
 		{
@@ -125,11 +104,11 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.pojo.base.ILightEntity#getProxyInformations(java.lang.String)
 	 */
-	public String getProxyInformation(String property)
+	public Object getProxyInformation(String property)
 	{
 		if (_proxyInformations != null)
 		{
-			return (String) _proxyInformations.get(property);
+			return _proxyInformations.get(property);
 		}
 		else
 		{

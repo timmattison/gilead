@@ -1,7 +1,7 @@
 /**
  * 
  */
-package net.sf.gilead.gwt.client.parameters;
+package net.sf.gilead.pojo.gwt;
 
 import java.io.Serializable;
 
@@ -14,6 +14,11 @@ import java.io.Serializable;
  */
 public interface IRequestParameter extends Serializable 
 {
+	/**
+	 * @return the parameter class.
+	 */
+	public Class<?> getParameterClass();
+	
 	/**
 	 * @return the underlying value.
 	 */

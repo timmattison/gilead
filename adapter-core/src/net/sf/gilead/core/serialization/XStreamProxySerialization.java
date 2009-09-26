@@ -9,7 +9,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 
 /**
  * XStream Serialization strategy.
@@ -58,7 +57,7 @@ public class XStreamProxySerialization implements IProxySerialization
 	/**
 	 * Convert Serializable to bytes.
 	 */
-	public String serialize(Serializable serializable)
+	public Object serialize(Serializable serializable)
 	{
 		if (_log.isDebugEnabled())
 		{
@@ -79,18 +78,29 @@ public class XStreamProxySerialization implements IProxySerialization
 	/**
 	 * Regenerate Serializable from String.
 	 */
-	public Serializable unserialize(String object)
-	{
+	public Serializable unserialize(Object object)
+	{ 
+	//	Precondition checking
+	//
+		if (object == null)
+		{
+			return null;
+		}
+		
+		if (object instanceof String == false)
+		{
+			throw new RuntimeException("Cannot unserialize object : " +object + " (was expecting a String)");
+		}
+		
 		String string = (String) object;
 		if (_log.isDebugEnabled())
 		{
 			_log.debug("Unserialization of " + string);
 		}
 		
-	//	Precondition checking
+	//	String checking
 	//
-		if ((string == null) ||
-			(string.length() == 0))
+		if (string.length() == 0)
 		{
 			return null;
 		}

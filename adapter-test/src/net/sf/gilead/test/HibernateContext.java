@@ -23,6 +23,7 @@ public class HibernateContext
 	{
 		stateful,
 		stateless,
+		gwt,
 		java5,
 		proxy,
 		annotated
@@ -42,6 +43,12 @@ public class HibernateContext
 	 */
 	private static final String STATELESS_CONFIGURATION_FILE = 
 		"stateless/hibernate.cfg.xml";
+	
+	/**
+	 * The stateless GWT configuration file
+	 */
+	private static final String GWT_CONFIGURATION_FILE = 
+		"gwt/hibernate.cfg.xml";
 	
 	/**
 	 * The Java5 configuration file
@@ -161,6 +168,10 @@ public class HibernateContext
 		else if (_context == Context.stateless)
 		{
 			return STATELESS_CONFIGURATION_FILE;
+		}
+		else if (_context == Context.gwt)
+		{
+			return GWT_CONFIGURATION_FILE;
 		}
 		else if (_context == Context.proxy)
 		{
