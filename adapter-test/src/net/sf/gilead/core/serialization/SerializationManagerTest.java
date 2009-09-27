@@ -9,8 +9,8 @@ import java.util.HashMap;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test serialization manager behavior
@@ -20,12 +20,12 @@ import org.apache.commons.logging.LogFactory;
 public class SerializationManagerTest extends TestCase
 {
 	//----
-	// Log channel
+	// Logger channel
 	//----
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(SerializationManagerTest.class);
+	private static Logger _log = LoggerFactory.getLogger(SerializationManagerTest.class);
 	
 	//-------------------------------------------------------------------------
 	//

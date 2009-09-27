@@ -13,8 +13,8 @@ import net.sf.gilead.pojo.base.ILightEntity;
 import net.sf.gilead.pojo.gwt.IRequestParameter;
 import net.sf.gilead.util.IntrospectionHelper;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * GWT remote loading service implementation.
@@ -34,9 +34,9 @@ public class LoadingServiceImpl<T extends ILightEntity> extends PersistentRemote
 	private static final long serialVersionUID = 5714428833885668669L;
 	
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(LoadingServiceImpl.class);
+	private static Logger _log = LoggerFactory.getLogger(LoadingServiceImpl.class);
 	
 	/**
 	 * The associated bean manager.

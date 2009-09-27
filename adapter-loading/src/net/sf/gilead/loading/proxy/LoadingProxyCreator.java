@@ -3,8 +3,8 @@ package net.sf.gilead.loading.proxy;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.gilead.loading.LoadingHelper;
 import net.sf.gilead.loading.annotations.LoadingInterface;
@@ -24,9 +24,9 @@ public class LoadingProxyCreator
 	// Attributes
 	//----
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(LoadingProxyCreator.class);
+	private static Logger _log = LoggerFactory.getLogger(LoadingProxyCreator.class);
 	
 	//-------------------------------------------------------------------------
 	//

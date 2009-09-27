@@ -11,8 +11,8 @@ import java.util.Arrays;
 
 import net.sf.gilead.exception.ConvertorException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.serial.io.JBossObjectInputStream;
 import org.jboss.serial.io.JBossObjectOutputStream;
 
@@ -31,9 +31,9 @@ public class JBossProxySerialization implements IProxySerialization
 	// Attributes
 	//----
 	/**
-	 * Log channel.
+	 * Logger channel.
 	 */
-	private static Log _log = LogFactory.getLog(JBossProxySerialization.class);
+	private static Logger _log = LoggerFactory.getLogger(JBossProxySerialization.class);
 	
 	//-------------------------------------------------------------------------
 	//

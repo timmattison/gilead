@@ -47,7 +47,7 @@ public class JdoEntityStore
 	// Attributes
 	//----
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
 	private static final Logger _log = Logger.getLogger(JdoEntityStore.class.getName());
 	

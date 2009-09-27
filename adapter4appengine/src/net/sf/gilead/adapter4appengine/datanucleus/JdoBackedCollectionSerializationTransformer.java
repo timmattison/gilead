@@ -26,7 +26,7 @@ public class JdoBackedCollectionSerializationTransformer implements
 	// Attributes
 	// ----
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
 	private static final Logger _log = Logger
 			.getLogger(JdoBackedCollectionSerializationTransformer.class

@@ -19,8 +19,8 @@ package net.sf.gilead.core.store.stateless;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.gilead.core.serialization.IProxySerialization;
 import net.sf.gilead.core.serialization.JBossProxySerialization;
@@ -41,9 +41,9 @@ public class StatelessProxyStore implements IProxyStore
 	// Attribute
 	//-----
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(StatelessProxyStore.class);
+	private static Logger _log = LoggerFactory.getLogger(StatelessProxyStore.class);
 	
 	/**
 	 * Serializer for proxy informations

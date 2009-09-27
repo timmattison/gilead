@@ -36,8 +36,8 @@ import net.sf.gilead.exception.CometException;
 
 import org.apache.catalina.CometEvent;
 import org.apache.catalina.CometProcessor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RPC;
@@ -71,9 +71,9 @@ public abstract class CometRemoteService extends RemoteServiceServlet
 	private static final long serialVersionUID = -2812019173043540023L;
 	
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(CometRemoteService.class);
+	private static Logger _log = LoggerFactory.getLogger(CometRemoteService.class);
 
 	/**
 	 * list of Comet annotated methods.
@@ -255,7 +255,7 @@ public abstract class CometRemoteService extends RemoteServiceServlet
 		{
 			if (_log.isDebugEnabled())
 			{
-				_log.debug(p_event.getEventType());
+				_log.debug(p_event.getEventType().toString());
 			}
 		} 
 		else if (p_event.getEventType() == CometEvent.EventType.READ)

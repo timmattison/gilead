@@ -29,8 +29,8 @@ import net.sf.gilead.gwt.GileadRPCHelper;
 
 import org.apache.catalina.CometEvent;
 import org.apache.catalina.CometProcessor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RPCCopy;
@@ -53,9 +53,9 @@ public abstract class PersistentCometService extends CometRemoteService
 	private static final long serialVersionUID = 1153492878621786165L;
 
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(PersistentCometService.class);
+	private static Logger _log = LoggerFactory.getLogger(PersistentCometService.class);
 
 	/**
 	 * The Persistent bean manager
@@ -119,7 +119,7 @@ public abstract class PersistentCometService extends CometRemoteService
 
 		if (p_event.getEventType() == CometEvent.EventType.BEGIN) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(p_event.getEventType());
+				_log.debug(p_event.getEventType().toString());
 			}
 		} else if (p_event.getEventType() == CometEvent.EventType.READ) {
 			try {

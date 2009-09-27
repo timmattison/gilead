@@ -30,7 +30,7 @@ public class JdoReadSerializationFilter implements ISerializationFilter
 	// Attributes
 	//----
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
 	private static final Logger log = Logger.getLogger(JdoReadSerializationFilter.class.getName());
 	

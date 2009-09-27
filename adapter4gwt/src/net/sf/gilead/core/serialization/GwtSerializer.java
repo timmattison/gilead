@@ -33,8 +33,8 @@ import net.sf.gilead.pojo.gwt.collection.ListParameter;
 import net.sf.gilead.pojo.gwt.collection.MapParameter;
 import net.sf.gilead.pojo.gwt.collection.SetParameter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 
@@ -52,9 +52,9 @@ public class GwtSerializer
 	// Attributes
 	//----
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static final Log _log = LogFactory.getLog(GwtSerializer.class);
+	private static final Logger _log = LoggerFactory.getLogger(GwtSerializer.class);
 	
 	//----
 	// Constructor

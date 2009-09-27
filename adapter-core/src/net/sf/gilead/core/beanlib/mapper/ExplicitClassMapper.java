@@ -21,8 +21,8 @@ import java.util.Map;
 
 import net.sf.gilead.core.beanlib.IClassMapper;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class mapper based on explicitly parameterized classes
@@ -31,9 +31,9 @@ import org.apache.commons.logging.LogFactory;
 public class ExplicitClassMapper implements IClassMapper
 {
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(ExplicitClassMapper.class);
+	private static Logger _log = LoggerFactory.getLogger(ExplicitClassMapper.class);
 	
 	/**
 	 * The maps of the domain class to their target class correspondence. 

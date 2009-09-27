@@ -14,8 +14,8 @@ import net.sf.gilead.gwt.client.ProxyInformationService;
 import net.sf.gilead.pojo.base.ILightEntity;
 import net.sf.gilead.pojo.gwt.IRequestParameter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -36,9 +36,9 @@ public class ProxyInformationServiceImpl extends RemoteServiceServlet
 	private static final long serialVersionUID = 814725549964949202L;
 
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(ProxyInformationServiceImpl.class);
+	private static Logger _log = LoggerFactory.getLogger(ProxyInformationServiceImpl.class);
 	
 	/**
 	 * The associated bean manager.

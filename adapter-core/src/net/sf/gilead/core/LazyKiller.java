@@ -24,8 +24,8 @@ import net.sf.gilead.core.beanlib.merge.BeanlibThreadLocal;
 import net.sf.gilead.core.beanlib.merge.MergeBeanPopulator;
 import net.sf.gilead.core.store.IProxyStore;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class replaces all "lazy but not loaded" Hibernate association with null
@@ -41,9 +41,9 @@ public class LazyKiller
 	// Attributes
 	//----
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(LazyKiller.class);
+	private static Logger _log = LoggerFactory.getLogger(LazyKiller.class);
 	
 	/**
 	 * The class mapper

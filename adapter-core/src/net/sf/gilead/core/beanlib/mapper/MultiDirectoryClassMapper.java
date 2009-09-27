@@ -5,8 +5,8 @@ import java.util.Map;
 
 import net.sf.gilead.core.beanlib.IClassMapper;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class mapper based on package hierarchy (Domain and DTO must have the same
@@ -163,8 +163,8 @@ public class MultiDirectoryClassMapper implements IClassMapper {
 		return sourceClassName;
 	}
 
-	private static Log _log = LogFactory
-			.getLog(MultiDirectoryClassMapper.class);
+	private static Logger _log = LoggerFactory
+			.getLogger(MultiDirectoryClassMapper.class);
 
 	/**
 	 * Mapping from domain packages to target class packages

@@ -2,14 +2,14 @@
 	<parent>
 		<artifactId>gilead</artifactId>
 		<groupId>net.sf.gilead</groupId>
-		<version>1.2.3-SNAPSHOT</version>
+		<version>1.3.0-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>${parent.groupId}</groupId>
 	<artifactId>adapter4blazeds</artifactId>
 	<name>adapter4blazeds</name>
-	<version>1.2.3-SNAPSHOT</version>
+	<version>1.3.0-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>${parent.groupId}</groupId>
@@ -20,8 +20,8 @@
 			<artifactId>hibernate-util</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>

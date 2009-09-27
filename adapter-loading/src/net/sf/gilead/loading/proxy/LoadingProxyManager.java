@@ -9,8 +9,8 @@ import net.sf.gilead.loading.proxy.wrapper.LoadingWrapper;
 import net.sf.gilead.proxy.JavassistProxyGenerator;
 import net.sf.gilead.proxy.xml.AdditionalCode;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
@@ -25,9 +25,9 @@ public class LoadingProxyManager
 	// Attributes
 	//----
 	/**
-	 * Log channel.
+	 * Logger channel.
 	 */
-	private static Log _log = LogFactory.getLog(LoadingProxyManager.class);
+	private static Logger _log = LoggerFactory.getLogger(LoadingProxyManager.class);
 	
 	/**
 	 * Proxy map.

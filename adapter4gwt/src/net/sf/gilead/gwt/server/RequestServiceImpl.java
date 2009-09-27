@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.PersistentBeanManager;
@@ -35,9 +35,9 @@ public class RequestServiceImpl<T extends ILightEntity> extends PersistentRemote
 	private static final long serialVersionUID = 814725549964949202L;
 
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(RequestServiceImpl.class);
+	private static Logger _log = LoggerFactory.getLogger(RequestServiceImpl.class);
 	
 	/**
 	 * The associated bean manager.
@@ -115,8 +115,9 @@ public class RequestServiceImpl<T extends ILightEntity> extends PersistentRemote
 		}
 		
 	//	Execute query
+	// 	Note : double case is mandatory due to Java 6 compiler issue 6548436
 	//
-		return (List<T>) persistenceUtil.executeQuery(query, queryParameters);
+		return (List<T>)(Object) persistenceUtil.executeQuery(query, queryParameters);
 	}
 
 	/**
@@ -165,7 +166,8 @@ public class RequestServiceImpl<T extends ILightEntity> extends PersistentRemote
 		}
 		
 	//	Execute query
+	//	Note : double case is mandatory due to Java 6 compiler issue 6548436
 	//
-		return (List<T>) persistenceUtil.executeQuery(query, queryParameters);
+		return (List<T>)(Object) persistenceUtil.executeQuery(query, queryParameters);
 	}
 }

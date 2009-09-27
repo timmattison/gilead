@@ -8,8 +8,8 @@ import java.io.Serializable;
 import net.sf.gilead.pojo.gwt.IRequestParameter;
 import net.sf.gilead.pojo.gwt.SerializedParameter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 
@@ -26,9 +26,9 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	// Attributes
 	//----
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static final Log _log = LogFactory.getLog(GwtProxySerialization.class);
+	private static final Logger _log = LoggerFactory.getLogger(GwtProxySerialization.class);
 	
 	/**
 	 * String serializer

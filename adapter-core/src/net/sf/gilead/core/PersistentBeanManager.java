@@ -45,8 +45,8 @@ import net.sf.gilead.exception.NotAssignableException;
 import net.sf.gilead.exception.NotPersistentObjectException;
 import net.sf.gilead.exception.TransientObjectException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manager for Persistent POJO handling
@@ -64,9 +64,9 @@ public class PersistentBeanManager
 	private static PersistentBeanManager _instance = null;
 	
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private Log _log = LogFactory.getLog(PersistentBeanManager.class);
+	private Logger _log = LoggerFactory.getLogger(PersistentBeanManager.class);
 	
 	/**
 	 * The associated Proxy informations store

@@ -24,8 +24,8 @@ import net.sf.gilead.core.beanlib.IClassMapper;
 import net.sf.gilead.core.beanlib.merge.BeanlibThreadLocal;
 import net.sf.gilead.core.beanlib.merge.MergeClassBeanReplicator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Bean replicator with different from and to classes for clone operation
@@ -38,9 +38,9 @@ public class CloneClassBeanReplicator extends Hibernate3JavaBeanReplicator
 	// Attributes
 	//---
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(CloneClassBeanReplicator.class);
+	private static Logger _log = LoggerFactory.getLogger(CloneClassBeanReplicator.class);
 	
 	/**
 	 * The class mapper (can be null)

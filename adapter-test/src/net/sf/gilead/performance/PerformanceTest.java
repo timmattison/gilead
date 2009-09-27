@@ -13,8 +13,8 @@ import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.dao.IUserDAO;
 import net.sf.gilead.test.domain.interfaces.IUser;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract class for performance test
@@ -27,9 +27,9 @@ public abstract class PerformanceTest extends TestCase
 	// Attributes
 	//----
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(PerformanceTest.class);
+	private static Logger _log = LoggerFactory.getLogger(PerformanceTest.class);
 	
 	/**
 	 * Persistent lazy manager

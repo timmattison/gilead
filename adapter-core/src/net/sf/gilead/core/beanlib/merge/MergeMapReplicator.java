@@ -6,8 +6,8 @@ package net.sf.gilead.core.beanlib.merge;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.beanlib.hibernate3.Hibernate3MapReplicator;
 import net.sf.beanlib.spi.BeanTransformerSpi;
@@ -47,9 +47,9 @@ public class MergeMapReplicator extends Hibernate3MapReplicator {
     // Attributes
     //----
     /**
-     * Log channel
+     * Logger channel
      */
-    private static Log _log = LogFactory.getLog(MergeMapReplicator.class);
+    private static Logger _log = LoggerFactory.getLogger(MergeMapReplicator.class);
 
     /**
      * The associated persistence util

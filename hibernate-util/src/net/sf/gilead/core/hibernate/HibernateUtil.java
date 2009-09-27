@@ -22,8 +22,8 @@ import net.sf.gilead.exception.TransientObjectException;
 import net.sf.gilead.pojo.base.IUserType;
 import net.sf.gilead.util.IntrospectionHelper;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -94,9 +94,9 @@ public class HibernateUtil implements IPersistenceUtil
 	// Attributes
 	//----	
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(HibernateUtil.class);
+	private static Logger _log = LoggerFactory.getLogger(HibernateUtil.class);
 	
 	/**
 	 * The pseudo unique instance of the singleton

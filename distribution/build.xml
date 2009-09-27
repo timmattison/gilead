@@ -34,9 +34,8 @@
 		<svn>
 			<update path=".." force="true" recursive="true" />
 		</svn>
-
 		<svn>
-			<info path="." revisionProperty="revisionVersion" />
+			<info path=".." revisionProperty="revisionVersion" />
 		</svn>
 		<property name="svn.version" value="${revisionVersion}" />
 	</target>
@@ -86,7 +85,7 @@
 	   		 dir="${core.test.dir}"/>
 	</target>
 
-	<target name="distribution" depends="clean, build, test">
+	<target name="distribution" depends="clean, build">
 		<!-- copy jar files -->
 		<copy todir="${output.dir}/${jar.dir}">
 			<fileset dir="${core.dir}/${jar.dir}">

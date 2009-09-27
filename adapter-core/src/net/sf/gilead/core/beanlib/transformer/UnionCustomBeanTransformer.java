@@ -4,8 +4,8 @@ package net.sf.gilead.core.beanlib.transformer;
 import net.sf.beanlib.PropertyInfo;
 import net.sf.beanlib.spi.CustomBeanTransformerSpi;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The UnionCustomBeanTransformer hold an array of CustomBeanTransformerSpi,
@@ -27,9 +27,9 @@ public class UnionCustomBeanTransformer implements CustomBeanTransformerSpi
 	// Attributes
 	//----
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(UnionCustomBeanTransformer.class);
+	private static Logger _log = LoggerFactory.getLogger(UnionCustomBeanTransformer.class);
 
 	/**
 	 * Current custom transformers

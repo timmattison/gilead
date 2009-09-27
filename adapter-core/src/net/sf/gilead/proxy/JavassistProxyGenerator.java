@@ -32,8 +32,8 @@ import net.sf.gilead.proxy.xml.Constructor;
 import net.sf.gilead.proxy.xml.Method;
 
 import org.apache.commons.lang.ClassUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Javassist proxy generator (for server side)
@@ -46,9 +46,9 @@ public class JavassistProxyGenerator implements IServerProxyGenerator
 	// Attributes
 	//----
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(JavassistProxyGenerator.class);
+	private static Logger _log = LoggerFactory.getLogger(JavassistProxyGenerator.class);
 	//-------------------------------------------------------------------------
 	//
 	// Public interface

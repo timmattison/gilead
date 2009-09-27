@@ -6,8 +6,8 @@ import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.store.stateful.HttpSessionProxyStore;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import flex.messaging.FlexContext;
 import flex.messaging.config.ConfigMap;
@@ -26,9 +26,9 @@ public class PersistentAdapter extends JavaAdapter
 	// Attribute
 	//----
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(PersistentAdapter.class);
+	private static Logger _log = LoggerFactory.getLogger(PersistentAdapter.class);
 	
 	/**
 	 * The Hibernate bean manager
@@ -134,7 +134,7 @@ public class PersistentAdapter extends JavaAdapter
 		}
 		catch (RuntimeException e)
 		{
-		// 	Log error on server console and rethrow it
+		//  Logger error on server console and rethrow it
 		//
 			if (_log.isDebugEnabled())
 			{

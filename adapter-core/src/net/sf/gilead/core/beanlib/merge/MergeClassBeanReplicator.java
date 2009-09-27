@@ -29,8 +29,8 @@ import net.sf.gilead.core.store.IProxyStore;
 import net.sf.gilead.exception.NotPersistentObjectException;
 import net.sf.gilead.exception.TransientObjectException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Bean replicator with different from and to classes for merge operation
@@ -44,9 +44,9 @@ public class MergeClassBeanReplicator extends Hibernate3JavaBeanReplicator
 	//---
 
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(MergeClassBeanReplicator.class);
+	private static Logger _log = LoggerFactory.getLogger(MergeClassBeanReplicator.class);
 	
 	/**
 	 * The class mapper (can be null)

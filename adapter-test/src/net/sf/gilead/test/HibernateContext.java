@@ -3,8 +3,8 @@
  */
 package net.sf.gilead.test;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
@@ -73,9 +73,9 @@ public class HibernateContext
 	// Attributes
 	//----
 	/**
-	 * Log channel
+	 * Logger channel
 	 */
-	private static Log _log = LogFactory.getLog(HibernateContext.class);
+	private static Logger _log = LoggerFactory.getLogger(HibernateContext.class);
 	
 	/**
 	 * Current configuration

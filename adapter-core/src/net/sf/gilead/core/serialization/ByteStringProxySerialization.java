@@ -13,8 +13,8 @@ import java.util.Arrays;
 
 import net.sf.gilead.exception.ConvertorException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Serialization manager singleton.
@@ -31,9 +31,9 @@ public class ByteStringProxySerialization implements IProxySerialization
 	// Attributes
 	//----
 	/**
-	 * Log channel.
+	 * Logger channel.
 	 */
-	private static Log _log = LogFactory.getLog(ByteStringProxySerialization.class);
+	private static Logger _log = LoggerFactory.getLogger(ByteStringProxySerialization.class);
 
 	//-------------------------------------------------------------------------
 	//
