@@ -111,7 +111,7 @@ public class StatelessProxyStore implements IProxyStore
 		// _proxySerializer = new ByteStringProxySerialization();
 		_proxySerializer = new JBossProxySerialization();
 		_serializationThread = new ThreadLocal<SerializationThread>();
-		_useSerializationThread = true;
+		_useSerializationThread = false;
 	}
 	
 	

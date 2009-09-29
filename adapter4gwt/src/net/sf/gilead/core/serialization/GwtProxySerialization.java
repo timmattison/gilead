@@ -134,15 +134,22 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	protected IRequestParameter convertBasicToGwt(Serializable object)
 								throws SerializationException
 	{
+	//	SerializableId special handling
+	//
+		if (object instanceof SerializableId)
+		{
+			return (IRequestParameter) object;
+		}
+		
 		try
 		{
 			return super.convertBasicToGwt(object);
 		}
 		catch(SerializationException ex)
 		{
-			if (_log.isDebugEnabled())
+			if (_log.isInfoEnabled())
 			{
-				_log.debug(object.getClass() + " not serializable => convert to string");
+				_log.info(object.getClass() + " not serializable => convert to string");
 			}
 			return new SerializedParameter((String)_stringSerializer.serialize(object));
 		}
@@ -177,9 +184,9 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 		}
 		catch(SerializationException ex)
 		{
-			if (_log.isDebugEnabled())
+			if (_log.isInfoEnabled())
 			{
-				_log.debug(object.getClass() + " not serializable => convert to string");
+				_log.info(object.getClass() + " not serializable => convert to string");
 			}
 			return new SerializedParameter((String)_stringSerializer.serialize(object));
 		}
@@ -215,9 +222,9 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 		}
 		catch(SerializationException ex)
 		{
-			if (_log.isDebugEnabled())
+			if (_log.isInfoEnabled())
 			{
-				_log.debug(object.getClass() + " not serializable => convert to string");
+				_log.info(object.getClass() + " not serializable => convert to string");
 			}
 			return new SerializedParameter((String)_stringSerializer.serialize(object));
 		}
@@ -253,9 +260,9 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 		}
 		catch(SerializationException ex)
 		{
-			if (_log.isDebugEnabled())
+			if (_log.isInfoEnabled())
 			{
-				_log.debug(object.getClass() + " not serializable => convert to string");
+				_log.info(object.getClass() + " not serializable => convert to string");
 			}
 			return new SerializedParameter((String)_stringSerializer.serialize(object));
 		}

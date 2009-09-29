@@ -2,12 +2,14 @@ package net.sf.gilead.core.serialization;
 
 import java.io.Serializable;
 
+import net.sf.gilead.pojo.gwt.IRequestParameter;
+
 /**
  * Id / Class structure for proxy information collection handling
  * @author bruno.marchesson
  *
  */
-public class SerializableId implements Serializable
+public class SerializableId implements IRequestParameter
 {
 	//----
 	// Attributes
@@ -117,5 +119,28 @@ public class SerializableId implements Serializable
 		{
 			return id.equals(((SerializableId)other).id);
 		}
+	}
+
+	//-------------------------------------------------------------------------
+	//
+	// IRequestParameter implementation
+	//
+	//-------------------------------------------------------------------------
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.pojo.gwt.IRequestParameter#getParameterClass()
+	 */
+	public Class<?> getParameterClass()
+	{
+		return SerializableId.class;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.pojo.gwt.IRequestParameter#getValue()
+	 */
+	public Object getValue()
+	{
+		return this;
 	}
 }
