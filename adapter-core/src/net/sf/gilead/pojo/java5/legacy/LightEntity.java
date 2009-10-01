@@ -25,6 +25,7 @@ import net.sf.gilead.pojo.base.ILightEntity;
 
 /**
  * Abstract POJO with minimal proxy informations handling
+ * This proxy information is encoded for GWT serialization compatibility (Gilead 1.2)
  * @author bruno.marchesson
  *
  */

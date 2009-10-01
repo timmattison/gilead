@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
-import net.sf.gilead.pojo.java5.legacy.LightEntity;
+import net.sf.gilead.pojo.java5.LightEntity;
 
 @Entity 
 public class Project extends LightEntity implements Serializable

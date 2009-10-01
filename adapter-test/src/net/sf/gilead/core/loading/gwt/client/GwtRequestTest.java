@@ -11,8 +11,8 @@ import net.sf.gilead.gwt.client.RequestService;
 import net.sf.gilead.gwt.client.RequestServiceAsync;
 import net.sf.gilead.pojo.gwt.IRequestParameter;
 import net.sf.gilead.pojo.gwt.basic.StringParameter;
-import net.sf.gilead.test.domain.stateless.Message;
-import net.sf.gilead.test.domain.stateless.User;
+import net.sf.gilead.test.domain.gwt.Message;
+import net.sf.gilead.test.domain.gwt.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;

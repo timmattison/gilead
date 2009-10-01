@@ -3,15 +3,10 @@
  */
 package net.sf.gilead.core.loading.gwt.client;
 
-import java.util.Set;
-
-import net.sf.gilead.gwt.client.LoadingService;
-import net.sf.gilead.gwt.client.LoadingServiceAsync;
 import net.sf.gilead.gwt.client.ProxyInformationService;
 import net.sf.gilead.gwt.client.ProxyInformationServiceAsync;
 import net.sf.gilead.pojo.gwt.basic.IntegerParameter;
 import net.sf.gilead.test.domain.stateful.Message;
-import net.sf.gilead.test.domain.stateful.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;

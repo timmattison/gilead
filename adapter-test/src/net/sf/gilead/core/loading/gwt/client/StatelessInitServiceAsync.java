@@ -3,8 +3,8 @@
  */
 package net.sf.gilead.core.loading.gwt.client;
 
-import net.sf.gilead.test.domain.stateless.Message;
-import net.sf.gilead.test.domain.stateless.User;
+import net.sf.gilead.test.domain.gwt.Message;
+import net.sf.gilead.test.domain.gwt.User;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

@@ -134,13 +134,6 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	protected IRequestParameter convertBasicToGwt(Serializable object)
 								throws SerializationException
 	{
-	//	SerializableId special handling
-	//
-		if (object instanceof SerializableId)
-		{
-			return (IRequestParameter) object;
-		}
-		
 		try
 		{
 			return super.convertBasicToGwt(object);

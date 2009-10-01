@@ -5,7 +5,6 @@
 	
 	<!-- Additional source path -->
 	<source path='pojo/base'/>
-	<source path='pojo/java5'/>
 	<source path='pojo/gwt'/>
 	
 	<!-- Proxy generator -->

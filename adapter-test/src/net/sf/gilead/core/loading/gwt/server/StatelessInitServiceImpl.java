@@ -1,6 +1,5 @@
 package net.sf.gilead.core.loading.gwt.server;
 
-
 import javax.servlet.ServletException;
 
 import net.sf.gilead.core.TestHelper;
@@ -9,8 +8,8 @@ import net.sf.gilead.gwt.PersistentRemoteService;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.dao.IMessageDAO;
 import net.sf.gilead.test.dao.IUserDAO;
-import net.sf.gilead.test.domain.stateless.Message;
-import net.sf.gilead.test.domain.stateless.User;
+import net.sf.gilead.test.domain.gwt.Message;
+import net.sf.gilead.test.domain.gwt.User;
 
 public class StatelessInitServiceImpl extends PersistentRemoteService implements StatelessInitService 
 {
@@ -24,14 +23,14 @@ public class StatelessInitServiceImpl extends PersistentRemoteService implements
 	// Service init
 	//
 	//-------------------------------------------------------------------------
-	@Override
-	public void init() throws ServletException
-	{
-		super.init();
-		
+	/**
+	 * Initialization
+	 */
+	public void initDB()
+	{	
 	//	Init Hibernate context
 	//
-		setBeanManager(TestHelper.initStatelessBeanManager());
+		setBeanManager(TestHelper.initGwtStatelessBeanManager());
 		
 	//	Init DB if needed
 	//
@@ -52,6 +51,8 @@ public class StatelessInitServiceImpl extends PersistentRemoteService implements
 	 */
 	public Message loadTestMessage()
 	{
+		initDB();
+		
 	//	Load last message
 	//
 		IMessageDAO messageDAO = DAOFactory.getMessageDAO();

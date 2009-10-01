@@ -1,18 +1,20 @@
-package net.sf.gilead.test.domain.dto;
+package net.sf.gilead.test.domain.legacy;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.sf.gilead.pojo.java5.LightEntity;
+import net.sf.gilead.pojo.java5.legacy.LightEntity;
 import net.sf.gilead.test.domain.interfaces.IAddress;
 import net.sf.gilead.test.domain.interfaces.IGroup;
 import net.sf.gilead.test.domain.interfaces.IMessage;
 import net.sf.gilead.test.domain.interfaces.IUser;
 
+
 /**
- * DTO User class for Java5 support
+ * User Domain class for stateless server
  */
-public class UserDTO extends LightEntity implements IUser
+public class User extends LightEntity implements Serializable, IUser
 {
 	/**
 	 * Serialisation ID
@@ -84,6 +86,20 @@ public class UserDTO extends LightEntity implements IUser
 	
 
 	/**
+	 * @return the address
+	 */
+	public IAddress getAddress() {
+		return address;
+	}
+
+	/**
+	 * @param address the address to set
+	 */
+	public void setAddress(IAddress address) {
+		this.address = address;
+	}
+
+	/**
 	 * @return the message List
 	 */
 	public Set<IMessage> getMessageList() {
@@ -103,7 +119,7 @@ public class UserDTO extends LightEntity implements IUser
 	 */
 	public void addMessage(IMessage message)
 	{
-		((MessageDTO)message).setAuthor(this);
+		((Message)message).setAuthor(this);
 		if (messageList == null)
 		{
 			messageList = new HashSet<IMessage>();
@@ -118,6 +134,7 @@ public class UserDTO extends LightEntity implements IUser
 	public void removeMessage(IMessage message)
 	{
 		messageList.remove(message);
+		((Message)message).setAuthor(this);
 	}
 
 	/**
@@ -147,7 +164,7 @@ public class UserDTO extends LightEntity implements IUser
 		if (groupList.contains(group) == false)
 		{
 			groupList.add(group);
-			group.addMember(this);
+			// group.addMember(this);
 		}
 	}
 
@@ -160,17 +177,7 @@ public class UserDTO extends LightEntity implements IUser
 			(groupList.contains(group)))
 		{
 			groupList.remove(group);
-			group.removeMember(this);
+			// group.removeMember(this);
 		}
-	}
-
-	public IAddress getAddress()
-	{
-		return address;
-	}
-
-	public void setAddress(IAddress address)
-	{
-		this.address = address;
 	}
 }

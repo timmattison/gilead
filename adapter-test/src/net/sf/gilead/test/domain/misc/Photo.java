@@ -1,6 +1,6 @@
 package net.sf.gilead.test.domain.misc;
 
-import net.sf.gilead.pojo.java5.legacy.LightEntity;
+import net.sf.gilead.pojo.java5.LightEntity;
 
 
 /**

@@ -13,12 +13,12 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Version;
 
-import net.sf.gilead.pojo.java5.legacy.LightEntity;
+import net.sf.gilead.pojo.java5.LightEntity;
 import net.sf.gilead.test.domain.interfaces.IGroup;
 import net.sf.gilead.test.domain.interfaces.IUser;
 
 /**
- * GroupDTO class.
+ * Group class.
  * A group contains many users, and user belongs to many groups 
  * (for many to many association test)
  * @author bruno.marchesson

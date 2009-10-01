@@ -1,15 +1,15 @@
-package net.sf.gilead.test.domain.stateless;
+package net.sf.gilead.test.domain.legacy;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.gilead.pojo.java5.LightEntity;
+import net.sf.gilead.pojo.java5.legacy.LightEntity;
 import net.sf.gilead.test.domain.interfaces.IMessage;
 import net.sf.gilead.test.domain.interfaces.IUser;
 
 /**
- * Message domain class for stateless pojo store
+ * Message Java 1.4 domain class for stateless pojo store
  * This class just has to inherit from LightEntity;
  * The 'Keywords' property has private getter and setter
  * 

@@ -138,7 +138,13 @@ public class SerializationThread implements Runnable
                     }
                     else
                     {
-                        Object serialized = _proxySerializer.serialize((HashMap<String, Serializable>)item.proxyInfo);
+                    	Object serialized = item.proxyInfo;
+                    	if (_proxySerializer != null)
+                    	{
+                    	//	Serialization needed
+                    	//
+                    		_proxySerializer.serialize((HashMap<String, Serializable>)item.proxyInfo);
+                    	}
                         item.entity.addProxyInformation(item.propertyName, serialized);
                     }
                 }

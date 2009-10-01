@@ -173,6 +173,10 @@ public class GwtSerializer
 		 
 	//	Check basic parameters (most current first) 
 	//
+		if (object instanceof IRequestParameter)
+		{
+			return (IRequestParameter) object;
+		}
 		if (object instanceof Integer)
 		{
 			return new IntegerParameter((Integer) object);

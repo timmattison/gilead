@@ -6,7 +6,7 @@ import javax.persistence.Embeddable;
 
 import org.hibernate.annotations.Parent;
 
-import net.sf.gilead.pojo.java5.legacy.LightEntity;
+import net.sf.gilead.pojo.java5.LightEntity;
 
 @Embeddable 
 public class Preference extends LightEntity implements Serializable {

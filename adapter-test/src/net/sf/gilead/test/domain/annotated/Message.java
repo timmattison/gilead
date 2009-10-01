@@ -18,7 +18,7 @@ import javax.persistence.Version;
 
 import net.sf.gilead.annotations.ReadOnly;
 import net.sf.gilead.annotations.ServerOnly;
-import net.sf.gilead.pojo.java5.legacy.LightEntity;
+import net.sf.gilead.pojo.java5.LightEntity;
 import net.sf.gilead.test.domain.interfaces.IMessage;
 
 import org.hibernate.annotations.CollectionOfElements;

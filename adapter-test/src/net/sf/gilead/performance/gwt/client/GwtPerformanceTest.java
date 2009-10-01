@@ -52,14 +52,6 @@ public class GwtPerformanceTest extends GWTTestCase
 		testLoadUserAndMessages("/StatelessPerformanceService");
 	}
 	
-	/**
-	 * Test clone user and messages with Java5 annotations
-	 */
-	public void testJava5CloneUserAndMessage()
-	{
-		testLoadUserAndMessages("/Java5PerformanceService");
-	}
-	
 	//-------------------------------------------------------------------------
 	//
 	// Internal test method

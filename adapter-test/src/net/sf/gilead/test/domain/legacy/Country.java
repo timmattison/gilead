@@ -1,13 +1,21 @@
-package net.sf.gilead.test.domain.dto;
+package net.sf.gilead.test.domain.legacy;
 
-import net.sf.gilead.pojo.java5.LightEntity;
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Version;
+
+import net.sf.gilead.pojo.java5.legacy.LightEntity;
 import net.sf.gilead.test.domain.interfaces.ICountry;
 
 /**
  * Country domain class
  * @author bruno.marchesson
  */
-public class CountryDTO extends LightEntity implements ICountry
+@Entity
+public class Country extends LightEntity implements Serializable, ICountry
 {
 	/**
 	 * Serialization ID 
@@ -15,9 +23,13 @@ public class CountryDTO extends LightEntity implements ICountry
 	private static final long serialVersionUID = -7655536246743775766L;
 
 	// Fields
+	@Id
 	private Integer id;
+	
+	@Version
 	private Integer version;
 	
+	@Column(name="NAME")
 	private String name;
 	
 	// Properties

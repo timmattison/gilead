@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 
-import net.sf.gilead.pojo.java5.legacy.LightEntity;
+import net.sf.gilead.pojo.java5.LightEntity;
 
 @Entity 
 public class Utente extends LightEntity implements Serializable { 

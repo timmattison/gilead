@@ -19,14 +19,13 @@ package net.sf.gilead.core.store.stateless;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.gilead.core.serialization.IProxySerialization;
-import net.sf.gilead.core.serialization.JBossProxySerialization;
 import net.sf.gilead.core.store.IProxyStore;
 import net.sf.gilead.exception.ProxyStoreException;
 import net.sf.gilead.pojo.base.ILightEntity;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Stateless proxy store.
@@ -107,9 +106,7 @@ public class StatelessProxyStore implements IProxyStore
 	public StatelessProxyStore()
 	{
 		// default value
-		//_proxySerializer = new XStreamProxySerialization();
-		// _proxySerializer = new ByteStringProxySerialization();
-		_proxySerializer = new JBossProxySerialization();
+		// _proxySerializer = new JBossProxySerialization();
 		_serializationThread = new ThreadLocal<SerializationThread>();
 		_useSerializationThread = false;
 	}
@@ -255,13 +252,23 @@ public class StatelessProxyStore implements IProxyStore
 		
 	//	Convert map
 	//
-		return _proxySerializer.serialize((Serializable)map);
+		if (_proxySerializer == null)
+		{
+		//	No serialization needed
+		//
+			return map;
+		}
+		else
+		{
+			return _proxySerializer.serialize((Serializable)map);
+		}
 	}
 	
 
 	/**
 	 * Convert Map<String,bytes> to Map<String, Serializable>
 	 */
+	@SuppressWarnings("unchecked")
 	protected Map<String, Serializable> convertToSerializable(Object serialized)
 	{
 	//	Precondition checking
@@ -273,7 +280,16 @@ public class StatelessProxyStore implements IProxyStore
 		
 	//	Convert map
 	//
-		return (Map<String, Serializable>) _proxySerializer.unserialize(serialized);
+		if (_proxySerializer == null)
+		{
+		//	No serialization
+		//
+			return (Map<String, Serializable>) serialized;
+		}
+		else
+		{
+			return (Map<String, Serializable>) _proxySerializer.unserialize(serialized);
+		}
 	}
 	
 	/**

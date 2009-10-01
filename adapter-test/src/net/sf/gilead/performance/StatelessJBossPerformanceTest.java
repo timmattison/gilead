@@ -22,7 +22,7 @@ public class StatelessJBossPerformanceTest extends PerformanceTest
 	{
 	//	Init bean manager
 	//
-		_beanManager = TestHelper.initStatelessBeanManager();
+		_beanManager = TestHelper.initLegacyStatelessBeanManager();
 	
 		((StatelessProxyStore)_beanManager.getProxyStore()).setProxySerializer(new JBossProxySerialization());
 

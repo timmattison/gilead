@@ -10,6 +10,7 @@ import net.sf.gilead.core.beanlib.mapper.DirectoryClassMapper;
 import net.sf.gilead.core.beanlib.mapper.ProxyClassMapper;
 import net.sf.gilead.core.hibernate.HibernateUtil;
 import net.sf.gilead.core.serialization.GwtProxySerialization;
+import net.sf.gilead.core.serialization.JBossProxySerialization;
 import net.sf.gilead.core.store.stateful.InMemoryProxyStore;
 import net.sf.gilead.core.store.stateless.StatelessProxyStore;
 import net.sf.gilead.test.DAOFactory;
@@ -329,11 +330,33 @@ public class TestHelper
 		HibernateUtil persistenceUtil = new HibernateUtil(); 
 		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
 		
-		PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
+		PersistentBeanManager beanManager = PersistentBeanManager.getInstance();
 		beanManager.setPersistenceUtil(persistenceUtil);
 		
 		StatelessProxyStore proxyStore = new StatelessProxyStore();
 		proxyStore.setProxySerializer(new GwtProxySerialization());
+		beanManager.setProxyStore(proxyStore);
+		
+		beanManager.setClassMapper(null);
+		
+		return beanManager;
+	}
+	
+	/**
+	 * Init bean manager for stateless mode for legacy Gilead 1.2 (encoded proxy info)
+	 */
+	public static PersistentBeanManager initLegacyStatelessBeanManager()
+	{
+		HibernateContext.setContext(HibernateContext.Context.legacy);
+		
+		HibernateUtil persistenceUtil = new HibernateUtil(); 
+		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
+		
+		PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
+		beanManager.setPersistenceUtil(persistenceUtil);
+		
+		StatelessProxyStore proxyStore = new StatelessProxyStore();
+		proxyStore.setProxySerializer(new JBossProxySerialization());
 		beanManager.setProxyStore(proxyStore);
 		
 		beanManager.setClassMapper(null);
@@ -375,7 +398,10 @@ public class TestHelper
 		
 		PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
-		beanManager.setProxyStore(new StatelessProxyStore());
+		
+		StatelessProxyStore proxyStore = new StatelessProxyStore();
+		proxyStore.setProxySerializer(new JBossProxySerialization());
+		beanManager.setProxyStore(proxyStore);
 		
 		ProxyClassMapper classMapper = new ProxyClassMapper();
 		classMapper.setPersistenceUtil(persistenceUtil);
@@ -397,7 +423,10 @@ public class TestHelper
 		
 		PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
 		beanManager.setPersistenceUtil(persistenceUtil);
-		beanManager.setProxyStore(new StatelessProxyStore());
+
+		StatelessProxyStore proxyStore = new StatelessProxyStore();
+		proxyStore.setProxySerializer(new JBossProxySerialization());
+		beanManager.setProxyStore(proxyStore);
 		
 		ProxyClassMapper classMapper = new ProxyClassMapper();
 		classMapper.setPersistenceUtil(persistenceUtil);
@@ -470,6 +499,11 @@ public class TestHelper
 			// gwt stateless
 			return new net.sf.gilead.test.domain.gwt.User();
 		}
+		else if (context == Context.legacy) 
+		{
+			// legacy stateless
+			return new net.sf.gilead.test.domain.legacy.User();
+		}
 		else if (context == Context.stateful) 
 		{
 			// stateful
@@ -508,6 +542,11 @@ public class TestHelper
 		{
 			// gwt stateless
 			return new net.sf.gilead.test.domain.gwt.Employee();
+		}
+		else if (context == Context.legacy) 
+		{
+			// legacy stateless
+			return new net.sf.gilead.test.domain.legacy.Employee();
 		}
 		else if (context == Context.stateful) 
 		{
@@ -548,6 +587,11 @@ public class TestHelper
 			// gwt stateless
 			return new net.sf.gilead.test.domain.gwt.Message();
 		}
+		else if (context == Context.legacy) 
+		{
+			// legacy stateless
+			return new net.sf.gilead.test.domain.legacy.Message();
+		}
 		else if (context == Context.stateful) 
 		{
 			// stateful
@@ -586,6 +630,11 @@ public class TestHelper
 		{
 			// gwt stateless
 			return new net.sf.gilead.test.domain.gwt.Group();
+		}
+		else if (context == Context.legacy) 
+		{
+			// legacy stateless
+			return new net.sf.gilead.test.domain.legacy.Group();
 		}
 		else if (context == Context.stateful) 
 		{
@@ -626,6 +675,11 @@ public class TestHelper
 			// gwt stateless
 			return new net.sf.gilead.test.domain.gwt.Address();
 		}
+		else if (context == Context.legacy) 
+		{
+			// legacy stateless
+			return new net.sf.gilead.test.domain.legacy.Address();
+		}
 		else if (context == Context.stateful) 
 		{
 			// stateful
@@ -664,6 +718,11 @@ public class TestHelper
 		{
 			// gwt stateless
 			return new net.sf.gilead.test.domain.gwt.Country();
+		}
+		else if (context == Context.legacy) 
+		{
+			// legacy stateless
+			return new net.sf.gilead.test.domain.legacy.Country();
 		}
 		else if (context == Context.stateful) 
 		{

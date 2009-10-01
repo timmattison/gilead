@@ -7,9 +7,8 @@
 	<inherits name='net.sf.gilead.gwt.Loading' /> 
 
 	<!-- Source path -->
-	<source path="test/domain/stateless"/>
+	<source path="test/domain/gwt"/>
 	<source path="test/domain/stateful"/>
-	<source path="test/domain/annotated"/>
 	<source path="test/domain/interfaces"/>
 	<source path="performance/gwt/client"/>
 	<source path="core/loading/gwt/client"/>

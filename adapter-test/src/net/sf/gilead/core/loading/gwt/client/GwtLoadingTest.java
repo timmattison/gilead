@@ -8,8 +8,8 @@ import java.util.Set;
 import net.sf.gilead.gwt.client.LoadingService;
 import net.sf.gilead.gwt.client.LoadingServiceAsync;
 import net.sf.gilead.pojo.gwt.basic.IntegerParameter;
-import net.sf.gilead.test.domain.stateless.Message;
-import net.sf.gilead.test.domain.stateless.User;
+import net.sf.gilead.test.domain.gwt.Message;
+import net.sf.gilead.test.domain.gwt.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;

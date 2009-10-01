@@ -23,6 +23,7 @@ public class HibernateContext
 	{
 		stateful,
 		stateless,
+		legacy,
 		gwt,
 		java5,
 		proxy,
@@ -49,6 +50,12 @@ public class HibernateContext
 	 */
 	private static final String GWT_CONFIGURATION_FILE = 
 		"gwt/hibernate.cfg.xml";
+	
+	/**
+	 * The stateless legacy configuration file (Gilead 1.2)
+	 */
+	private static final String LEGACY_CONFIGURATION_FILE = 
+		"legacy/hibernate.cfg.xml";
 	
 	/**
 	 * The Java5 configuration file
@@ -172,6 +179,10 @@ public class HibernateContext
 		else if (_context == Context.gwt)
 		{
 			return GWT_CONFIGURATION_FILE;
+		}
+		else if (_context == Context.legacy)
+		{
+			return LEGACY_CONFIGURATION_FILE;
 		}
 		else if (_context == Context.proxy)
 		{
