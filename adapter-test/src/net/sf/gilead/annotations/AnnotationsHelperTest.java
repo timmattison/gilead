@@ -4,7 +4,7 @@
 package net.sf.gilead.annotations;
 
 import junit.framework.TestCase;
-import net.sf.gilead.test.domain.annotated.Address;
+import net.sf.gilead.annotations.TestAccessManager.Role;
 import net.sf.gilead.test.domain.annotated.Message;
 import net.sf.gilead.test.domain.annotated.User;
 import net.sf.gilead.test.domain.misc.Configuration;
@@ -46,15 +46,17 @@ public class AnnotationsHelperTest extends TestCase
 	{
 	//	Annotation on property
 	//
-		assertTrue(AnnotationsHelper.isServerOnly(Message.class, "version"));
-		assertFalse(AnnotationsHelper.isServerOnly(Message.class, "author"));
-		assertFalse(AnnotationsHelper.isServerOnly(Message.class, "doesNotExist"));
+		Message message = new Message();
+		assertTrue(AnnotationsHelper.isServerOnly(message, "version"));
+		assertFalse(AnnotationsHelper.isServerOnly(message, "author"));
+		assertFalse(AnnotationsHelper.isServerOnly(message, "doesNotExist"));
 		
 	//	Annotation on getter
 	//
-		assertTrue(AnnotationsHelper.isServerOnly(User.class, "password"));
-		assertFalse(AnnotationsHelper.isServerOnly(User.class, "login"));
-		assertFalse(AnnotationsHelper.isServerOnly(User.class, "doesNotExist"));
+		User user = new User();
+		assertTrue(AnnotationsHelper.isServerOnly(user, "password"));
+		assertFalse(AnnotationsHelper.isServerOnly(user, "login"));
+		assertFalse(AnnotationsHelper.isServerOnly(user, "doesNotExist"));
 	}
 
 	/**
@@ -82,19 +84,40 @@ public class AnnotationsHelperTest extends TestCase
 	{
 	//	Annotation on property
 	//
-		assertTrue(AnnotationsHelper.isReadOnly(Message.class, "keywords"));
-		assertFalse(AnnotationsHelper.isReadOnly(Message.class, "message"));
-		assertFalse(AnnotationsHelper.isReadOnly(Message.class, "doesNotExist"));
+		Message message = new Message();
+		assertTrue(AnnotationsHelper.isReadOnly(message, "keywords"));
+		assertFalse(AnnotationsHelper.isReadOnly(message, "message"));
+		assertFalse(AnnotationsHelper.isReadOnly(message, "doesNotExist"));
 		
 	//	Annotation on getter
 	//
-		assertTrue(AnnotationsHelper.isReadOnly(User.class, "login"));
-		assertFalse(AnnotationsHelper.isReadOnly(User.class, "password"));
-		assertFalse(AnnotationsHelper.isReadOnly(User.class, "doesNotExist"));
+		User user = new User();
+		assertTrue(AnnotationsHelper.isReadOnly(user, "login"));
+		assertFalse(AnnotationsHelper.isReadOnly(user, "password"));
+		assertFalse(AnnotationsHelper.isReadOnly(user, "doesNotExist"));
 		
 	//	Test on private getter
 	//
 //		assertTrue(AnnotationsHelper.isReadOnly(Address.class, "zipCode"));
+	}
+	
+	/**
+	 * Test access manager handling
+	 */
+	public final void testAccessManager()
+	{
+		TestAccessManager accessManager = (TestAccessManager) AnnotationsHelper.getAccessManager(TestAccessManager.class);
+		
+	//	Test access with role user
+	//
+		accessManager.setRole(TestAccessManager.Role.user);
+		Message message = new Message();
+		assertTrue(AnnotationsHelper.isReadOnly(message, "date"));
+		
+	//	Test with admin user
+	//
+		accessManager.setRole(TestAccessManager.Role.admin);
+		assertFalse(AnnotationsHelper.isReadOnly(message, "date"));
 	}
 
 }

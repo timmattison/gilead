@@ -34,7 +34,7 @@ public class StatelessPerformanceServiceImpl extends PersistentRemoteService
 		
 	//	Init Hibernate context
 	//
-		setBeanManager(TestHelper.initStatelessBeanManager());
+		setBeanManager(TestHelper.initGwtStatelessBeanManager());
 		
 	//	Init DB if needed
 	//

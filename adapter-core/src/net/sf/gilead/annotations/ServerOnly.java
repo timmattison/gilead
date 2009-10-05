@@ -13,11 +13,12 @@ import java.lang.annotation.Target;
 /**
  * Annotation for "ServerOnly" properties.
  * Relevant value is not sent to the client side and replaced by null.
- * Is is replaced by the original value during the 'merge' phase
+ * Is is replaced by the original value during the 'merge' phase to prevent any hack.
  * @author bruno.marchesson
  */
 @Target({METHOD, FIELD})
 @Retention(RUNTIME)
 public @interface ServerOnly {
 
+	Class<? extends IAccessManager> accessManager() default DefaultAccessManager.class;
 }

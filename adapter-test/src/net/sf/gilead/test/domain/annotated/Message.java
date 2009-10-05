@@ -18,6 +18,7 @@ import javax.persistence.Version;
 
 import net.sf.gilead.annotations.ReadOnly;
 import net.sf.gilead.annotations.ServerOnly;
+import net.sf.gilead.annotations.TestAccessManager;
 import net.sf.gilead.pojo.java5.LightEntity;
 import net.sf.gilead.test.domain.interfaces.IMessage;
 
@@ -46,6 +47,8 @@ public class Message extends LightEntity implements IMessage
 	private Integer version;
     
     private String message;
+    
+    @ReadOnly(accessManager=TestAccessManager.class)
     private Date date;
     
     private User author;

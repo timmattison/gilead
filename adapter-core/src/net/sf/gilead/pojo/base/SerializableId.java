@@ -1,4 +1,4 @@
-package net.sf.gilead.core.serialization;
+package net.sf.gilead.pojo.base;
 
 import java.io.Serializable;
 

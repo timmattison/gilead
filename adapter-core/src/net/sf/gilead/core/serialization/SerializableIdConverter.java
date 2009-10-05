@@ -2,6 +2,8 @@ package net.sf.gilead.core.serialization;
 
 import java.io.Serializable;
 
+import net.sf.gilead.pojo.base.SerializableId;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

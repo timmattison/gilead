@@ -17,6 +17,7 @@ import java.lang.annotation.Target;
  */
 @Target({METHOD, FIELD})
 @Retention(RUNTIME)
-public @interface ReadOnly {
-
+public @interface ReadOnly 
+{
+	Class<? extends IAccessManager> accessManager() default DefaultAccessManager.class;
 }
