@@ -4,7 +4,6 @@
 package net.sf.gilead.annotations;
 
 import junit.framework.TestCase;
-import net.sf.gilead.annotations.TestAccessManager.Role;
 import net.sf.gilead.test.domain.annotated.Message;
 import net.sf.gilead.test.domain.annotated.User;
 import net.sf.gilead.test.domain.misc.Configuration;

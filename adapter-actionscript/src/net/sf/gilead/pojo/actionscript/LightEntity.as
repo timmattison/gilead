@@ -7,9 +7,15 @@ package net.sf.gilead.pojo.actionscript
 	{
 		/**
 		 * The internal proxy informations
-		 * (a map of <String, Map<String, bytes>>)
+		 * (a map of <String, Map<String, Serializable>>)
 		 */
 		private var _proxyInformations:Object;
+		
+		/**
+	 	 * Map of persistence initialisation state.
+	 	 * (Map<String,Boolean>
+	 	 */
+		private var _initializationMap:Object;
 		
 		/**
 		 * Constructor of Lazy Pojo abstract class.
@@ -17,6 +23,7 @@ package net.sf.gilead.pojo.actionscript
 		public function LightEntity()
 		{
 			_proxyInformations = new Object();
+			_initializationMap = new Object();
 		}
 		
 		/**
@@ -36,15 +43,35 @@ package net.sf.gilead.pojo.actionscript
 		}
 		
 		/**
-		 * Remove proxy informations.
-		 * Use with care, especially on collections !!!
+		 * Getter for initialization map
 		 */
-		public function removeProxyInformation(propertyName:String):void
+		public function get initializationMap():Object
 		{
-			if (_proxyInformations != null)
-			{
-				_proxyInformations[propertyName] = null;
-			}
+			return _initializationMap;
+		}
+		
+		/**
+		 * Setter for initialization map
+		 */
+		public function set initializationMap(value:Object):void
+		{
+			_initializationMap = value;
+		}
+		
+		/**
+		 * Indicates if the property was initialized on server side
+		 */ 
+		public function isInitialized(property:String):boolean
+		{
+			return _initializationMap[property];
+		}
+		
+		/**
+		 * Indicates that the property has been initialized on client side
+		 */ 
+		public function seInitialized(property:String):void
+		{
+			_initializationMap[property] = true;
 		}
 		
 		/**

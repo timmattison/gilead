@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.client.rpc.SerializationException;
-import com.google.gwt.user.server.rpc.RPCCopy;
+import com.google.gwt.user.server.rpc.RPC;
 import com.google.gwt.user.server.rpc.RPCRequest;
 
 /**
@@ -129,8 +129,7 @@ public abstract class PersistentCometService extends CometRemoteService
 
 				// Decode request
 				//
-				rpcRequest = RPCCopy.getInstance().decodeRequest(payload,
-						this.getClass(), this);
+				rpcRequest = RPC.decodeRequest(payload, this.getClass(), this);
 				// TODO not sure of that: parameters are stored into rpcRequest
 				// ?
 				// session ?
@@ -226,27 +225,35 @@ public abstract class PersistentCometService extends CometRemoteService
 			String responsePayload = null;
 			try {
 				try {
-					Object returnValue = RPCCopy.getInstance().invoke(this,
-							p_rpcRequest.getMethod(),
-							p_rpcRequest.getParameters(),
-							p_rpcRequest.getSerializationPolicy());
+					Object returnValue = p_rpcRequest.getMethod().invoke(this, p_rpcRequest.getParameters());
 
 					returnValue = GileadRPCHelper.parseReturnValue(returnValue,
 							_beanManager);
 
 					// Encode response
 					//  
-					responsePayload = RPCCopy.getInstance()
-							.encodeResponseForSuccess(p_rpcRequest.getMethod(),
+					responsePayload = RPC.encodeResponseForSuccess(p_rpcRequest.getMethod(),
 									returnValue,
 									p_rpcRequest.getSerializationPolicy());
 
-				} catch (InvocationTargetException e) {
-					_log.error("Invocation exception : " + e.getMessage(), e);
-					responsePayload = RPCCopy.getInstance()
-							.encodeResponseForFailure(p_rpcRequest.getMethod(),
-									e.getCause(),
-									p_rpcRequest.getSerializationPolicy());
+				}
+				catch (IllegalAccessException e) 
+				{
+			        SecurityException securityException = new SecurityException(
+			            "Blocked attempt to access inaccessible method "
+			                + p_rpcRequest.getMethod()
+			                + " on target " + this);
+			        securityException.initCause(e);
+			        throw securityException;
+				}
+				catch (InvocationTargetException e)
+				{
+					// Clone exception if needed
+					Exception exception = (Exception) GileadRPCHelper.parseReturnValue(e.getCause(), _beanManager);
+					
+					responsePayload = RPC.encodeResponseForFailure(p_rpcRequest.getMethod(), 
+													    exception,
+														p_rpcRequest.getSerializationPolicy());
 				}
 			} catch (SerializationException e) {
 				_log.error("Serialization exception : " + e.getMessage(), e);e.printStackTrace();

@@ -49,9 +49,8 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	
 	/**
 	 * Map of persistence initialisation state.
-	 * The key is the property name, the value is a map with
-	 * persistence informations filled by the persistence util
-	 * implementation
+	 * The key is the property name, the value is the initialization state
+	 * of the property
 	 */
 	protected Map<String, Boolean> _initializationMap;
 

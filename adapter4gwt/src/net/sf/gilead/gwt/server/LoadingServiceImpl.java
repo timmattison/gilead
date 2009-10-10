@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 
+import net.sf.gilead.annotations.AnnotationsHelper;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.gwt.PersistentRemoteService;
@@ -111,7 +112,7 @@ public class LoadingServiceImpl<T extends ILightEntity> extends PersistentRemote
 	public <K extends ILightEntity> Set<K> loadSetAssociation(T parent,
 															  String propertyName)
 	{
-	return (Set<K>) loadAssociation(parent, propertyName);
+		return (Set<K>) loadAssociation(parent, propertyName);
 	}
 	
 	//-------------------------------------------------------------------------
@@ -154,6 +155,12 @@ public class LoadingServiceImpl<T extends ILightEntity> extends PersistentRemote
 		if (beanManager == null)
 		{
 			throw new NullPointerException("Bean manager not set !");
+		}
+		
+		if (AnnotationsHelper.isServerOnly(parent, propertyName))
+		{
+			_log.warn("Cannot load @ServerOnly property " + propertyName);
+			return null;
 		}
 		
 	//	Get Persistence util

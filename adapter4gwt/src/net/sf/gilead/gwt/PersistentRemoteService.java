@@ -26,7 +26,7 @@ import net.sf.gilead.core.beanlib.mapper.ProxyClassMapper;
 
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.SerializationException;
-import com.google.gwt.user.server.rpc.RPCCopy;
+import com.google.gwt.user.server.rpc.RPC;
 import com.google.gwt.user.server.rpc.RPCRequest;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.server.rpc.SerializationPolicy;
@@ -154,47 +154,57 @@ public abstract class PersistentRemoteService extends RemoteServiceServlet
 		{
 		// Decode request
 		//
-	       rpcRequest = RPCCopy.getInstance().decodeRequest(payload, this.getClass(), this);
+	       rpcRequest = RPC.decodeRequest(payload, this.getClass(), this);
+	       
+	       if (rpcRequest == null)
+	       {
+	    	   throw new NullPointerException("No rpc request");
+	       }
 	      
 	    //	Invoke method
 	    //
 	       GileadRPCHelper.parseInputParameters(rpcRequest, _beanManager, 
-	    		   								   getThreadLocalRequest().getSession());
-	       Object returnValue = RPCCopy.getInstance().invoke(this, rpcRequest.getMethod(), 
-	    		  							   rpcRequest.getParameters(),
-	    		  							   rpcRequest.getSerializationPolicy());
+	    		   								getThreadLocalRequest().getSession());
+	       Object returnValue = rpcRequest.getMethod().invoke(this, rpcRequest.getParameters());
 	      
 	       returnValue = GileadRPCHelper.parseReturnValue(returnValue, _beanManager);
 	      
 	    //	Encode response
 	    //  
-	      return RPCCopy.getInstance().encodeResponseForSuccess(rpcRequest.getMethod(), 
-	    		  								  				returnValue,
-	    		  								  				rpcRequest.getSerializationPolicy());
-	      
+	      return RPC.encodeResponseForSuccess(rpcRequest.getMethod(), 
+	    		  	 		  				  returnValue,
+	    		  							  rpcRequest.getSerializationPolicy());
+	    }
+		catch (IllegalArgumentException e)
+		{
+	        SecurityException securityException = new SecurityException(
+	            "Blocked attempt to invoke method " + rpcRequest.getMethod());
+	        securityException.initCause(e);
+	        throw securityException;
 	    } 
+		catch (IllegalAccessException e) 
+		{
+	        SecurityException securityException = new SecurityException(
+	            "Blocked attempt to access inaccessible method "
+	                + rpcRequest.getMethod()
+	                + " on target " + this);
+	        securityException.initCause(e);
+	        throw securityException;
+		}
 		catch (InvocationTargetException e)
 		{
 			// Clone exception if needed
 			Exception exception = (Exception) GileadRPCHelper.parseReturnValue(e.getCause(), _beanManager);
 			
-			return RPCCopy.getInstance().encodeResponseForFailure(rpcRequest.getMethod(), 
-																  exception,
-																  rpcRequest.getSerializationPolicy());
+			return RPC.encodeResponseForFailure(rpcRequest.getMethod(), 
+											    exception,
+												rpcRequest.getSerializationPolicy());
 		}
 		catch (IncompatibleRemoteServiceException ex)
 		{
 			// Clone exception if needed
 			Exception exception = (Exception) GileadRPCHelper.parseReturnValue(ex, _beanManager);
-			
-			if (rpcRequest != null)
-			{
-				return RPCCopy.getInstance().encodeResponseForFailure(null, exception, rpcRequest.getSerializationPolicy());
-			}
-			else
-			{
-				return RPCCopy.getInstance().encodeResponseForFailure(null, exception);
-			}
+			return RPC.encodeResponseForFailure(null, exception, rpcRequest.getSerializationPolicy());
 	    } 
 	}
 }
