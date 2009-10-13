@@ -5,6 +5,7 @@ package net.sf.gilead.core.serialization;
 
 import java.io.Serializable;
 
+import net.sf.gilead.pojo.gwt.GwtSerializableId;
 import net.sf.gilead.pojo.gwt.IRequestParameter;
 import net.sf.gilead.pojo.gwt.SerializedParameter;
 
@@ -73,7 +74,6 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	/* (non-Javadoc)
 	 * @see net.sf.gilead.core.serialization.IProxySerialization#serialize(java.io.Serializable)
 	 */
-	@SuppressWarnings("unchecked")
 	public Object serialize(Serializable serializable)
 	{
 	//	Precondition checking
@@ -99,7 +99,6 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	/* (non-Javadoc)
 	 * @see net.sf.gilead.core.serialization.IProxySerialization#unserialize(java.lang.Object)
 	 */
-	@SuppressWarnings("unchecked")
 	public Serializable unserialize(Object serialized)
 	{
 	//	Precondition checking
@@ -134,6 +133,25 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	protected IRequestParameter convertBasicToGwt(Serializable object)
 								throws SerializationException
 	{
+	//	SerializableId handling
+	//
+		if (object instanceof SerializableId)
+		{
+			SerializableId serializableId = (SerializableId) object;
+			GwtSerializableId gwtSerializableId = new GwtSerializableId();
+			gwtSerializableId.setEntityName(serializableId.getEntityName());
+			gwtSerializableId.setHashCode(serializableId.getHashCode());
+			
+			if (serializableId.getId() != null)
+			{
+				gwtSerializableId.setId(convertBasicToGwt(serializableId.getId()));
+			}
+			
+			return gwtSerializableId;
+		}
+		
+	//	Basic case
+	//
 		try
 		{
 			return super.convertBasicToGwt(object);
@@ -154,9 +172,26 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	 */
 	protected Serializable convertBasicFromGwt(IRequestParameter parameter)
 	{
+	//	Serialized case
+	//
 		if (parameter instanceof SerializedParameter)
 		{
 			return _stringSerializer.unserialize(parameter.getValue());
+		}
+		else if (parameter instanceof GwtSerializableId)
+		{
+		//	Re-create serializable Id
+		//
+			GwtSerializableId gwtSerializableId = (GwtSerializableId) parameter;
+			SerializableId serializableId = new SerializableId();
+			serializableId.setEntityName(gwtSerializableId.getEntityName());
+			serializableId.setHashCode(gwtSerializableId.getHashCode());
+			if (gwtSerializableId.getId() != null)
+			{
+				serializableId.setId(convertBasicFromGwt(gwtSerializableId.getId()));
+			}
+			
+			return serializableId;
 		}
 		else
 		{

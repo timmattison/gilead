@@ -123,7 +123,13 @@ public abstract class PersistentRemoteService extends RemoteServiceServlet
 	protected SerializationPolicy doGetSerializationPolicy(
 			HttpServletRequest request, String moduleBaseURL, String strongName) 
 	{
-		GileadRPCHelper.initClassLoader();
+	//	Init proxy class loader if in proxy mode 
+	//
+		if ((_beanManager != null) &&
+			(_beanManager.getClassMapper() instanceof ProxyClassMapper))
+		{
+			GileadRPCHelper.initClassLoader();
+		}
 		return super.doGetSerializationPolicy(request, moduleBaseURL, strongName);
 	}
 	/**

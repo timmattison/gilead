@@ -84,6 +84,7 @@ public class GileadRPCHelper
 	//
 		if (parameters != null)
 		{
+			long start = System.currentTimeMillis();
 			for (int index = 0 ; index < parameters.length; index ++)
 			{
 				if (parameters[index] != null)
@@ -101,6 +102,11 @@ public class GileadRPCHelper
 						log.info(parameters[index] + " is transient : cannot merge...");
 					}
 				}
+			}
+			
+			if (log.isDebugEnabled())
+			{
+				log.debug("Merge took " + (System.currentTimeMillis() - start) + " ms.");
 			}
 		}
 	}
@@ -145,6 +151,7 @@ public class GileadRPCHelper
 	//
 		if (returnValue != null)
 		{
+			long start = System.currentTimeMillis();
 			try
 			{
 				returnValue = beanManager.clone(returnValue, true);
@@ -160,6 +167,11 @@ public class GileadRPCHelper
 			finally
 			{
 				beanManager.getProxyStore().cleanUp();
+			}
+			
+			if (log.isDebugEnabled())
+			{
+				log.debug("Clone took " + (System.currentTimeMillis() - start) + " ms.");
 			}
 		}
 		

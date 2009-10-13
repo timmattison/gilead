@@ -15,11 +15,11 @@ import java.util.Map.Entry;
 
 import net.sf.beanlib.hibernate.UnEnhancer;
 import net.sf.gilead.core.IPersistenceUtil;
+import net.sf.gilead.core.serialization.SerializableId;
 import net.sf.gilead.exception.ComponentTypeException;
 import net.sf.gilead.exception.NotPersistentObjectException;
 import net.sf.gilead.exception.TransientObjectException;
 import net.sf.gilead.pojo.base.IUserType;
-import net.sf.gilead.pojo.base.SerializableId;
 import net.sf.gilead.util.IntrospectionHelper;
 
 import org.slf4j.Logger;

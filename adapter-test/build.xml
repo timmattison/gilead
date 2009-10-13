@@ -48,6 +48,11 @@
     	     dir="${adapter4gwt.dir}"/>
     	
         <mkdir dir="${build.dir}"/>
+    	
+    	<!-- Needed for GWT -->
+        <copy includeemptydirs="false" todir="${build.dir}">
+            <fileset dir="${source.dir}" includes="**/gwt/client/"/>
+        </copy>
     </target>
     
 	<target name="clean">

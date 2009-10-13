@@ -27,7 +27,7 @@
     	 	
     	<!-- Needed for GWT -->
         <copy includeemptydirs="false" todir="${build.dir}">
-            <fileset dir="${source.dir}" excludes="**/*.launch"/>
+            <fileset dir="${source.dir}" includes="**/pojo/"/>
         </copy>
     </target>
     

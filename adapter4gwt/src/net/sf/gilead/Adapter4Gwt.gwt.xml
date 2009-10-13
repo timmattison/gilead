@@ -6,6 +6,7 @@
 	<!-- Additional source path -->
 	<source path='pojo/base'/>
 	<source path='pojo/gwt'/>
+	<source path='gwt/client'/>
 	
 	<!-- Proxy generator -->
 	<!-- generate-with class="net.sf.gilead.proxy.gwt.Gwt15ProxyGenerator">

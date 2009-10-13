@@ -61,7 +61,7 @@ package net.sf.gilead.pojo.actionscript
 		/**
 		 * Indicates if the property was initialized on server side
 		 */ 
-		public function isInitialized(property:String):boolean
+		public function isInitialized(property:String):Boolean
 		{
 			return _initializationMap[property];
 		}
@@ -69,7 +69,7 @@ package net.sf.gilead.pojo.actionscript
 		/**
 		 * Indicates that the property has been initialized on client side
 		 */ 
-		public function seInitialized(property:String):void
+		public function setInitialized(property:String):void
 		{
 			_initializationMap[property] = true;
 		}
