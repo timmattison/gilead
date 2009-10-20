@@ -35,7 +35,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.sf.beanlib.utils.ClassUtils;
-import net.sf.gilead.annotations.AnnotationsHelper;
+import net.sf.gilead.core.annotations.AnnotationsManager;
 import net.sf.gilead.core.beanlib.IClassMapper;
 import net.sf.gilead.core.store.IProxyStore;
 import net.sf.gilead.core.store.stateless.StatelessProxyStore;
@@ -507,12 +507,20 @@ public class PersistentBeanManager
 			Object hibernatePojo = null;
 			try
 			{
-				if ((AnnotationsHelper.hasServerOnlyOrReadOnlyAnnotations(hibernateClass)) &&
-					(id != null))
+				if (AnnotationsManager.hasGileadAnnotations(hibernateClass))
 				{
-				//	ServerOnly or ReadOnly annotation : load from DB needed
-				//
-					hibernatePojo = _persistenceUtil.load(id, hibernateClass);
+					if (id != null)
+					{
+					//	ServerOnly or ReadOnly annotation : load from DB needed
+					//
+						hibernatePojo = _persistenceUtil.load(id, hibernateClass);
+					}
+					else
+					{
+					//	Transient instance
+					//
+						hibernatePojo = clonePojo;
+					}
 				}
 				else
 				{

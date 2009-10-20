@@ -11,12 +11,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for "ReadOnly" properties.
- * Value coming back from client side is ignored during 'merge' phase
+ * Annotation for limited access properties.
+ * Accessibility of these properties is defined by the defined AccessManager, and
+ * can be ReadOnly, ServerOnly or null (write access).
  * @author bruno.marchesson
  */
 @Target({METHOD, FIELD})
 @Retention(RUNTIME)
-public @interface ReadOnly 
+public @interface LimitedAccess 
 {
 }

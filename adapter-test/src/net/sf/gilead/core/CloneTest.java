@@ -1042,13 +1042,13 @@ public abstract class CloneTest extends TestCase
 		 
 		//Change the clone name 
 		String newName = "new name"; 
-		cloneUser.setLogin(newName); 
+		cloneUser.setFirstName(newName); 
 		 
 	//	Merge user
 	//
 		IUser mergeUser = (IUser) _beanManager.merge(cloneUser); 
 		 
-		assertEquals("New name after merge", newName, mergeUser.getLogin()); 
+		assertEquals("New name after merge", newName, mergeUser.getFirstName()); 
 	}
 	
 	/**

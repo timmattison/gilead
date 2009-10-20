@@ -21,8 +21,8 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import net.sf.beanlib.spi.DetailedPropertyFilter;
-import net.sf.gilead.annotations.AnnotationsHelper;
 import net.sf.gilead.core.IPersistenceUtil;
+import net.sf.gilead.core.annotations.AnnotationsManager;
 import net.sf.gilead.core.beanlib.CloneAndMergeConstants;
 import net.sf.gilead.core.store.IProxyStore;
 import net.sf.gilead.pojo.base.ILightEntity;
@@ -131,8 +131,8 @@ public class ClonePropertyFilter implements DetailedPropertyFilter
 			
 		//	'ServerOnly' annotation handling
 		//
-			if ((AnnotationsHelper.isServerOnly(fromBean, propertyName)) ||
-				(AnnotationsHelper.isServerOnly(toBean, propertyName)))	
+			if ((AnnotationsManager.isServerOnly(fromBean, propertyName)) ||
+				(AnnotationsManager.isServerOnly(toBean, propertyName)))	
 			{
 				return false;
 			}

@@ -5,9 +5,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.gilead.annotations.AnnotationsHelper;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.PersistentBeanManager;
+import net.sf.gilead.core.annotations.AnnotationsManager;
 import net.sf.gilead.gwt.PersistentRemoteService;
 import net.sf.gilead.gwt.client.LoadingService;
 import net.sf.gilead.pojo.base.ILightEntity;
@@ -157,7 +157,7 @@ public class LoadingServiceImpl<T extends ILightEntity> extends PersistentRemote
 			throw new NullPointerException("Bean manager not set !");
 		}
 		
-		if (AnnotationsHelper.isServerOnly(parent, propertyName))
+		if (AnnotationsManager.isServerOnly(parent, propertyName))
 		{
 			_log.warn("Cannot load @ServerOnly property " + propertyName);
 			return null;

@@ -16,9 +16,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import net.sf.gilead.annotations.LimitedAccess;
 import net.sf.gilead.annotations.ReadOnly;
 import net.sf.gilead.annotations.ServerOnly;
-import net.sf.gilead.annotations.TestAccessManager;
 import net.sf.gilead.pojo.java5.LightEntity;
 import net.sf.gilead.test.domain.interfaces.IMessage;
 
@@ -41,20 +41,21 @@ public class Message extends LightEntity implements IMessage
 	private static final long serialVersionUID = -1067096371173906324L;
 	
 	//	Fields    
-    private int id;
+	private int id;
     
     @ServerOnly
 	private Integer version;
     
     private String message;
     
-    @ReadOnly(accessManager=TestAccessManager.class)
     private Date date;
     
     private User author;
     
-    @ReadOnly
     private Map<String, Integer> keywords;
+    
+    @LimitedAccess
+    private String comment;
     
     // Properties
 	/* (non-Javadoc)
@@ -128,6 +129,18 @@ public class Message extends LightEntity implements IMessage
 		this.author = (User) author;
 	}
 	
+	/**
+	 * @return the comment
+	 */
+	public String getComment() {
+		return comment;
+	}
+	/**
+	 * @param comment the comment to set
+	 */
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
 	/**
 	 * @see net.sf.gilead.test.domain.interfaces.IMessage#getKeywords()
 	 */

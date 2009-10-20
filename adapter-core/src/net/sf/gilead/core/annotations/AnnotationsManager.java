@@ -1,4 +1,4 @@
-package net.sf.gilead.annotations;
+package net.sf.gilead.core.annotations;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -7,6 +7,9 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.gilead.annotations.LimitedAccess;
+import net.sf.gilead.annotations.ReadOnly;
+import net.sf.gilead.annotations.ServerOnly;
 import net.sf.gilead.util.IntrospectionHelper;
 
 import org.slf4j.Logger;
@@ -17,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * @author bruno.marchesson
  *
  */
-public class AnnotationsHelper
+public class AnnotationsManager
 {
 	//----
 	// Attributes
@@ -25,20 +28,39 @@ public class AnnotationsHelper
 	/**
 	 * Logger channel
 	 */
-	private static Logger _log = LoggerFactory.getLogger(AnnotationsHelper.class);
+	private static Logger _log = LoggerFactory.getLogger(AnnotationsManager.class);
 	
 	/**
 	 * Annotation map.
 	 * It is filled with associated Gilead annotation for all classes and properties 
 	 * for performance purpose (computing it each time is very expensive)
 	 */
-	private static Map<Class<?>, Map<String, GileadAnnotation>> _annotationMap = new HashMap<Class<?>, Map<String,GileadAnnotation>>();
+	private static Map<Class<?>, Map<String, Class<?>>> _annotationMap = new HashMap<Class<?>, Map<String,Class<?>>>();
 	
 	/**
-	 * The access manager map, since they are singleton.
+	 * The associated access manager
 	 */
-	private static Map<Class<? extends IAccessManager>, IAccessManager> _accessManagerMap = new HashMap<Class<? extends IAccessManager>, IAccessManager>(); 
+	private static IAccessManager _accessManager;
 	
+	//----
+	// Properties
+	//----
+	/**
+	 * @param accessManager the access Manager to use for @LimitedAccess properties
+	 */
+	public static void setAccessManager(IAccessManager accessManager)
+	{
+		_accessManager = accessManager;
+	}
+
+	/**
+	 * @return the access Manager
+	 */
+	public static IAccessManager getAccessManager()
+	{
+		return _accessManager;
+	}
+
 	//-------------------------------------------------------------------------
 	//
 	// Static helpers
@@ -79,7 +101,7 @@ public class AnnotationsHelper
 	/**
 	 * Indicated if the argument has "ServerOnly" annotation on one of its field.
 	 */
-	public static boolean hasServerOnlyOrReadOnlyAnnotations(Class<?> entityClass)
+	public static boolean hasGileadAnnotations(Class<?> entityClass)
 	{
 	//	Search all Gilead annotations
 	//
@@ -94,31 +116,6 @@ public class AnnotationsHelper
 		return isAnnotedClass(entityClass, ReadOnly.class);
 	}
 	
-	/**
-	 * Gets the singleton for the argument access manager class.
-	 * @param managerClass the access manager class
-	 * @return the singleton
-	 */
-	public synchronized static IAccessManager getAccessManager(Class<? extends IAccessManager> managerClass)
-	{
-		IAccessManager accessManager = _accessManagerMap.get(managerClass);
-		if (accessManager == null)
-		{
-		//	Create it
-		//
-			try
-			{
-				accessManager = managerClass.newInstance();
-				_accessManagerMap.put(managerClass, accessManager);
-			}
-			catch(Exception ex)
-			{
-				throw new RuntimeException("Error creating Access Manager", ex);
-			}
-		}
-		
-		return accessManager;
-	}
 	//-------------------------------------------------------------------------
 	//
 	// Internal methods
@@ -127,14 +124,14 @@ public class AnnotationsHelper
 	/**
 	 * Indicated if the argument has "ReadOnly" annotation on one of its field.
 	 */
-	private static Map<String, GileadAnnotation> getGileadAnnotations(Class<?> clazz)
+	private static Map<String, Class<?>> getGileadAnnotations(Class<?> clazz)
 	{
 		if (_log.isDebugEnabled())
 		{
 			_log.debug("Looking for Gilead annotations for " + clazz);
 		}
 		
-		Map<String, GileadAnnotation> result = new HashMap<String, GileadAnnotation>();
+		Map<String, Class<?>> result = new HashMap<String, Class<?>>();
 		
 	//	Search annotations on fields
 	//
@@ -153,8 +150,7 @@ public class AnnotationsHelper
 					{
 						_log.debug(propertyName + " member has @ReadOnly");
 					}
-					IAccessManager accessManager = getAccessManager(readOnly.accessManager());
-					result.put(propertyName, new GileadAnnotation(ReadOnly.class, accessManager));
+					result.put(propertyName, ReadOnly.class);
 					continue;
 				}
 				
@@ -166,8 +162,19 @@ public class AnnotationsHelper
 					{
 						_log.debug(propertyName + " member has @ServerOnly");
 					}
-					IAccessManager accessManager = getAccessManager(serverOnly.accessManager());
-					result.put(propertyName, new GileadAnnotation(ServerOnly.class, accessManager));
+					result.put(propertyName, ServerOnly.class);
+					continue;
+				}
+				
+				// LimitedAccess
+				LimitedAccess limitedAccess = field.getAnnotation(LimitedAccess.class);
+				if (limitedAccess != null)
+				{
+					if (_log.isDebugEnabled())
+					{
+						_log.debug(propertyName + " member has @LimitedAccess");
+					}
+					result.put(propertyName, LimitedAccess.class);
 					continue;
 				}
 				
@@ -180,8 +187,8 @@ public class AnnotationsHelper
 				result.put(propertyName, null);
 			}
 			
-	//	Search annotation on getters
-	//
+		//	Search annotation on getters
+		//
 			BeanInfo info = Introspector.getBeanInfo(clazz);
 			PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
 			for (int index = 0; index < descriptors.length; index++)
@@ -207,11 +214,12 @@ public class AnnotationsHelper
 						{
 							_log.debug(propertyName + " getter has @ReadOnly");
 						}
-						IAccessManager accessManager = getAccessManager(readOnly.accessManager());
-						result.put(propertyName, new GileadAnnotation(ReadOnly.class, accessManager));
+						result.put(propertyName, ReadOnly.class);
 						continue;
 					}
 					
+				//	ServerOnly
+				//
 					ServerOnly serverOnly = descriptor.getReadMethod().getAnnotation(ServerOnly.class); 
 					if (serverOnly != null)
 					{
@@ -219,9 +227,21 @@ public class AnnotationsHelper
 						{
 							_log.debug(propertyName + " getter has @ServerOnly");
 						}
-						IAccessManager accessManager = getAccessManager(serverOnly.accessManager());
-						result.put(propertyName, new GileadAnnotation(ServerOnly.class, accessManager));
+						result.put(propertyName, ServerOnly.class);
 					}
+					
+				//	LimitedAccess
+				//
+					LimitedAccess limitedAccess = descriptor.getReadMethod().getAnnotation(LimitedAccess.class); 
+					if (limitedAccess != null)
+					{
+						if (_log.isDebugEnabled())
+						{
+							_log.debug(propertyName + " getter has @LimitedAccess");
+						}
+						result.put(propertyName, LimitedAccess.class);
+					}
+
 				}
 			}
 		} 
@@ -243,7 +263,7 @@ public class AnnotationsHelper
 	//	Map checking
 	//
 		Class<?> clazz = entity.getClass();
-		Map<String, GileadAnnotation> propertyAnnotations = _annotationMap.get(clazz);
+		Map<String, Class<?>> propertyAnnotations = _annotationMap.get(clazz);
 		if (propertyAnnotations == null)
 		{
 		//	Compute property annotations
@@ -257,29 +277,39 @@ public class AnnotationsHelper
 		
 	//	Does the map contains the target annotation for the argument property ?
 	//
-		GileadAnnotation annotation = propertyAnnotations.get(propertyName); 
+		Class<?> annotation = propertyAnnotations.get(propertyName); 
+
+	//	Limited access ?
+	//
+		if (LimitedAccess.class.equals(annotation))
+		{
+		//	Call access manager
+		//
+			if (_accessManager == null)
+			{
+				_log.warn("No Access Manager defined whereas @LimitedAccess annotation is used !");
+			}
+			else
+			{
+				annotation = _accessManager.getActiveAnnotation(entity, propertyName);
+			}
+		}
+
+	//	Annotation checking
+	//
 		if (annotation == null)
 		{
 			return false;
 		}
+		
 		if ((annotationClass != null) &&
-			(annotationClass.equals(annotation.annotationClass) == false))
+			(annotationClass.equals(annotation) == false))
 		{
 			return false;
 		}
-		
-	// 	Check access manager
-	//
-		if (annotationClass != null)
-		{
-			return annotation.accessManager.isAnnotationActive(annotationClass, entity, propertyName);
-		}
 		else
 		{
-		//	Check access for every Gilead annotation
-		//
-			return (annotation.accessManager.isAnnotationActive(ServerOnly.class, entity, propertyName) ||
-					annotation.accessManager.isAnnotationActive(ReadOnly.class, entity, propertyName));
+			return true;
 		}
 	}
 	
@@ -290,7 +320,7 @@ public class AnnotationsHelper
 	{
 	//	Map checking
 	//
-		Map<String, GileadAnnotation> propertyAnnotations = _annotationMap.get(entityClass);
+		Map<String, Class<?>> propertyAnnotations = _annotationMap.get(entityClass);
 		if (propertyAnnotations == null)
 		{
 		//	Compute property annotations
@@ -306,13 +336,21 @@ public class AnnotationsHelper
 	//
 		if (propertyAnnotations != null)
 		{
-			for (Map.Entry<String, GileadAnnotation> entry : propertyAnnotations.entrySet())
+			for (Map.Entry<String, Class<?>> entry : propertyAnnotations.entrySet())
 			{
-				GileadAnnotation annotation = entry.getValue();
+				Class<?> annotation = entry.getValue();
+				
+				if (LimitedAccess.class.equals(annotation))
+				{
+				//	Consider that it can be ServerOnly or ReadOnly...
+				//
+					return true;
+				}
+				
 				if (annotation != null)
 				{
 					if ((annotationClass == null) ||
-						(annotationClass.equals(annotation.annotationClass) == true))
+						(annotationClass.equals(annotation) == true))
 					{
 					//	Found 
 					//
@@ -322,47 +360,5 @@ public class AnnotationsHelper
 			}
 		}
 		return false;
-	}
-}
-
-/**
- * Structure for Gilead annotation
- * @author bruno.marchesson
- *
- */
-class GileadAnnotation
-{
-	//----
-	// Fields
-	//----
-	/**
-	 * The associated annotation.
-	 */
-	public Class<?> annotationClass;
-	
-	/**
-	 * The annotation access manager.
-	 */
-	public IAccessManager accessManager;
-	
-	//----
-	// Constructors
-	//----
-	/**
-	 * Empty constructor
-	 */
-	public GileadAnnotation() 
-	{
-	}
-
-	/**
-	 * Complete constructor
-	 * @param annotation
-	 * @param accessManager
-	 */
-	public GileadAnnotation(Class<?> annotationClass, IAccessManager accessManager) 
-	{
-		this.annotationClass = annotationClass;
-		this.accessManager = accessManager;
 	}
 }

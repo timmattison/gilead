@@ -5,7 +5,12 @@ package net.sf.gilead.core;
 
 import java.util.Date;
 
+import sun.swing.AccessibleMethod;
+
 import junit.framework.TestCase;
+import net.sf.gilead.annotations.TestAccessManager;
+import net.sf.gilead.annotations.TestAccessManager.Role;
+import net.sf.gilead.core.annotations.AnnotationsManager;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.dao.IMessageDAO;
 import net.sf.gilead.test.dao.IUserDAO;
@@ -94,6 +99,12 @@ public class AnnotationsTest extends TestCase
 	 */
 	public void testReadOnlyAndServerOnlyCloneAndMergeMessage()
 	{
+	//	Init access manager
+	//
+		TestAccessManager accessManager = new TestAccessManager();
+		accessManager.setRole(Role.user);
+		AnnotationsManager.setAccessManager(accessManager);
+		
 	//	Get MessageDAO
 	//
 		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
@@ -102,14 +113,12 @@ public class AnnotationsTest extends TestCase
 	//	Load message
 	//
 		Message message = (Message) messageDAO.loadDetailedMessage((Integer)TestHelper.getExistingMessageId());
+		message.setComment("myComment");
+		messageDAO.saveMessage(message);
+		
 		assertNotNull(message);
 		assertNotNull(message.getVersion()); // serverOnly
-		if (message.countKeywords() == 0)
-		{
-			message.addKeyword("test", 2);
-			messageDAO.saveMessage(message);
-		}
-		assertTrue(message.countKeywords() > 0); // readOnly
+		assertNotNull(message.getComment()); // readOnly
 		
 	//	Clone message
 	//
@@ -119,9 +128,9 @@ public class AnnotationsTest extends TestCase
 	//
 		assertNotNull(cloneMessage);
 		assertNull(cloneMessage.getVersion()); // serverOnly
-		assertTrue(cloneMessage.countKeywords() > 0); // readOnly
+		assertNotNull(cloneMessage.getComment()); // readOnly
 		
-		cloneMessage.clearKeywords();
+		cloneMessage.setComment("modified");
 	
 	//	Merge Message
 	//
@@ -131,8 +140,8 @@ public class AnnotationsTest extends TestCase
 	//
 		assertNotNull(mergeMessage);
 		assertNotNull(mergeMessage.getVersion()); // serverOnly
-		assertTrue(mergeMessage.countKeywords() > 0); // readOnly
-		assertEquals(message.countKeywords(), mergeMessage.countKeywords());
+		assertNotNull(mergeMessage.getComment());
+		assertEquals(message.getComment(), mergeMessage.getComment());
 	}
 	
 	/**
@@ -140,6 +149,12 @@ public class AnnotationsTest extends TestCase
 	 */
 	public void testAnnotationsOnTransientMessage()
 	{
+	//	Init access manager
+	//
+		TestAccessManager accessManager = new TestAccessManager();
+		accessManager.setRole(Role.user);
+		AnnotationsManager.setAccessManager(accessManager);
+
 	//	Create message
 	//
 		Message message = new Message();
@@ -147,6 +162,7 @@ public class AnnotationsTest extends TestCase
 		message.setDate(new Date());
 		message.setVersion(1);
 		message.addKeyword("test", 4);
+		message.setComment("myComment");
 		
 	//	Clone message
 	//
@@ -156,9 +172,9 @@ public class AnnotationsTest extends TestCase
 	//
 		assertNotNull(cloneMessage);
 		assertNull(cloneMessage.getVersion()); // serverOnly
-		assertTrue(cloneMessage.countKeywords() > 0); // readOnly
+		assertNotNull(cloneMessage.getComment()); // readOnly
 		
-		cloneMessage.addKeyword("readOnly", 8);		
+		cloneMessage.setComment("modified");		
 		
 	//	Merge Message
 	//
@@ -168,6 +184,7 @@ public class AnnotationsTest extends TestCase
 	//
 		assertNotNull(mergeMessage);
 		assertNull(mergeMessage.getVersion()); // serverOnly
-		assertTrue(mergeMessage.countKeywords() == 0); // readOnly
+		assertNotNull(mergeMessage.getComment()); // readOnly
+		assertEquals(cloneMessage.getComment(), mergeMessage.getComment());
 	}
 }

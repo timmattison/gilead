@@ -3,6 +3,8 @@
  */
 package net.sf.gilead.annotations;
 
+import net.sf.gilead.core.annotations.IAccessManager;
+
 /**
  * Role based test access manager.
  * @author bruno.marchesson
@@ -57,16 +59,16 @@ public class TestAccessManager implements IAccessManager
 	/* (non-Javadoc)
 	 * @see net.sf.gilead.annotations.IAccessManager#isAnnotationActive(java.lang.Class, java.lang.Object, java.lang.String)
 	 */
-	public boolean isAnnotationActive(Class<?> annotationClass, Object entity,
-									  String propertyName)
+	public Class<?> getActiveAnnotation(Object entity,
+									    String propertyName)
 	{
 		if (role == Role.admin)
 		{
-			return false;
+			return null;
 		}
 		else
 		{
-			return true;
+			return ReadOnly.class;
 		}
 	}
 }

@@ -22,8 +22,8 @@ import net.sf.beanlib.hibernate.UnEnhancer;
 import net.sf.beanlib.hibernate3.Hibernate3JavaBeanReplicator;
 import net.sf.beanlib.spi.BeanTransformerSpi;
 import net.sf.beanlib.spi.replicator.BeanReplicatorSpi;
-import net.sf.gilead.annotations.AnnotationsHelper;
 import net.sf.gilead.core.IPersistenceUtil;
+import net.sf.gilead.core.annotations.AnnotationsManager;
 import net.sf.gilead.core.beanlib.IClassMapper;
 import net.sf.gilead.core.store.IProxyStore;
 import net.sf.gilead.exception.NotPersistentObjectException;
@@ -205,22 +205,25 @@ public class MergeClassBeanReplicator extends Hibernate3JavaBeanReplicator
         
     //	Proxy informations
     //
-        if ((AnnotationsHelper.hasServerOnlyOrReadOnlyAnnotations(from.getClass())) ||
-        	(AnnotationsHelper.hasServerOnlyOrReadOnlyAnnotations(toClass)))
+        if ((AnnotationsManager.hasGileadAnnotations(from.getClass())) ||
+        	(AnnotationsManager.hasGileadAnnotations(toClass)))
         {
         	// Load entity
         	try
         	{
 	        	Serializable id = _persistenceUtil.getId(from, toClass);
+	        	toClass = chooseClass(from.getClass(), toClass);
 	        	result = (T)_persistenceUtil.load(id, toClass);
         	}
         	catch(NotPersistentObjectException e)
         	{
         		_log.warn("Not an hibernate class (" + toClass + ") : annotated values will not be restored.");
+        		return (T) from;
         	}
         	catch(TransientObjectException e)
         	{
         		_log.warn("Transient value of class " + toClass + " : annotated values will not be restored.");
+        		return (T) from;
         	}
         }
     	
