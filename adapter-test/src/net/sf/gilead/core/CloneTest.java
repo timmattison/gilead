@@ -1555,6 +1555,42 @@ public abstract class CloneTest extends TestCase
 	}
 	
 	/**
+	 * Test merge a new entity object graph (created on client side)
+	 */
+	@SuppressWarnings("unchecked")
+	public void testMergeTwiceOnNewEntities() throws Exception
+	{
+	//	Create clone user
+	//
+		IUser cloneUser = createNewCloneUser();
+		
+	//	Create associated messages
+	//
+		IMessage message = createNewCloneMessage(cloneUser);
+		cloneUser.addMessage(message);
+		assertEquals(message.getAuthor(), cloneUser);
+		
+	//	Create a list of all these items
+	//
+		List<Object> cloneList = new ArrayList<Object>(2);
+		cloneList.add(cloneUser);
+		cloneList.add(message);
+		
+	//	Merge list
+	//
+		List<Object> mergeList = (List<Object>) _beanManager.merge(cloneList);
+		
+	//	Test merged object
+	//
+		assertNotNull(mergeList);
+		IUser mergeUser = (IUser) mergeList.get(0);
+		IMessage mergeMessage = (IMessage) mergeList.get(1);
+		assertNotNull(mergeUser);
+		assertNotNull(mergeMessage);
+		assertTrue(mergeUser == mergeMessage.getAuthor());
+	}
+	
+	/**
 	 * Test clone and merge of a persistent map, containing only basic types
 	 */
 	public void testCloneAndMergeOnPersistentMap()

@@ -16,8 +16,11 @@
 
 package net.sf.gilead.core;
 
+import java.util.Map;
+
 import net.sf.beanlib.hibernate.HibernateBeanReplicator;
 import net.sf.beanlib.provider.BeanPopulator;
+import net.sf.beanlib.spi.BeanTransformerSpi;
 import net.sf.gilead.core.beanlib.IClassMapper;
 import net.sf.gilead.core.beanlib.clone.CloneBeanReplicator;
 import net.sf.gilead.core.beanlib.merge.BeanlibThreadLocal;
@@ -59,6 +62,12 @@ public class LazyKiller
 	 * The used proxy store
 	 */
 	private IProxyStore _proxyStore;
+	
+	/**
+	 * The cloned map. It is used to propagate treated beans throughout 
+	 * collection clone and merge.
+	 */
+	private ThreadLocal<Map<Object,Object>> _clonedMap;
 	
 	//----
 	// Properties
@@ -126,6 +135,7 @@ public class LazyKiller
 					  IPersistenceUtil persistenceUtil,
 					  IProxyStore proxyStore)
 	{
+		_clonedMap = new ThreadLocal<Map<Object,Object>>();
 		setClassMapper(classMapper);
 		setPersistenceUtil(persistenceUtil);
 		setProxyStore(proxyStore);
@@ -136,6 +146,14 @@ public class LazyKiller
 	// Public interface
 	//
 	//------------------------------------------------------------------------
+	/**
+	 * Reset the clone map.
+	 */
+	public void reset()
+	{
+		_clonedMap.set(null);
+	}
+	
 	/**
 	 * Hibernate detachment
 	 * @param hibernatePojo the input hibernate pojo
@@ -250,6 +268,14 @@ public class LazyKiller
 																	   _classMapper, 
 																	   _persistenceUtil,
 																	   _proxyStore);
+	//	Propagate cloned map if needed
+	//
+		BeanTransformerSpi transformer = (BeanTransformerSpi) replicator.getTransformer();
+		Map<Object, Object> clonedMap = _clonedMap.get();
+		if (clonedMap != null)
+		{
+			transformer.getClonedMap().putAll(clonedMap);
+		}
 	//	Store root pojo on bean stack
 	//
 		BeanlibThreadLocal.getFromBeanStack().clear();
@@ -257,5 +283,9 @@ public class LazyKiller
 		BeanlibThreadLocal.getToBeanStack().push(hibernatePojo);
 		
 		replicator.populate();
+		
+	//	Fill cloned map if needed
+	//
+		_clonedMap.set(transformer.getClonedMap());
 	}
 }
