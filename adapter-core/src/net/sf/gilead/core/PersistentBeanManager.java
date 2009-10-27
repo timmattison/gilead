@@ -845,6 +845,10 @@ public class PersistentBeanManager
 				//
 					propertyClass  = ((IndexedPropertyDescriptor) descriptor).getPropertyType();
 				}
+				else if (propertyClass.isArray())
+				{
+					propertyClass = propertyClass.getComponentType();
+				}
 				if (propertyClass == null)
 				{
 				//	Can do nothing with this...
@@ -921,6 +925,19 @@ public class PersistentBeanManager
 					{
 						if ((holdPersistentObject(value.getKey(), alreadyChecked) == true) ||
 							(holdPersistentObject(value.getValue(), alreadyChecked) == true))
+						{
+							return true;
+						}
+					}
+				}
+				else if (propertyClass.isArray())
+				{
+				//	Check array elements
+				//
+					Object[] propertyValues = (Object[]) propertyValue;
+					for (int property = 0; property < propertyValues.length ; property++)
+					{
+						if (holdPersistentObject(propertyValues[property]) == true)
 						{
 							return true;
 						}

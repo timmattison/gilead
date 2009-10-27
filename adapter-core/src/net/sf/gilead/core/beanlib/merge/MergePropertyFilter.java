@@ -131,7 +131,7 @@ public class MergePropertyFilter implements DetailedPropertyFilter
 		
 		//	'ReadOnly' or 'ServerOnly' annotation : original info was loaded, do not copy
 		//
-			if ((AnnotationsManager.isServerOrReadOnly(cloneBean, propertyName)) ||
+			if (/*(AnnotationsManager.isServerOrReadOnly(cloneBean, propertyName)) ||*/
 				(AnnotationsManager.isServerOrReadOnly(persistentBean, propertyName)))
 			{
 			//	If the proxy was initialized before clone

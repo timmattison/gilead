@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 
 import junit.framework.TestCase;
 import net.sf.gilead.core.store.stateful.AbstractStatefulProxyStore;
+import net.sf.gilead.core.wrapper.WrappingArrayClass;
 import net.sf.gilead.core.wrapper.WrappingClass;
 import net.sf.gilead.core.wrapper.WrappingClass.ErrorCode;
 import net.sf.gilead.pojo.base.ILightEntity;
@@ -745,6 +746,54 @@ public abstract class CloneTest extends TestCase
 		assertEquals(wrapper.getUser().getId(), mergedWrapper.getUser().getId());
 		assertNotNull(mergedWrapper.getUser().getMessageList());
 		assertFalse(Hibernate.isInitialized(mergedWrapper.getUser().getMessageList()));
+	}
+	
+	/**
+	 * Test clone and merge operations on array wrapper
+	 * (ie a non persistent class containing persistent classes)
+	 */
+	public void testCloneAndMergeArrayWrapper()
+	{
+	//	Create wrapping object
+	//
+		WrappingArrayClass wrapper = new WrappingArrayClass();
+		
+	//	Get Message and User DAO
+	//
+		IMessageDAO messageDAO = DAOFactory.getMessageDAO();
+		assertNotNull(messageDAO);
+		
+	//	Fill wrapper
+	//
+		List<IMessage> messageList = messageDAO.loadAllMessage(0, 10);
+		wrapper.setMessages(messageList.toArray(new IMessage[messageList.size()]));
+		
+	//	Clone wrapper
+	//
+		WrappingArrayClass cloneWrapper = (WrappingArrayClass) _beanManager.clone(wrapper);
+		
+	//	Clone verification
+	//
+		assertNotNull(cloneWrapper.getMessages());
+		for (int index = 0 ; index < cloneWrapper.getMessages().length ; index ++)
+		{
+			IUser author = cloneWrapper.getMessages()[index].getAuthor(); 
+			assertNull(author);
+		}
+		
+	//	Merge wrapper
+	//
+		WrappingArrayClass mergedWrapper = (WrappingArrayClass) _beanManager.merge(cloneWrapper);
+		
+	//	Merge verification
+	//
+		assertNotNull(mergedWrapper.getMessages());
+		for (int index = 0 ; index < cloneWrapper.getMessages().length ; index ++)
+		{
+			IUser author = mergedWrapper.getMessages()[index].getAuthor(); 
+			assertNotNull(author);
+			assertFalse(_beanManager.getPersistenceUtil().isInitialized(author));
+		}
 	}
 	/**
 	 * Test clone and merge operations on wrapper transient object

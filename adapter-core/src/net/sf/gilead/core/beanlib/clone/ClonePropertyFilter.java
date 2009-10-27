@@ -131,8 +131,8 @@ public class ClonePropertyFilter implements DetailedPropertyFilter
 			
 		//	'ServerOnly' annotation handling
 		//
-			if ((AnnotationsManager.isServerOnly(fromBean, propertyName)) ||
-				(AnnotationsManager.isServerOnly(toBean, propertyName)))	
+			if ((AnnotationsManager.isServerOnly(fromBean, propertyName)) /*||
+				(AnnotationsManager.isServerOnly(toBean, propertyName))*/)	
 			{
 				return false;
 			}
