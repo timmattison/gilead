@@ -138,7 +138,7 @@ public class PersistentAdapter extends JavaAdapter
 		//
 			if (_log.isDebugEnabled())
 			{
-				_log.debug("Received runtime error on server", e.getCause());
+				_log.debug("Received runtime error on server", e);
 			}
 			
 			throw e;
