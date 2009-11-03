@@ -12,6 +12,7 @@
 	<property name="jar.dir"  value="dist"/>
 	
 	<property name="core.dir" value="../adapter-core"/>
+	<property name="hibernate.dir" value="../hibernate-util"/>
 	
 	<!-- Classpath -->
     <path id="project.classpath">
@@ -24,12 +25,18 @@
     	<fileset dir="${core.dir}">
 	        <include name="**/*.jar" />
     	</fileset>
+    	
+    	<fileset dir="${hibernate.dir}">
+	        <include name="**/*.jar" />
+    	</fileset>
     </path>
 	
 	<!-- Targets -->
     <target name="init">
     	<ant antfile="${core.dir}/build.xml" target="jar" 
     	     dir="${core.dir}"/>
+    	<ant antfile="${hibernate.dir}/build.xml" target="jar" 
+    	   	 dir="${hibernate.dir}"/>
     	
         <mkdir dir="${build.dir}"/>
     	

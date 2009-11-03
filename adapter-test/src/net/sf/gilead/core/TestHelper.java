@@ -8,11 +8,12 @@ import java.util.StringTokenizer;
 
 import net.sf.gilead.core.beanlib.mapper.DirectoryClassMapper;
 import net.sf.gilead.core.beanlib.mapper.ProxyClassMapper;
+import net.sf.gilead.core.hibernate.ConfigurationHelper;
 import net.sf.gilead.core.hibernate.HibernateUtil;
-import net.sf.gilead.core.serialization.GwtProxySerialization;
 import net.sf.gilead.core.serialization.JBossProxySerialization;
 import net.sf.gilead.core.store.stateful.InMemoryProxyStore;
 import net.sf.gilead.core.store.stateless.StatelessProxyStore;
+import net.sf.gilead.gwt.GwtConfigurationHelper;
 import net.sf.gilead.test.DAOFactory;
 import net.sf.gilead.test.HibernateContext;
 import net.sf.gilead.test.HibernateContext.Context;
@@ -308,16 +309,7 @@ public class TestHelper
 	public static PersistentBeanManager initStatelessBeanManager()
 	{
 		HibernateContext.setContext(HibernateContext.Context.stateless);
-		
-		HibernateUtil persistenceUtil = new HibernateUtil(); 
-		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
-		
-		PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
-		beanManager.setPersistenceUtil(persistenceUtil);
-		beanManager.setProxyStore(new StatelessProxyStore());
-		beanManager.setClassMapper(null);
-		
-		return beanManager;
+		return ConfigurationHelper.initStatelessBeanManager(HibernateContext.getSessionFactory());
 	}
 	
 	/**
@@ -326,20 +318,7 @@ public class TestHelper
 	public static PersistentBeanManager initGwtStatelessBeanManager()
 	{
 		HibernateContext.setContext(HibernateContext.Context.gwt);
-		
-		HibernateUtil persistenceUtil = new HibernateUtil(); 
-		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
-		
-		PersistentBeanManager beanManager = PersistentBeanManager.getInstance();
-		beanManager.setPersistenceUtil(persistenceUtil);
-		
-		StatelessProxyStore proxyStore = new StatelessProxyStore();
-		proxyStore.setProxySerializer(new GwtProxySerialization());
-		beanManager.setProxyStore(proxyStore);
-		
-		beanManager.setClassMapper(null);
-		
-		return beanManager;
+		return GwtConfigurationHelper.initGwtStatelessBeanManager(HibernateContext.getSessionFactory());
 	}
 	
 	/**
@@ -348,20 +327,7 @@ public class TestHelper
 	public static PersistentBeanManager initLegacyStatelessBeanManager()
 	{
 		HibernateContext.setContext(HibernateContext.Context.legacy);
-		
-		HibernateUtil persistenceUtil = new HibernateUtil(); 
-		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
-		
-		PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
-		beanManager.setPersistenceUtil(persistenceUtil);
-		
-		StatelessProxyStore proxyStore = new StatelessProxyStore();
-		proxyStore.setProxySerializer(new JBossProxySerialization());
-		beanManager.setProxyStore(proxyStore);
-		
-		beanManager.setClassMapper(null);
-		
-		return beanManager;
+		return ConfigurationHelper.initLegacyStatelessBeanManager(HibernateContext.getSessionFactory());
 	}
 	
 	/**
@@ -370,7 +336,6 @@ public class TestHelper
 	public static PersistentBeanManager initStatefulBeanManager()
 	{
 		HibernateContext.setContext(HibernateContext.Context.stateful);
-		
 		HibernateUtil persistenceUtil = new HibernateUtil(); 
 		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
 		
@@ -392,22 +357,7 @@ public class TestHelper
 	public static PersistentBeanManager initProxyBeanManager() throws FileNotFoundException
 	{
 		HibernateContext.setContext(HibernateContext.Context.proxy);
-		
-		HibernateUtil persistenceUtil = new HibernateUtil(); 
-		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
-		
-		PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
-		beanManager.setPersistenceUtil(persistenceUtil);
-		
-		StatelessProxyStore proxyStore = new StatelessProxyStore();
-		proxyStore.setProxySerializer(new JBossProxySerialization());
-		beanManager.setProxyStore(proxyStore);
-		
-		ProxyClassMapper classMapper = new ProxyClassMapper();
-		classMapper.setPersistenceUtil(persistenceUtil);
-		beanManager.setClassMapper(classMapper);
-		
-		return beanManager;
+		return ConfigurationHelper.initProxyBeanManager(HibernateContext.getSessionFactory());
 	}
 	
 	/**
@@ -466,15 +416,7 @@ public class TestHelper
 	{
 		HibernateContext.setContext(HibernateContext.Context.annotated);
 		
-		HibernateUtil persistenceUtil = new HibernateUtil(); 
-		persistenceUtil.setSessionFactory(HibernateContext.getSessionFactory());
-		
-		PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
-		beanManager.setPersistenceUtil(persistenceUtil);
-		beanManager.setProxyStore(new StatelessProxyStore());
-		beanManager.setClassMapper(null);
-		
-		return beanManager;
+		return ConfigurationHelper.initStatelessBeanManager(HibernateContext.getSessionFactory());
 	}
 	
 	//--------------------------------------------------------------------------

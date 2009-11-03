@@ -7,5 +7,7 @@
 	<classpathentry kind="lib" path="lib/proxy/commons-lang-2.2.jar"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/GWT (1)"/>
 	<classpathentry kind="lib" path="/adapter-core/lib/slf4j-api-1.5.8.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/hibernate-util"/>
+	<classpathentry kind="lib" path="/hibernate-util/lib/hibernate3.jar" sourcepath="C:/GWT/hibernate3.2/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

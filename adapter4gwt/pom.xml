@@ -86,6 +86,10 @@
 			<artifactId>adapter-core</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>${parent.groupId}</groupId>
+			<artifactId>hibernate-util</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
 		</dependency>
