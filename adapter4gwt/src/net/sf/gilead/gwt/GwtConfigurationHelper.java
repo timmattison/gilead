@@ -21,18 +21,21 @@ public class GwtConfigurationHelper
 	 */
 	public static PersistentBeanManager initGwtStatelessBeanManager(SessionFactory sessionFactory)
 	{
-		HibernateUtil persistenceUtil = new HibernateUtil(); 
-		persistenceUtil.setSessionFactory(sessionFactory);
+		if (PersistentBeanManager.getInstance().getPersistenceUtil() == null)
+		{
+			HibernateUtil persistenceUtil = new HibernateUtil(); 
+			persistenceUtil.setSessionFactory(sessionFactory);
+			
+			PersistentBeanManager beanManager = PersistentBeanManager.getInstance();
+			beanManager.setPersistenceUtil(persistenceUtil);
+			
+			StatelessProxyStore proxyStore = new StatelessProxyStore();
+			proxyStore.setProxySerializer(new GwtProxySerialization());
+			beanManager.setProxyStore(proxyStore);
+			
+			beanManager.setClassMapper(null);
+		}
 		
-		PersistentBeanManager beanManager = PersistentBeanManager.getInstance();
-		beanManager.setPersistenceUtil(persistenceUtil);
-		
-		StatelessProxyStore proxyStore = new StatelessProxyStore();
-		proxyStore.setProxySerializer(new GwtProxySerialization());
-		beanManager.setProxyStore(proxyStore);
-		
-		beanManager.setClassMapper(null);
-		
-		return beanManager;
+		return PersistentBeanManager.getInstance();
 	}
 }

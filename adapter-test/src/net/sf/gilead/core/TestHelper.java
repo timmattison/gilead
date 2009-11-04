@@ -309,6 +309,10 @@ public class TestHelper
 	public static PersistentBeanManager initStatelessBeanManager()
 	{
 		HibernateContext.setContext(HibernateContext.Context.stateless);
+		
+		// force init
+		PersistentBeanManager.getInstance().setPersistenceUtil(null);
+		
 		return ConfigurationHelper.initStatelessBeanManager(HibernateContext.getSessionFactory());
 	}
 	
@@ -318,6 +322,10 @@ public class TestHelper
 	public static PersistentBeanManager initGwtStatelessBeanManager()
 	{
 		HibernateContext.setContext(HibernateContext.Context.gwt);
+		
+		// force init
+		PersistentBeanManager.getInstance().setPersistenceUtil(null);
+		
 		return GwtConfigurationHelper.initGwtStatelessBeanManager(HibernateContext.getSessionFactory());
 	}
 	
@@ -327,6 +335,10 @@ public class TestHelper
 	public static PersistentBeanManager initLegacyStatelessBeanManager()
 	{
 		HibernateContext.setContext(HibernateContext.Context.legacy);
+		
+		// force init
+		PersistentBeanManager.getInstance().setPersistenceUtil(null);
+		
 		return ConfigurationHelper.initLegacyStatelessBeanManager(HibernateContext.getSessionFactory());
 	}
 	
@@ -357,6 +369,10 @@ public class TestHelper
 	public static PersistentBeanManager initProxyBeanManager() throws FileNotFoundException
 	{
 		HibernateContext.setContext(HibernateContext.Context.proxy);
+		
+		// force init
+		PersistentBeanManager.getInstance().setPersistenceUtil(null);
+		
 		return ConfigurationHelper.initProxyBeanManager(HibernateContext.getSessionFactory());
 	}
 	
@@ -415,6 +431,9 @@ public class TestHelper
 	public static PersistentBeanManager initJava5AnnotatedBeanManager() throws FileNotFoundException
 	{
 		HibernateContext.setContext(HibernateContext.Context.annotated);
+		
+		// force init
+		PersistentBeanManager.getInstance().setPersistenceUtil(null);
 		
 		return ConfigurationHelper.initStatelessBeanManager(HibernateContext.getSessionFactory());
 	}
