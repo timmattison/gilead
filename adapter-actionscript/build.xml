@@ -3,8 +3,8 @@
 	
 	<!-- Properties -->
     <property environment="env"/>
-    <property name="version" value="1.2"/>
-	<property name="output.file" value="adapter-actionscript-${version}.swc" />
+    <property name="version" value="1.3"/>
+	<property name="output.file" value="gilead-actionscript-${version}.swc" />
 	
 	<property name="source.dir" value="src"/>
     <property name="lib.dir" value="lib"/>

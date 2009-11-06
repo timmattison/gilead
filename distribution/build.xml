@@ -8,7 +8,7 @@
 	<property name="src.dir" value="src"/>
 	<property name="build.dir" value="classes"/>
 	<property name="jar.dir" value="dist"/>
-	<property name="doc.dir" value="doc"/>
+	<property name="doc.dir" value="javadoc"/>
 	<property name="lib.dir" value="lib"/>
 
 	<property name="core.dir" value="../adapter-core"/>
@@ -18,7 +18,8 @@
 	<property name="adapter-actionscript.dir" value="../adapter-actionscript"/>
 	<property name="adapter4blazeds.dir" value="../adapter4blazeds"/>
 	<property name="comet4gwt.dir" value="../comet4gwt"/>
-
+	<property name="adapter4appengine.dir" value="../adapter4appengine"/>
+	
 	<!-- Targets -->
 	<target name="svn.version">
 		<typedef resource="com/googlecode/svntask/svntask.xml">
@@ -60,6 +61,8 @@
 			dir="${adapter4blazeds.dir}"/>
 		<ant antfile="${comet4gwt.dir}/build.xml" target="clean" 
 			dir="${comet4gwt.dir}"/>
+		<ant antfile="${adapter4appengine.dir}/build.xml" target="clean" 
+			dir="${adapter4appengine.dir}"/>
 		<ant antfile="${core.test.dir}/build.xml" target="clean" 
 			dir="${core.test.dir}"/>
 		<delete dir="${output.dir}"/>
@@ -78,6 +81,8 @@
 			dir="${adapter4blazeds.dir}"/>
 		<ant antfile="${comet4gwt.dir}/build.xml" target="jar" 
 			dir="${comet4gwt.dir}"/>
+		<ant antfile="${adapter4appengine.dir}/build.xml" target="jar" 
+			dir="${adapter4appengine.dir}"/>
 	</target>
 
 	<target name="test" depends="init">
@@ -87,7 +92,7 @@
 
 	<target name="distribution" depends="clean, build">
 		<!-- copy jar files -->
-		<copy todir="${output.dir}/${jar.dir}">
+		<copy todir="${output.dir}">
 			<fileset dir="${core.dir}/${jar.dir}">
 				<include name="*.jar"/>
 			</fileset>
@@ -106,10 +111,13 @@
 			<fileset dir="${comet4gwt.dir}/${jar.dir}">
 				<include name="*.jar"/>
 			</fileset>
+			<fileset dir="${adapter4appengine.dir}/${jar.dir}">
+				<include name="*.jar"/>
+			</fileset>
 		</copy>
 
 		<!-- Copy src & lib for each component -->
-		<copy todir="${output.dir}/adapter-core"
+		<copy todir="${output.dir}/gilead-core"
 			  includeemptydirs="false">
 			<fileset dir="${core.dir}">
 				<include name="**/*"/>
@@ -119,7 +127,7 @@
 			</fileset>
 		</copy>
 
-		<copy todir="${output.dir}/hibernate-util"
+		<copy todir="${output.dir}/gilead-hibernate"
 			  includeemptydirs="false">
 			<fileset dir="${hibernate.dir}">
 				<include name="**/*"/>
@@ -129,7 +137,7 @@
 			</fileset>
 		</copy>
 
-		<copy todir="${output.dir}/adapter4gwt"
+		<copy todir="${output.dir}/gilead4gwt"
 			  includeemptydirs="false">
 			<fileset dir="${adapter4gwt.dir}">
 				<include name="**/*"/>
@@ -139,7 +147,7 @@
 			</fileset>
 		</copy>
 
-		<copy todir="${output.dir}/adapter-actionscript"
+		<copy todir="${output.dir}/gilead-actionscript"
 			  includeemptydirs="false">
 			<fileset dir="${adapter-actionscript.dir}">
 				<include name="**/*"/>
@@ -149,7 +157,7 @@
 			</fileset>
 		</copy>
 
-		<copy todir="${output.dir}/adapter4blazeds"
+		<copy todir="${output.dir}/gilead4blazeds"
 			  includeemptydirs="false">
 			<fileset dir="${adapter4blazeds.dir}">
 				<include name="**/*"/>
@@ -169,7 +177,17 @@
 			</fileset>
 		</copy>
 		
-		<copy todir="${output.dir}/adapter-test"
+		<copy todir="${output.dir}/gilead4appengine"
+			  includeemptydirs="false">
+			<fileset dir="${adapter4appengine.dir}">
+				<include name="**/*"/>
+				<exclude name="**/bin/**/*"/>
+				<exclude name="**/${build.dir}/**/*"/>
+				<exclude name="**/${jar.dir}/**/*"/>
+			</fileset>
+		</copy>
+		
+		<copy todir="${output.dir}/gilead-test"
 			  includeemptydirs="false">
 			<fileset dir="${core.test.dir}">
 				<include name="**/*"/>
@@ -196,6 +214,9 @@
 				<include name="**/*.java"/>
 			</fileset>
 			<fileset dir="${comet4gwt.dir}/${src.dir}">
+				<include name="**/*.java"/>
+			</fileset>
+			<fileset dir="${adapter4appengine.dir}/${src.dir}">
 				<include name="**/*.java"/>
 			</fileset>
 		</copy>

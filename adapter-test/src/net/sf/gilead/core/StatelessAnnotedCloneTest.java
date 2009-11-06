@@ -34,6 +34,7 @@ public class StatelessAnnotedCloneTest extends CloneTest
 		_cloneUserClass = _domainUserClass;
 		_cloneEmployeeClass = _domainEmployeeClass;
 		
+		_testComponentType = false;
 	//	Call base setup
 	//
 		super.setUp();
