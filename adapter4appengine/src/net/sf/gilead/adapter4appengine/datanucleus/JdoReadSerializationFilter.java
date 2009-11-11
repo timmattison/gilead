@@ -176,25 +176,44 @@ public class JdoReadSerializationFilter implements ISerializationFilter
 	//
 	//-------------------------------------------------------------------------
 	/**
+	 * Returns a Field object that reflects the primary key of the class or 
+	 * interface represented by this Class object. 
+	 * 
+	 */
+	protected Field getDeclaredId(Object obj)
+	{
+		Class<?> theClass = obj.getClass();
+		while( theClass != null )
+		{
+			Field[] fields = theClass.getDeclaredFields();
+			for( Field field : fields )
+			{
+				if( (field.getAnnotation( PrimaryKey.class ) != null)
+						|| (field.getAnnotation( Id.class ) != null) )
+				{
+					// Id field
+					//
+					return field;
+				}
+			}
+			// Id field not found in base class: take a look in super class
+			theClass = theClass.getSuperclass();
+		}
+
+		throw new RuntimeException( "Id field not found for class " + obj.getClass().getName() );
+	}
+
+	/**
 	 * @return the ID of the argument persistent ID
 	 */
 	protected Object getId(Object obj, Map<String, Object> fieldValues)
 	{
-		Field[] fields = obj.getClass().getDeclaredFields();
-		for (Field field : fields)
-		{
-			if ((field.getAnnotation(PrimaryKey.class) != null) ||
-				(field.getAnnotation(Id.class) != null))
-			{
-			//	Id field
-			//
-				return fieldValues.get(field.getName());
-			}
-		}
-		
-		throw new RuntimeException("Id field not found for class " + obj.getClass().getName());
+		Field field = getDeclaredId( obj );
+		return fieldValues.get( field.getName() );
 	}
 	
+
+
 	/**
 	 * Get stored detached state for the input obj and its associated id
 	 * @param obj
@@ -234,8 +253,7 @@ public class JdoReadSerializationFilter implements ISerializationFilter
 	{
 		try
 		{
-			// TODO ID field name
-			Field idField = obj.getClass().getDeclaredField("id");
+			Field idField = getDeclaredId( obj );
 			idField.setAccessible(true);
 			
 			// Get stored ID

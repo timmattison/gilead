@@ -1,8 +1,7 @@
 package com.google.gwt.user.client.rpc.core.com.google.appengine.api.datastore;
 
 import com.google.appengine.api.datastore.Key;
-
-//import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamReader;
 import com.google.gwt.user.client.rpc.SerializationStreamWriter;
@@ -42,13 +41,11 @@ public class Key_CustomFieldSerializer {
 	    		
     		long id = streamReader.readLong();
 	    	
-    		// TODO solve the import for the following lines
-    		/*
     		if (name == null)
     			instance = KeyFactory.createKey (parent, kind, id);
     		else
     			instance = KeyFactory.createKey(parent, kind, name);
-			*/
+
 	        return instance;
 	    }
 
@@ -68,7 +65,6 @@ public class Key_CustomFieldSerializer {
 	        String name = instance.getName() != null ? instance.getName() : "null";
 	        long id = instance.getId();
 	        
-	        streamWriter.writeString(kind);
 	        streamWriter.writeString(name);
 	        streamWriter.writeLong(id);	        
 	    }
