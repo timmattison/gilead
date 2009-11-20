@@ -2,6 +2,7 @@ package net.sf.gilead.blazeds.adapter;
 
 import java.util.List;
 
+import net.sf.gilead.blazeds.remoting.IBeanManagerService;
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.store.stateful.HttpSessionProxyStore;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import flex.messaging.FlexContext;
 import flex.messaging.config.ConfigMap;
+import flex.messaging.log.Log;
 import flex.messaging.messages.Message;
 import flex.messaging.messages.RemotingMessage;
 import flex.messaging.services.remoting.adapters.JavaAdapter;
@@ -130,7 +132,8 @@ public class PersistentAdapter extends JavaAdapter
 			
 		//	Clone result
 		//
-			return _beanManager.clone(result);
+			result = _beanManager.clone(result);
+			return result;
 		}
 		catch (RuntimeException e)
 		{
@@ -152,5 +155,26 @@ public class PersistentAdapter extends JavaAdapter
 				HttpSessionProxyStore.setHttpSession(null);
 			}
 		}
+	}
+	
+	/**
+	 * Create the underlying service instance
+	 */
+	@Override
+	protected Object createInstance(Class cl)
+	{
+		// Let the Java adapter create the instance
+		Object result = super.createInstance(cl);
+		
+		if (result instanceof IBeanManagerService)
+		{
+			if (_log.isDebugEnabled())
+			{
+				_log.debug("Seting bean manager " + _beanManager + " to service " + result);
+			}
+			
+			((IBeanManagerService)result).setBeanManager(_beanManager);
+		}
+		return result;
 	}
 }

@@ -3,15 +3,12 @@
  */
 package net.sf.gilead.blazeds.remoting;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.pojo.base.ILightEntity;
-import net.sf.gilead.pojo.gwt.IRequestParameter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +68,7 @@ public class RequestService<T extends ILightEntity> implements IBeanManagerServi
 	 */
 	@SuppressWarnings("unchecked")
 	public List<T> executeRequest(String query,
-								  List<IRequestParameter> parameters)
+								  List<Object> parameters)
 	{
 	//	Precondition checking
 	//
@@ -98,23 +95,10 @@ public class RequestService<T extends ILightEntity> implements IBeanManagerServi
 			throw new NullPointerException("Persistence util not set on beanManager field !");
 		}
 		
-	//	Convert parameters if needed
-	//
-		List<Object> queryParameters = null;
-		if ((parameters != null) &&
-			(parameters.isEmpty() == false))
-		{
-			queryParameters = new ArrayList<Object>(parameters.size());
-			for (IRequestParameter parameter : parameters)
-			{
-				queryParameters.add(parameter.getValue());
-			}
-		}
-		
 	//	Execute query
 	// 	Note : double case is mandatory due to Java 6 compiler issue 6548436
 	//
-		return (List<T>)(Object) persistenceUtil.executeQuery(query, queryParameters);
+		return (List<T>)(Object) persistenceUtil.executeQuery(query, parameters);
 	}
 
 	/**
@@ -122,7 +106,7 @@ public class RequestService<T extends ILightEntity> implements IBeanManagerServi
 	 */
 	@SuppressWarnings("unchecked")
 	public List<T> executeRequest(String query,
-								  Map<String, IRequestParameter> parameters) 
+								  Map<String, Object> parameters) 
 	{
 	//	Precondition checking
 	//
@@ -149,22 +133,9 @@ public class RequestService<T extends ILightEntity> implements IBeanManagerServi
 			throw new NullPointerException("Persistence util not set on beanManager field !");
 		}
 		
-	//	Convert parameters if needed
-	//
-		Map<String,Object> queryParameters = null;
-		if ((parameters != null) &&
-			(parameters.isEmpty() == false))
-		{
-			queryParameters = new HashMap<String, Object>(parameters.size());
-			for (Map.Entry<String, IRequestParameter> parameter : parameters.entrySet())
-			{
-				queryParameters.put(parameter.getKey(), parameter.getValue().getValue());
-			}
-		}
-		
 	//	Execute query
 	//	Note : double case is mandatory due to Java 6 compiler issue 6548436
 	//
-		return (List<T>)(Object) persistenceUtil.executeQuery(query, queryParameters);
+		return (List<T>)(Object) persistenceUtil.executeQuery(query, parameters);
 	}
 }

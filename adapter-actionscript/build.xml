@@ -12,7 +12,7 @@
 	
 	<!-- Targets -->
     <target name="init">
-    	<property name="FLEX_HOME" value="C:/eclipse/Flex Builder 3/sdks/3.2.0"/>
+    	<property name="FLEX_HOME" value="D:/Librairies/FlexSDK_3.4"/>
     	<taskdef resource="flexTasks.tasks" 
     		     classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
     	 

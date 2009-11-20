@@ -1,7 +1,5 @@
 package net.sf.gilead.pojo.actionscript
-{
-	import mx.collections.ArrayCollection;
-	
+{	
     [RemoteClass(alias="net.sf.gilead.pojo.java5.LightEntity")]
 	public class LightEntity
 	{
@@ -77,9 +75,24 @@ package net.sf.gilead.pojo.actionscript
 		/**
 		 * toString overrides
 		 */
-		public function toString():String
+		public function debugString():String
 		{
-			return "[proxyInformations : "+_proxyInformations.toString()+"]";
+			var result:String;
+			result = "[proxyInformations : ";
+			result += _proxyInformations + " (";
+			for(var key:String in _proxyInformations)
+			{
+				result += key + ":" + _proxyInformations[key] + ","; 
+			}
+			result += ")], [initializationMap : "; 
+			result += _initializationMap + " (";
+			for(var key2:String in _initializationMap)
+			{
+				result += key2 + ":" + _initializationMap[key2] + ","; 
+			}
+			
+			result += ")]";
+			return result;
 		}
 	}
 }
