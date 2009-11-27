@@ -6,9 +6,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import net.sf.gilead.configuration.ConfigurationHelper;
 import net.sf.gilead.core.beanlib.mapper.DirectoryClassMapper;
 import net.sf.gilead.core.beanlib.mapper.ProxyClassMapper;
-import net.sf.gilead.core.hibernate.ConfigurationHelper;
 import net.sf.gilead.core.hibernate.HibernateUtil;
 import net.sf.gilead.core.serialization.JBossProxySerialization;
 import net.sf.gilead.core.store.stateful.InMemoryProxyStore;
@@ -313,7 +313,8 @@ public class TestHelper
 		// force init
 		PersistentBeanManager.getInstance().setPersistenceUtil(null);
 		
-		return ConfigurationHelper.initStatelessBeanManager(HibernateContext.getSessionFactory());
+		return ConfigurationHelper.initStatelessBeanManager(
+				new HibernateUtil(HibernateContext.getSessionFactory()));
 	}
 	
 	/**
@@ -326,7 +327,8 @@ public class TestHelper
 		// force init
 		PersistentBeanManager.getInstance().setPersistenceUtil(null);
 		
-		return GwtConfigurationHelper.initGwtStatelessBeanManager(HibernateContext.getSessionFactory());
+		return GwtConfigurationHelper.initGwtStatelessBeanManager(
+				new HibernateUtil(HibernateContext.getSessionFactory()));
 	}
 	
 	/**
@@ -339,7 +341,8 @@ public class TestHelper
 		// force init
 		PersistentBeanManager.getInstance().setPersistenceUtil(null);
 		
-		return ConfigurationHelper.initLegacyStatelessBeanManager(HibernateContext.getSessionFactory());
+		return ConfigurationHelper.initLegacyStatelessBeanManager(
+				new HibernateUtil(HibernateContext.getSessionFactory()));
 	}
 	
 	/**
@@ -373,7 +376,8 @@ public class TestHelper
 		// force init
 		PersistentBeanManager.getInstance().setPersistenceUtil(null);
 		
-		return ConfigurationHelper.initProxyBeanManager(HibernateContext.getSessionFactory());
+		return ConfigurationHelper.initProxyBeanManager(
+				new HibernateUtil(HibernateContext.getSessionFactory()));
 	}
 	
 	/**
@@ -435,7 +439,8 @@ public class TestHelper
 		// force init
 		PersistentBeanManager.getInstance().setPersistenceUtil(null);
 		
-		return ConfigurationHelper.initStatelessBeanManager(HibernateContext.getSessionFactory());
+		return ConfigurationHelper.initStatelessBeanManager(
+				new HibernateUtil(HibernateContext.getSessionFactory()));
 	}
 	
 	//--------------------------------------------------------------------------

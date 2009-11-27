@@ -625,22 +625,25 @@ public class HibernateUtil implements IPersistenceUtil
 			}
 			else
 			{
-				// BM start of debug code
-				Map<?,?> map = (Map<?, ?>) underlyingCollection;
-				_log.info("Merging map of type " + map.getClass().getName());
-				for (Map.Entry<?, ?> entry : map.entrySet())
+				if (_log.isDebugEnabled())
 				{
-					_log.info("Key is '" + entry.getKey() + "' of type " + entry.getKey().getClass());
-					if (entry.getValue() == null)
+					// BM start of debug code
+					Map<?,?> map = (Map<?, ?>) underlyingCollection;
+					_log.debug("Merging map of type " + map.getClass().getName());
+					for (Map.Entry<?, ?> entry : map.entrySet())
 					{
-						_log.info("Value is null");
+						_log.debug("Key is '" + entry.getKey() + "' of type " + entry.getKey().getClass());
+						if (entry.getValue() == null)
+						{
+							_log.debug("Value is null");
+						}
+						else
+						{
+							_log.debug("Value is '" + entry.getValue() + "' of type " + entry.getValue().getClass());
+						}
 					}
-					else
-					{
-						_log.info("Value is '" + entry.getValue() + "' of type " + entry.getValue().getClass());
-					}
+					// BM end of debugging code
 				}
-				// BM end of debugging code
 				
 				collection = new PersistentMap((SessionImpl) session,
 						 				 	   (Map<?, ?>) underlyingCollection);

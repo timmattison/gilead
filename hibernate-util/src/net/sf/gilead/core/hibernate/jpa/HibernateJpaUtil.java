@@ -3,6 +3,8 @@
  */
 package net.sf.gilead.core.hibernate.jpa;
 
+import javax.persistence.EntityManagerFactory;
+
 import net.sf.gilead.core.hibernate.HibernateUtil;
 import net.sf.gilead.util.IntrospectionHelper;
 
@@ -36,4 +38,27 @@ public class HibernateJpaUtil extends HibernateUtil
 	//
 		setSessionFactory(((HibernateEntityManagerFactory) entityManagerFactory).getSessionFactory()); 
 	}
+	
+	//-------------------------------------------------------------------------
+	//
+	// Constructors
+	//
+	//-------------------------------------------------------------------------
+	/**
+	 * Empty constructor.
+	 */
+	public HibernateJpaUtil()
+	{
+		super();
+	}
+	
+	/**
+	 * Complete constructor.
+	 */
+	public HibernateJpaUtil(EntityManagerFactory entityManagerFactory)
+	{
+		super();
+		setEntityManagerFactory(entityManagerFactory);
+	}
+	
 }

@@ -1,17 +1,16 @@
 /**
  * 
  */
-package net.sf.gilead.core.hibernate;
+package net.sf.gilead.configuration;
 
 import java.io.FileNotFoundException;
 
+import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.beanlib.mapper.ProxyClassMapper;
 import net.sf.gilead.core.serialization.JBossProxySerialization;
 import net.sf.gilead.core.store.stateful.HttpSessionProxyStore;
 import net.sf.gilead.core.store.stateless.StatelessProxyStore;
-
-import org.hibernate.SessionFactory;
 
 /**
  * Configuration helper to simplify Gilead configuration.
@@ -28,13 +27,10 @@ public class ConfigurationHelper
 	/**
 	 * Init bean manager for stateless mode
 	 */
-	public static PersistentBeanManager initStatelessBeanManager(SessionFactory sessionFactory)
+	public static PersistentBeanManager initStatelessBeanManager(IPersistenceUtil persistenceUtil)
 	{
 		if (PersistentBeanManager.getInstance().getPersistenceUtil() == null)
 		{
-			HibernateUtil persistenceUtil = new HibernateUtil(); 
-			persistenceUtil.setSessionFactory(sessionFactory);
-			
 			PersistentBeanManager beanManager = PersistentBeanManager.getInstance();
 			beanManager.setPersistenceUtil(persistenceUtil);
 			beanManager.setProxyStore(new StatelessProxyStore());
@@ -47,13 +43,10 @@ public class ConfigurationHelper
 	/**
 	 * Init bean manager for stateless mode for legacy Gilead 1.2 (encoded proxy info)
 	 */
-	public static PersistentBeanManager initLegacyStatelessBeanManager(SessionFactory sessionFactory)
+	public static PersistentBeanManager initLegacyStatelessBeanManager(IPersistenceUtil persistenceUtil)
 	{
 		if (PersistentBeanManager.getInstance().getPersistenceUtil() == null)
 		{
-			HibernateUtil persistenceUtil = new HibernateUtil(); 
-			persistenceUtil.setSessionFactory(sessionFactory);
-			
 			PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
 			beanManager.setPersistenceUtil(persistenceUtil);
 			
@@ -70,13 +63,10 @@ public class ConfigurationHelper
 	/**
 	 * Init bean manager for stateful mode
 	 */
-	public static PersistentBeanManager initStatefulBeanManager(SessionFactory sessionFactory)
+	public static PersistentBeanManager initStatefulBeanManager(IPersistenceUtil persistenceUtil)
 	{
 		if (PersistentBeanManager.getInstance().getPersistenceUtil() == null)
 		{
-			HibernateUtil persistenceUtil = new HibernateUtil(); 
-			persistenceUtil.setSessionFactory(sessionFactory);
-			
 			HttpSessionProxyStore proxyStore = new HttpSessionProxyStore();
 			proxyStore.setPersistenceUtil(persistenceUtil);
 			
@@ -93,13 +83,10 @@ public class ConfigurationHelper
 	 * Init bean manager for dynamic proxy mode
 	 * @throws FileNotFoundException 
 	 */
-	public static PersistentBeanManager initProxyBeanManager(SessionFactory sessionFactory)
+	public static PersistentBeanManager initProxyBeanManager(IPersistenceUtil persistenceUtil)
 	{
 		if (PersistentBeanManager.getInstance().getPersistenceUtil() == null)
 		{
-			HibernateUtil persistenceUtil = new HibernateUtil(); 
-			persistenceUtil.setSessionFactory(sessionFactory);
-			
 			PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
 			beanManager.setPersistenceUtil(persistenceUtil);
 			

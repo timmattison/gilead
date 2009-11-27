@@ -5,13 +5,17 @@ import java.util.Collection;
 import java.util.List;
 
 import junit.framework.TestCase;
+import net.sf.gilead.core.store.stateful.AbstractStatefulProxyStore;
+import net.sf.gilead.core.store.stateful.InMemoryProxyStore;
 import net.sf.gilead.test.HibernateContext;
+import net.sf.gilead.test.domain.misc.BaseDictionary;
 import net.sf.gilead.test.domain.misc.Client;
 import net.sf.gilead.test.domain.misc.Page;
 import net.sf.gilead.test.domain.misc.PersistentException;
 import net.sf.gilead.test.domain.misc.Photo;
 import net.sf.gilead.test.domain.misc.Preference;
 import net.sf.gilead.test.domain.misc.Project;
+import net.sf.gilead.test.domain.misc.SomeDictionary;
 import net.sf.gilead.test.domain.misc.Utente;
 
 import org.hibernate.Query;
@@ -66,7 +70,7 @@ public class NonRegressionTest extends TestCase
 	//	Merge and save user
 	//
 		utente = (Utente) beanManager.merge(utente);
-		saveUser(utente);
+		save(utente);
 		
 	//	Reload it
 	//
@@ -131,6 +135,50 @@ public class NonRegressionTest extends TestCase
 		assertEquals(1, client.getProjects().size());
 	}
 	
+	/**
+	 * Test merge on create new entity (with name) and embeddable on client side
+	 * @throws FileNotFoundException 
+	 */
+	public void testEntityNameOnNewItem() throws FileNotFoundException
+	{
+	//	Init bean manager
+	//
+		PersistentBeanManager beanManager = TestHelper.initJava5SupportBeanManager();
+		AbstractStatefulProxyStore proxyStore = new InMemoryProxyStore();
+		proxyStore.setPersistenceUtil(beanManager.getPersistenceUtil());
+		beanManager.setProxyStore(proxyStore);
+
+	//	Create dictionaries
+	//
+		BaseDictionary baseDictionary = new BaseDictionary();
+		baseDictionary.setName("testDictionary");
+		save(baseDictionary);
+		
+		SomeDictionary dictionary = new SomeDictionary();
+		dictionary.setKey(new SomeDictionary.PrimaryKey(baseDictionary.getId(), 1));
+		dictionary.setBaseDictionary(baseDictionary);
+		
+		SomeDictionary childDictionary = new SomeDictionary();
+		dictionary.addChild(childDictionary);
+		save(dictionary);
+		
+	//	Clone dictionary
+	//
+		//BaseDictionary cloneDictionary = (BaseDictionary) beanManager.clone(baseDictionary);
+		SomeDictionary cloneDictionary = (SomeDictionary) beanManager.clone(dictionary);
+		assertNotNull(cloneDictionary);
+		
+		SomeDictionary childDictionary2 = new SomeDictionary();
+		cloneDictionary.getChildren().clear();
+		cloneDictionary.addChild(childDictionary2);
+		
+	//	Merge dictionary
+	//
+		// BaseDictionary mergedDictionary = (BaseDictionary) beanManager.merge(cloneDictionary);
+		SomeDictionary mergedDictionary = (SomeDictionary) beanManager.merge(cloneDictionary);
+		assertNotNull(mergedDictionary);
+	}
+	
 	//-------------------------------------------------------------------------
 	//
 	// Internal methods
@@ -151,37 +199,9 @@ public class NonRegressionTest extends TestCase
 		user.getPreferences().add(preference);
 		
 		// Save preference
-		saveUser(user);
+		save(user);
 		
 		return user;
-	}
-	
-	/**
-	 * Save User
-	 */
-	private void saveUser(Utente user)
-	{
-		Session session = null;
-		Transaction transaction = null;
-		try
-		{
-		//	Get session
-		//
-			session = HibernateContext.getSessionFactory().getCurrentSession();
-			transaction = session.beginTransaction();
-
-		//	Save user
-		//
-			session.saveOrUpdate(user);
-			transaction.commit();
-		}
-		catch (RuntimeException e)
-		{
-		//	Rollback
-		//
-			transaction.rollback();
-			throw e;
-		}
 	}
 	
 	/**
@@ -236,39 +256,11 @@ public class NonRegressionTest extends TestCase
 		page.addPhoto(photo3);
 		
 		// Save page
-		savePage(page);
+		save(page);
 		
 		return page;
 	}
 	
-	/**
-	 * Save Page
-	 */
-	private void savePage(Page page)
-	{
-		Session session = null;
-		Transaction transaction = null;
-		try
-		{
-		//	Get session
-		//
-			session = HibernateContext.getSessionFactory().getCurrentSession();
-			transaction = session.beginTransaction();
-
-		//	Save user
-		//
-			session.saveOrUpdate(page);
-			transaction.commit();
-			
-		}
-		catch (RuntimeException e)
-		{
-		//	Rollback
-		//
-			transaction.rollback();
-			throw e;
-		}
-	}
 	
 	/**
      * Load the page with the argument name
@@ -332,15 +324,16 @@ public class NonRegressionTest extends TestCase
 		client.getProjects().add(project2);
 		
 		// Save client
-		saveClient(client);
+		save(client);
 		
 		return client;
 	}
 	
+	
 	/**
-	 * Save Client
+	 * Save entity
 	 */
-	private void saveClient(Client client)
+	private void save(Object object)
 	{
 		Session session = null;
 		Transaction transaction = null;
@@ -353,7 +346,7 @@ public class NonRegressionTest extends TestCase
 
 		//	Save user
 		//
-			session.saveOrUpdate(client);
+			session.saveOrUpdate(object);
 			transaction.commit();
 		}
 		catch (RuntimeException e)

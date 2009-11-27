@@ -38,5 +38,7 @@
 		<mapping class="net.sf.gilead.test.domain.misc.Preference"/>
 		<mapping class="net.sf.gilead.test.domain.misc.Client"/>
 		<mapping class="net.sf.gilead.test.domain.misc.Project"/>
+		<mapping class="net.sf.gilead.test.domain.misc.BaseDictionary"/>
+		<mapping class="net.sf.gilead.test.domain.misc.SomeDictionary"/>
     </session-factory>
 </hibernate-configuration>

@@ -2,6 +2,8 @@ package net.sf.gilead.core.hibernate.jboss;
 
 import java.lang.reflect.Method;
 
+import javax.persistence.EntityManagerFactory;
+
 import net.sf.gilead.core.hibernate.HibernateUtil;
 
 import org.hibernate.SessionFactory;
@@ -66,5 +68,36 @@ public class HibernateJBossUtil extends HibernateUtil
 		
 		// Call base class
 		super.setSessionFactory(sessionFactory);
+	}
+	
+	//-------------------------------------------------------------------------
+	//
+	// Constructors
+	//
+	//-------------------------------------------------------------------------
+	/**
+	 * Empty constructor.
+	 */
+	public HibernateJBossUtil() 
+	{
+		super();
+	}
+	
+	/**
+	 * Session factory constructor
+	 */
+	public HibernateJBossUtil(SessionFactory sessionFactory)
+	{
+		super();
+		setSessionFactory(sessionFactory);
+	}
+	
+	/**
+	 * Entity manager constructor
+	 */
+	public HibernateJBossUtil(EntityManagerFactory entityManagerFactory)
+	{
+		super();
+		setEntityManagerFactory(entityManagerFactory);
 	}
 }

@@ -3,6 +3,8 @@
  */
 package net.sf.gilead.core.hibernate.spring;
 
+import javax.persistence.EntityManagerFactory;
+
 import net.sf.gilead.core.hibernate.HibernateUtil;
 
 import org.hibernate.SessionFactory;
@@ -62,4 +64,37 @@ public class HibernateSpringUtil extends HibernateUtil
 		// Call base class
 		super.setSessionFactory(sessionFactory);
 	}
+	
+	//-------------------------------------------------------------------------
+	//
+	// Constructors
+	//
+	//-------------------------------------------------------------------------
+	/**
+	 * Empty constructor.
+	 */
+	public HibernateSpringUtil()
+	{
+		super();
+	}
+	
+	/**
+	 * Session factory constructor.
+	 */
+	public HibernateSpringUtil(SessionFactory sessionFactory)
+	{
+		super();
+		setSessionFactory(sessionFactory);
+	}
+	
+	/**
+	 * Entity Manager factory constructor.
+	 */
+	public HibernateSpringUtil(EntityManagerFactory entityManagerFactory)
+	{
+		super();
+		setEntityManagerFactory(entityManagerFactory);
+	}
+	
+	
 }
