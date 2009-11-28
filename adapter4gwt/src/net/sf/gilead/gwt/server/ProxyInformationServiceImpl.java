@@ -74,8 +74,7 @@ public class ProxyInformationServiceImpl extends RemoteServiceServlet
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.gwt.client.ProxyInformationService#isLazyLoaded(java.lang.String, java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
-	public boolean isInitialized(String className, IRequestParameter id, String propertyName)
+	public boolean isInitialized(String className, IRequestParameter idParam, String propertyName)
 	{
 	//	Precondition checking
 	//
@@ -90,6 +89,7 @@ public class ProxyInformationServiceImpl extends RemoteServiceServlet
 			throw new NullPointerException("Bean manager not set !");
 		}
 		
+		Serializable id = (Serializable) idParam.getValue();
 		if (_log.isDebugEnabled())
 		{
 			_log.debug("Getting initialized state for " + className + "[" + id+ "]." + propertyName);
@@ -144,7 +144,7 @@ public class ProxyInformationServiceImpl extends RemoteServiceServlet
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.gwt.client.ProxyInformationService#setInitialized(java.lang.String, net.sf.gilead.gwt.client.parameters.IRequestParameter, java.lang.String)
 	 */
-	public void setInitialized(String className, IRequestParameter id,
+	public void setInitialized(String className, IRequestParameter idParam,
 							   String propertyName)
 	{
 	//	Precondition checking
@@ -160,6 +160,7 @@ public class ProxyInformationServiceImpl extends RemoteServiceServlet
 			throw new NullPointerException("Bean manager not set !");
 		}
 		
+		Serializable id = (Serializable) idParam.getValue();
 		if (_log.isDebugEnabled())
 		{
 			_log.debug("Changing initialized state to 'true' for " + className + "[" + id+ "]." + propertyName);

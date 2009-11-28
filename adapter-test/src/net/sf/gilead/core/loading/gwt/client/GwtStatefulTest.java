@@ -111,7 +111,7 @@ public class GwtStatefulTest extends GWTTestCase
 					public void onSuccess(Boolean result)
 					{
 						assertNotNull(result);
-						assertTrue(result.booleanValue());
+						assertFalse(result.booleanValue());
 						
 						// tell the test system the test is now done
 						finishTest();

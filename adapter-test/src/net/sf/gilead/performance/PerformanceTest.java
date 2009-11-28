@@ -36,6 +36,11 @@ public abstract class PerformanceTest extends TestCase
 	 */
 	protected PersistentBeanManager _beanManager;
 	
+	/**
+	 * Indicates if merge is needed
+	 */
+	protected boolean _merge = true;
+	
 	//-------------------------------------------------------------------------
 	//
 	// Test initialisation
@@ -90,17 +95,20 @@ public abstract class PerformanceTest extends TestCase
 		long end = System.currentTimeMillis();
 		assertNotNull(cloneUser);
 		
-		_log.info("Clone user took " + (end - start) + " ms.");
+		_log.info(getClass().getSimpleName() + " / Clone user took " + (end - start) + " ms.");
 		
-	//	Merge user
-	//
-		start = System.currentTimeMillis();
-		IUser mergeUser = (IUser) _beanManager.merge(cloneUser);
-		_log.info("Merge user took " + (System.currentTimeMillis() - start) + " ms.");
-		
-	//	Test merged user
-	//
-		assertNotNull(mergeUser);
+		if (_merge)
+		{
+		//	Merge user
+		//
+			start = System.currentTimeMillis();
+			IUser mergeUser = (IUser) _beanManager.merge(cloneUser);
+			_log.info(getClass().getSimpleName() + " / Merge user took " + (System.currentTimeMillis() - start) + " ms.");
+			
+		//	Test merged user
+		//
+			assertNotNull(mergeUser);
+		}
 	}
 	
 	/**
@@ -124,17 +132,20 @@ public abstract class PerformanceTest extends TestCase
 		long end = System.currentTimeMillis();
 		assertNotNull(cloneUserList);
 		
-		_log.info("[CGLIB check enabled] Clone user list took " + (end - start) + " ms.");
+		_log.info(getClass().getSimpleName() + " / [CGLIB check enabled] Clone user list took " + (end - start) + " ms.");
 		
-	//	Merge user
-	//
-		start = System.currentTimeMillis();
-		List<IUser> mergeUserList = (List<IUser>) _beanManager.merge(cloneUserList);
-		_log.info("[CGLIB check enabled] Merge user list took " + (System.currentTimeMillis() - start) + " ms.");
-		
-	//	Test merged user
-	//
-		assertNotNull(mergeUserList);
+		if (_merge)
+		{
+		//	Merge user
+		//
+			start = System.currentTimeMillis();
+			List<IUser> mergeUserList = (List<IUser>) _beanManager.merge(cloneUserList);
+			_log.info(getClass().getSimpleName() + " / [CGLIB check enabled] Merge user list took " + (System.currentTimeMillis() - start) + " ms.");
+			
+		//	Test merged user
+		//
+			assertNotNull(mergeUserList);
+		}
 	}
 	
 	/**
@@ -162,16 +173,19 @@ public abstract class PerformanceTest extends TestCase
 		long end = System.currentTimeMillis();
 		assertNotNull(cloneUserList);
 		
-		_log.info("[CGLIB check disabled]Clone user list took " + (end - start) + " ms.");
+		_log.info(getClass().getSimpleName() + " / [CGLIB check disabled]Clone user list took " + (end - start) + " ms.");
 		
-	//	Merge user
-	//
-		start = System.currentTimeMillis();
-		List<IUser> mergeUserList = (List<IUser>) _beanManager.merge(cloneUserList);
-		_log.info("[CGLIB check disabled]Merge user list took " + (System.currentTimeMillis() - start) + " ms.");
-		
-	//	Test merged user
-	//
-		assertNotNull(mergeUserList);
+		if (_merge)
+		{
+		//	Merge user
+		//
+			start = System.currentTimeMillis();
+			List<IUser> mergeUserList = (List<IUser>) _beanManager.merge(cloneUserList);
+			_log.info(getClass().getSimpleName() + " / [CGLIB check disabled]Merge user list took " + (System.currentTimeMillis() - start) + " ms.");
+			
+		//	Test merged user
+		//
+			assertNotNull(mergeUserList);
+		}
 	}
 }

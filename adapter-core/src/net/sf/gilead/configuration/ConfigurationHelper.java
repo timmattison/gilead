@@ -9,6 +9,7 @@ import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.beanlib.mapper.ProxyClassMapper;
 import net.sf.gilead.core.serialization.JBossProxySerialization;
+import net.sf.gilead.core.store.NoProxyStore;
 import net.sf.gilead.core.store.stateful.HttpSessionProxyStore;
 import net.sf.gilead.core.store.stateless.StatelessProxyStore;
 
@@ -97,6 +98,22 @@ public class ConfigurationHelper
 			ProxyClassMapper classMapper = new ProxyClassMapper();
 			classMapper.setPersistenceUtil(persistenceUtil);
 			beanManager.setClassMapper(classMapper);
+		}
+		
+		return PersistentBeanManager.getInstance();
+	}
+	
+	/**
+	 * Init bean manager for clone only mode
+	 */
+	public static PersistentBeanManager initBeanManagerForCloneOnly(IPersistenceUtil persistenceUtil)
+	{
+		if (PersistentBeanManager.getInstance().getPersistenceUtil() == null)
+		{
+			PersistentBeanManager beanManager = PersistentBeanManager.getInstance();
+			beanManager.setPersistenceUtil(persistenceUtil);
+			beanManager.setProxyStore(new NoProxyStore());
+			beanManager.setClassMapper(null);
 		}
 		
 		return PersistentBeanManager.getInstance();

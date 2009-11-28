@@ -66,11 +66,10 @@ public class ProxyInformationService implements IBeanManagerService
 	// Request service implementation
 	//
 	//-------------------------------------------------------------------------
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.gilead.gwt.client.ProxyInformationService#isLazyLoaded(java.lang.String, java.lang.String)
+	/**
+	 * Check the initialization state for stateful mode
 	 */
-	public boolean isInitialized(String className, IRequestParameter id, String propertyName)
+	public boolean isInitialized(String className, Serializable id, String propertyName)
 	{
 	//	Precondition checking
 	//
@@ -139,7 +138,7 @@ public class ProxyInformationService implements IBeanManagerService
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.gwt.client.ProxyInformationService#setInitialized(java.lang.String, net.sf.gilead.gwt.client.parameters.IRequestParameter, java.lang.String)
 	 */
-	public void setInitialized(String className, IRequestParameter id,
+	public void setInitialized(String className, Serializable id,
 							   String propertyName)
 	{
 	//	Precondition checking
