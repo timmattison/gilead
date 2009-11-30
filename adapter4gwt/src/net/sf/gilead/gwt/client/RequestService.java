@@ -3,11 +3,11 @@ package net.sf.gilead.gwt.client;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.gilead.pojo.base.ILightEntity;
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.google.gwt.user.client.rpc.SerializationException;
 
 /**
  * Remote request service declaration
@@ -16,7 +16,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  *
  */
 @RemoteServiceRelativePath("RequestService")
-public interface RequestService<T extends ILightEntity> extends RemoteService
+public interface RequestService<T extends IGwtSerializableParameter> extends RemoteService
 {
 	//-------------------------------------------------------------------------
 	//
@@ -26,10 +26,10 @@ public interface RequestService<T extends ILightEntity> extends RemoteService
 	/**
 	 * Execute a request on server.
 	 */
-	public List<T> executeRequest(String query, List<IRequestParameter> parameters);
+	public List<T> executeRequest(String query, List<IGwtSerializableParameter> parameters) throws SerializationException;
 	
 	/**
 	 * Execute a request on server.
 	 */
-	public List<T> executeRequest(String query, Map<String, IRequestParameter> parameters);
+	public List<T> executeRequest(String query, Map<String, IGwtSerializableParameter> parameters) throws SerializationException;
 }

@@ -11,7 +11,7 @@ import net.sf.gilead.core.annotations.AnnotationsManager;
 import net.sf.gilead.gwt.PersistentRemoteService;
 import net.sf.gilead.gwt.client.LoadingService;
 import net.sf.gilead.pojo.base.ILightEntity;
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 import net.sf.gilead.util.IntrospectionHelper;
 
 import org.slf4j.Logger;
@@ -125,7 +125,7 @@ public class LoadingServiceImpl<T extends ILightEntity> extends PersistentRemote
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.gwt.client.LoadingService#loadEntity(java.lang.Integer)
 	 */
-	public T loadEntity(String className, IRequestParameter id)
+	public T loadEntity(String className, IGwtSerializableParameter id)
 	{
 		return loadEntity(className, (Serializable)id.getValue());
 	}

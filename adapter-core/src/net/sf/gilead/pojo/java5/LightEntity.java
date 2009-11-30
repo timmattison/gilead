@@ -161,4 +161,13 @@ public abstract class LightEntity implements ILightEntity, Serializable
 		}
 		_initializationMap.put(property, initialized);	
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.pojo.gwt.IRequestParameter#getValue()
+	 */
+	public Object getValue()
+	{
+		return this;
+	}
 }

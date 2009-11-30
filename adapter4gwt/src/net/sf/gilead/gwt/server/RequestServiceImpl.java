@@ -3,27 +3,30 @@
  */
 package net.sf.gilead.gwt.server;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.gilead.core.IPersistenceUtil;
+import net.sf.gilead.core.PersistentBeanManager;
+import net.sf.gilead.core.serialization.GwtSerializer;
+import net.sf.gilead.gwt.PersistentRemoteService;
+import net.sf.gilead.gwt.client.RequestService;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.gilead.core.IPersistenceUtil;
-import net.sf.gilead.core.PersistentBeanManager;
-import net.sf.gilead.gwt.PersistentRemoteService;
-import net.sf.gilead.gwt.client.RequestService;
-import net.sf.gilead.pojo.base.ILightEntity;
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import com.google.gwt.user.client.rpc.SerializationException;
 
 /**
  * Request service implementation.
  * @author bruno.marchesson
  *
  */
-public class RequestServiceImpl<T extends ILightEntity> extends PersistentRemoteService
+public class RequestServiceImpl<T extends IGwtSerializableParameter> extends PersistentRemoteService
 	implements RequestService<T>
 {
 	//----
@@ -74,7 +77,8 @@ public class RequestServiceImpl<T extends ILightEntity> extends PersistentRemote
 	 */
 	@SuppressWarnings("unchecked")
 	public List<T> executeRequest(String query,
-								  List<IRequestParameter> parameters)
+								  				  List<IGwtSerializableParameter> parameters)
+								  				  throws SerializationException
 	{
 	//	Precondition checking
 	//
@@ -108,7 +112,7 @@ public class RequestServiceImpl<T extends ILightEntity> extends PersistentRemote
 			(parameters.isEmpty() == false))
 		{
 			queryParameters = new ArrayList<Object>(parameters.size());
-			for (IRequestParameter parameter : parameters)
+			for (IGwtSerializableParameter parameter : parameters)
 			{
 				queryParameters.add(parameter.getValue());
 			}
@@ -117,7 +121,20 @@ public class RequestServiceImpl<T extends ILightEntity> extends PersistentRemote
 	//	Execute query
 	// 	Note : double case is mandatory due to Java 6 compiler issue 6548436
 	//
-		return (List<T>)(Object) persistenceUtil.executeQuery(query, queryParameters);
+		List<Serializable> result = (List<Serializable>)(Object) persistenceUtil.executeQuery(query, queryParameters);
+		if (result == null)
+		{
+			return null;
+		}
+		
+		// convert result
+		List<T> serializableResult = new ArrayList<T>(result.size());
+		GwtSerializer serializer = new GwtSerializer();
+		for (Serializable serializable : result)
+		{
+			serializableResult.add((T)serializer.convertToGwt(serializable));
+		}
+		return serializableResult; 
 	}
 
 	/**
@@ -125,7 +142,8 @@ public class RequestServiceImpl<T extends ILightEntity> extends PersistentRemote
 	 */
 	@SuppressWarnings("unchecked")
 	public List<T> executeRequest(String query,
-								  Map<String, IRequestParameter> parameters) 
+				  				  Map<String, IGwtSerializableParameter> parameters)
+				  				  throws SerializationException
 	{
 	//	Precondition checking
 	//
@@ -159,7 +177,7 @@ public class RequestServiceImpl<T extends ILightEntity> extends PersistentRemote
 			(parameters.isEmpty() == false))
 		{
 			queryParameters = new HashMap<String, Object>(parameters.size());
-			for (Map.Entry<String, IRequestParameter> parameter : parameters.entrySet())
+			for (Map.Entry<String, IGwtSerializableParameter> parameter : parameters.entrySet())
 			{
 				queryParameters.put(parameter.getKey(), parameter.getValue().getValue());
 			}
@@ -168,6 +186,19 @@ public class RequestServiceImpl<T extends ILightEntity> extends PersistentRemote
 	//	Execute query
 	//	Note : double case is mandatory due to Java 6 compiler issue 6548436
 	//
-		return (List<T>)(Object) persistenceUtil.executeQuery(query, queryParameters);
+		List<Serializable> result = (List<Serializable>)(Object) persistenceUtil.executeQuery(query, queryParameters);
+		if (result == null)
+		{
+			return null;
+		}
+		
+		// convert result
+		List<T> serializableResult = new ArrayList<T>(result.size());
+		GwtSerializer serializer = new GwtSerializer();
+		for (Serializable serializable : result)
+		{
+			serializableResult.add((T)serializer.convertToGwt(serializable));
+		}
+		return serializableResult; 
 	}
 }

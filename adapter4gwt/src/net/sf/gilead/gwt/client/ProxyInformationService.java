@@ -1,6 +1,6 @@
 package net.sf.gilead.gwt.client;
 
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -24,10 +24,10 @@ public interface ProxyInformationService extends RemoteService
 	/**
 	 * Indicates if a property was null or lazy loaded.
 	 */
-	public boolean isInitialized(String className, IRequestParameter id, String propertyName);
+	public boolean isInitialized(String className, IGwtSerializableParameter id, String propertyName);
 	
 	/**
 	 * Update proxy information when a field (lazy loaded) is initialized from client side.
 	 */
-	public void setInitialized(String className, IRequestParameter id, String propertyName);
+	public void setInitialized(String className, IGwtSerializableParameter id, String propertyName);
 }

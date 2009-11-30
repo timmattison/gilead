@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.sf.gilead.pojo.base.ILightEntity;
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -28,7 +28,7 @@ public interface LoadingServiceAsync<T extends ILightEntity>
 	/**
 	 * Load an entity from its id
 	 */
-	public void loadEntity(String className, IRequestParameter id, AsyncCallback<T> callback);
+	public void loadEntity(String className, IGwtSerializableParameter id, AsyncCallback<T> callback);
 	
 	//-------------------------------------------------------------------------
 	//

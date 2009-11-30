@@ -9,7 +9,7 @@ import java.util.Map;
 
 import net.sf.gilead.gwt.client.RequestService;
 import net.sf.gilead.gwt.client.RequestServiceAsync;
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 import net.sf.gilead.pojo.gwt.basic.StringParameter;
 import net.sf.gilead.test.domain.gwt.Message;
 import net.sf.gilead.test.domain.gwt.User;
@@ -139,7 +139,7 @@ public class GwtRequestTest extends GWTTestCase
 			{
 				// Call remote loading service
 				RequestServiceAsync<User> remoteService = (RequestServiceAsync<User>) GWT.create(RequestService.class);
-				remoteService.executeRequest("from User", (List<IRequestParameter>) null, new AsyncCallback<List<User>>()
+				remoteService.executeRequest("from User", (List<IGwtSerializableParameter>) null, new AsyncCallback<List<User>>()
 				{
 					public void onFailure(Throwable caught)
 					{
@@ -181,7 +181,7 @@ public class GwtRequestTest extends GWTTestCase
 				RequestServiceAsync<User> remoteService = (RequestServiceAsync<User>) GWT.create(RequestService.class);
 
 				// Parameters
-				Map<String, IRequestParameter> parameters = new HashMap<String, IRequestParameter>();
+				Map<String, IGwtSerializableParameter> parameters = new HashMap<String, IGwtSerializableParameter>();
 				parameters.put("login", new StringParameter(user.getLogin()));
 				
 				remoteService.executeRequest("from User u where u.login = :login", parameters, new AsyncCallback<List<User>>()

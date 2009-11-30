@@ -16,13 +16,15 @@
 
 package net.sf.gilead.pojo.base;
 
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
+
 
 /**
  * Persistence info handler interface.
  * All the persistent POJO must implements this interface in stateless mode.
  * @author bruno.marchesson
  */
-public interface ILightEntity
+public interface ILightEntity extends IGwtSerializableParameter
 {
 	public static final String INITIALISED = "initialized";
 

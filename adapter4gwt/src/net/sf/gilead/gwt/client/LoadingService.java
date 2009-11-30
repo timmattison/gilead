@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.sf.gilead.pojo.base.ILightEntity;
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -26,7 +26,7 @@ public interface LoadingService<T extends ILightEntity> extends RemoteService
 	/**
 	 * Load an entity from its id
 	 */
-	public T loadEntity(String className, IRequestParameter id);
+	public T loadEntity(String className, IGwtSerializableParameter id);
 
 	//-------------------------------------------------------------------------
 	//

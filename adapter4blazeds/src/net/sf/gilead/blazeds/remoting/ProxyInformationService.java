@@ -11,7 +11,7 @@ import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.store.IProxyStore;
 import net.sf.gilead.core.store.stateful.AbstractStatefulProxyStore;
 import net.sf.gilead.pojo.base.ILightEntity;
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

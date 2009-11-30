@@ -3,7 +3,7 @@
  */
 package net.sf.gilead.gwt.client;
 
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -17,12 +17,12 @@ public interface ProxyInformationServiceAsync
 	/**
 	 * Indicates if a property was null or lazy loaded.
 	 */
-	void isInitialized(String className, IRequestParameter id,
+	void isInitialized(String className, IGwtSerializableParameter id,
 					   String propertyName, AsyncCallback<Boolean> callback);
 
 	/**
 	 * Update proxy information when a field (lazy loaded) is initialized from client side.
 	 */
-	void setInitialized(String className, IRequestParameter id,
+	void setInitialized(String className, IGwtSerializableParameter id,
 						String propertyName, AsyncCallback<Void> callback);
 }

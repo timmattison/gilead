@@ -44,7 +44,7 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	 * persistence informations filled by the persistence util
 	 * implementation
 	 */
-	protected Map<String, IRequestParameter> _proxyInformations;
+	protected Map<String, IGwtSerializableParameter> _proxyInformations;
 	
 	/**
 	 * Map of persistence initialisation state.
@@ -80,9 +80,9 @@ public abstract class LightEntity implements ILightEntity, Serializable
 	{
 		if (_proxyInformations == null)
 		{
-			_proxyInformations = new HashMap<String, IRequestParameter>();
+			_proxyInformations = new HashMap<String, IGwtSerializableParameter>();
 		}
-		_proxyInformations.put(property, (IRequestParameter) proxyInfo);
+		_proxyInformations.put(property, (IGwtSerializableParameter) proxyInfo);
 	}
 	
 	/*
@@ -158,5 +158,14 @@ public abstract class LightEntity implements ILightEntity, Serializable
 			_initializationMap = new HashMap<String, Boolean>();
 		}
 		_initializationMap.put(property, initialized);	
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.pojo.gwt.IRequestParameter#getValue()
+	 */
+	public Object getValue()
+	{
+		return this;
 	}
 }

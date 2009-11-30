@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author bruno.marchesson
  *
  */
-public class SerializedParameter implements IRequestParameter, Serializable
+public class SerializedParameter implements IGwtSerializableParameter, Serializable
 {
 	//----
 	// Attributes
@@ -61,17 +61,5 @@ public class SerializedParameter implements IRequestParameter, Serializable
 	 */
 	public SerializedParameter()
 	{
-	}
-	
-	//----
-	// Public interface
-	//----
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.gilead.gwt.client.parameters.IRequestParameter#getParameterClass()
-	 */
-	public Class<?> getParameterClass() 
-	{
-		return null;
 	}
 }

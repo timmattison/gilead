@@ -6,14 +6,14 @@ package net.sf.gilead.pojo.gwt.collection;
 import java.io.Serializable;
 import java.util.Map;
 
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 
 /**
  * Map parameter.
  * @author bruno.marchesson
  *
  */
-public class MapParameter implements IRequestParameter, Serializable
+public class MapParameter implements IGwtSerializableParameter, Serializable
 {
 	//----
 	// Attributes
@@ -26,7 +26,7 @@ public class MapParameter implements IRequestParameter, Serializable
 	/**
 	 * The underlying value.
 	 */
-	private Map<IRequestParameter, IRequestParameter> value;
+	private Map<IGwtSerializableParameter, IGwtSerializableParameter> value;
 
 	//----
 	// Getter and Mapter
@@ -34,7 +34,7 @@ public class MapParameter implements IRequestParameter, Serializable
 	/**
 	 * Change value.
 	 */
-	public void MapValue(Map<IRequestParameter, IRequestParameter> value)
+	public void MapValue(Map<IGwtSerializableParameter, IGwtSerializableParameter> value)
 	{
 		this.value = value;
 	}
@@ -53,7 +53,7 @@ public class MapParameter implements IRequestParameter, Serializable
 	/**
 	 * Constructor.
 	 */
-	public MapParameter(Map<IRequestParameter, IRequestParameter> value)
+	public MapParameter(Map<IGwtSerializableParameter, IGwtSerializableParameter> value)
 	{
 		this.value = value;
 	}
@@ -63,17 +63,5 @@ public class MapParameter implements IRequestParameter, Serializable
 	 */
 	public MapParameter()
 	{
-	}
-	
-	//----
-	// Public interface
-	//----
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.gilead.gwt.client.parameters.IRequestParameter#getParameterClass()
-	 */
-	public Class<?> getParameterClass() 
-	{
-		return Map.class;
 	}
 }

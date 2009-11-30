@@ -19,7 +19,7 @@ public class Preference extends LightEntity implements Serializable {
 	@Parent 
 	private Utente user; 
 	 
-	private int value;
+	private int intValue;
 
 	/**
 	 * @return the user
@@ -38,14 +38,14 @@ public class Preference extends LightEntity implements Serializable {
 	/**
 	 * @return the value
 	 */
-	public int getValue() {
-		return value;
+	public int getIntValue() {
+		return intValue;
 	}
 
 	/**
 	 * @param value the value to set
 	 */
-	public void setValue(int value) {
-		this.value = value;
+	public void setIntValue(int value) {
+		this.intValue = value;
 	} 
 } 

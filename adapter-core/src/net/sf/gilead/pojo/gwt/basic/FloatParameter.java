@@ -5,14 +5,14 @@ package net.sf.gilead.pojo.gwt.basic;
 
 import java.io.Serializable;
 
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 
 /**
  * Float parameter.
  * @author bruno.marchesson
  *
  */
-public class FloatParameter implements IRequestParameter, Serializable
+public class FloatParameter implements IGwtSerializableParameter, Serializable
 {
 	//----
 	// Attributes
@@ -62,17 +62,5 @@ public class FloatParameter implements IRequestParameter, Serializable
 	 */
 	public FloatParameter()
 	{
-	}
-	
-	//----
-	// Public interface
-	//----
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.gilead.gwt.client.parameters.IRequestParameter#getParameterClass()
-	 */
-	public Class<?> getParameterClass() 
-	{
-		return Float.class;
 	}
 }

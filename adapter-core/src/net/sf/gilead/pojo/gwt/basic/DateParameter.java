@@ -6,14 +6,14 @@ package net.sf.gilead.pojo.gwt.basic;
 import java.io.Serializable;
 import java.util.Date;
 
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 
 /**
  * Date parameter.
  * @author bruno.marchesson
  *
  */
-public class DateParameter implements IRequestParameter, Serializable
+public class DateParameter implements IGwtSerializableParameter, Serializable
 {
 	//----
 	// Attributes
@@ -63,17 +63,5 @@ public class DateParameter implements IRequestParameter, Serializable
 	 */
 	public DateParameter()
 	{
-	}
-	
-	//----
-	// Public interface
-	//----
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.gilead.gwt.client.parameters.IRequestParameter#getParameterClass()
-	 */
-	public Class<?> getParameterClass() 
-	{
-		return Date.class;
 	}
 }

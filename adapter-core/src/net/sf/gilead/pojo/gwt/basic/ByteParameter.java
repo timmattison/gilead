@@ -5,14 +5,14 @@ package net.sf.gilead.pojo.gwt.basic;
 
 import java.io.Serializable;
 
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 
 /**
  * Byte parameter.
  * @author bruno.marchesson
  *
  */
-public class ByteParameter implements IRequestParameter, Serializable
+public class ByteParameter implements IGwtSerializableParameter, Serializable
 {
 	//----
 	// Attributes
@@ -62,17 +62,5 @@ public class ByteParameter implements IRequestParameter, Serializable
 	 */
 	public ByteParameter()
 	{
-	}
-	
-	//----
-	// Public interface
-	//----
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.gilead.gwt.client.parameters.IRequestParameter#getParameterClass()
-	 */
-	public Class<?> getParameterClass() 
-	{
-		return Byte.class;
 	}
 }

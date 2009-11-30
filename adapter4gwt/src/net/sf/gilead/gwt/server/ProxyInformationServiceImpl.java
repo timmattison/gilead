@@ -12,7 +12,7 @@ import net.sf.gilead.core.store.IProxyStore;
 import net.sf.gilead.core.store.stateful.AbstractStatefulProxyStore;
 import net.sf.gilead.gwt.client.ProxyInformationService;
 import net.sf.gilead.pojo.base.ILightEntity;
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +74,7 @@ public class ProxyInformationServiceImpl extends RemoteServiceServlet
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.gwt.client.ProxyInformationService#isLazyLoaded(java.lang.String, java.lang.String)
 	 */
-	public boolean isInitialized(String className, IRequestParameter idParam, String propertyName)
+	public boolean isInitialized(String className, IGwtSerializableParameter idParam, String propertyName)
 	{
 	//	Precondition checking
 	//
@@ -144,7 +144,7 @@ public class ProxyInformationServiceImpl extends RemoteServiceServlet
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.gwt.client.ProxyInformationService#setInitialized(java.lang.String, net.sf.gilead.gwt.client.parameters.IRequestParameter, java.lang.String)
 	 */
-	public void setInitialized(String className, IRequestParameter idParam,
+	public void setInitialized(String className, IGwtSerializableParameter idParam,
 							   String propertyName)
 	{
 	//	Precondition checking

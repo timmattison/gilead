@@ -3,16 +3,13 @@
  */
 package net.sf.gilead.pojo.gwt;
 
-import java.io.Serializable;
-
-import net.sf.gilead.pojo.base.ILightEntity;
 
 /**
  * GWT serializabe version of the SerializableId class.
  * @author bruno.marchesson
  *
  */
-public class GwtSerializableId implements IRequestParameter
+public class GwtSerializableId implements IGwtSerializableParameter
 {
 	//----
 	// Attributes
@@ -25,7 +22,7 @@ public class GwtSerializableId implements IRequestParameter
 	/**
 	 * The underlying id
 	 */
-	protected IRequestParameter id;
+	protected IGwtSerializableParameter id;
 	
 	/**
 	 * Hash code for non persistent and transient values
@@ -43,14 +40,14 @@ public class GwtSerializableId implements IRequestParameter
 	/**
 	 * @return the id
 	 */
-	public IRequestParameter getId() {
+	public IGwtSerializableParameter getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(IRequestParameter id) {
+	public void setId(IGwtSerializableParameter id) {
 		this.id = id;
 	}
 
@@ -87,15 +84,7 @@ public class GwtSerializableId implements IRequestParameter
 	// IRequestParameter fake implementation
 	//
 	//-------------------------------------------------------------------------
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.gilead.pojo.gwt.IRequestParameter#getParameterClass()
-	 */
-	public Class<?> getParameterClass()
-	{
-		return null;
-	}
-
+	
 	public Object getValue()
 	{
 		return null;

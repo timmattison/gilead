@@ -6,7 +6,7 @@ package net.sf.gilead.core.serialization;
 import java.io.Serializable;
 
 import net.sf.gilead.pojo.gwt.GwtSerializableId;
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 import net.sf.gilead.pojo.gwt.SerializedParameter;
 
 import org.slf4j.Logger;
@@ -112,7 +112,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	//
 		try
 		{
-			return convertFromGwt((IRequestParameter) serialized);
+			return convertFromGwt((IGwtSerializableParameter) serialized);
 		}
 		catch(SerializationException ex)
 		{
@@ -130,7 +130,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.core.serialization.GwtSerializer#convertBasicToGwt(java.io.Serializable)
 	 */
-	protected IRequestParameter convertBasicToGwt(Serializable object)
+	protected IGwtSerializableParameter convertBasicToGwt(Serializable object)
 								throws SerializationException
 	{
 	//	SerializableId handling
@@ -170,7 +170,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.core.serialization.GwtSerializer#convertBasicFromGwt(net.sf.gilead.gwt.client.parameters.IRequestParameter)
 	 */
-	protected Serializable convertBasicFromGwt(IRequestParameter parameter)
+	protected Serializable convertBasicFromGwt(IGwtSerializableParameter parameter)
 	{
 	//	Serialized case
 	//
@@ -203,7 +203,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.core.serialization.GwtSerializer#convertListToGwt(java.io.Serializable)
 	 */
-	protected IRequestParameter convertListToGwt(Serializable object)
+	protected IGwtSerializableParameter convertListToGwt(Serializable object)
 								throws SerializationException
 	{
 		try
@@ -224,7 +224,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.core.serialization.GwtSerializer#convertListFromGwt(net.sf.gilead.gwt.client.parameters.IRequestParameter)
 	 */
-	protected Serializable convertListFromGwt(IRequestParameter parameter)
+	protected Serializable convertListFromGwt(IGwtSerializableParameter parameter)
 											throws SerializationException
 	{
 		if (parameter instanceof SerializedParameter)
@@ -241,7 +241,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.core.serialization.GwtSerializer#convertSetToGwt(java.io.Serializable)
 	 */
-	protected IRequestParameter convertSetToGwt(Serializable object)
+	protected IGwtSerializableParameter convertSetToGwt(Serializable object)
 								throws SerializationException
 	{
 		try
@@ -262,7 +262,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.core.serialization.GwtSerializer#convertSetFromGwt(net.sf.gilead.gwt.client.parameters.IRequestParameter)
 	 */
-	protected Serializable convertSetFromGwt(IRequestParameter parameter)
+	protected Serializable convertSetFromGwt(IGwtSerializableParameter parameter)
 											throws SerializationException
 	{
 		if (parameter instanceof SerializedParameter)
@@ -279,7 +279,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.core.serialization.GwtSerializer#convertMapToGwt(java.io.Serializable)
 	 */
-	protected IRequestParameter convertMapToGwt(Serializable object)
+	protected IGwtSerializableParameter convertMapToGwt(Serializable object)
 								throws SerializationException							
 	{
 		try
@@ -297,7 +297,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	}
 	
 	@Override
-	protected Serializable convertMapFromGwt(IRequestParameter parameter)
+	protected Serializable convertMapFromGwt(IGwtSerializableParameter parameter)
 											throws SerializationException
 	{
 		if (parameter instanceof SerializedParameter)

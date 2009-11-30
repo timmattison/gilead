@@ -6,14 +6,14 @@ package net.sf.gilead.pojo.gwt.collection;
 import java.io.Serializable;
 import java.util.List;
 
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 
 /**
  * List parameter.
  * @author bruno.marchesson
  *
  */
-public class ListParameter implements IRequestParameter, Serializable
+public class ListParameter implements IGwtSerializableParameter, Serializable
 {
 	//----
 	// Attributes
@@ -26,7 +26,7 @@ public class ListParameter implements IRequestParameter, Serializable
 	/**
 	 * The underlying value.
 	 */
-	private List<IRequestParameter> value;
+	private List<IGwtSerializableParameter> value;
 
 	//----
 	// Getter and setter
@@ -34,7 +34,7 @@ public class ListParameter implements IRequestParameter, Serializable
 	/**
 	 * Change value.
 	 */
-	public void setValue(List<IRequestParameter> value)
+	public void setValue(List<IGwtSerializableParameter> value)
 	{
 		this.value = value;
 	}
@@ -53,7 +53,7 @@ public class ListParameter implements IRequestParameter, Serializable
 	/**
 	 * Constructor.
 	 */
-	public ListParameter(List<IRequestParameter> value)
+	public ListParameter(List<IGwtSerializableParameter> value)
 	{
 		this.value = value;
 	}
@@ -63,17 +63,5 @@ public class ListParameter implements IRequestParameter, Serializable
 	 */
 	public ListParameter()
 	{
-	}
-	
-	//----
-	// Public interface
-	//----
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.gilead.gwt.client.parameters.IRequestParameter#getParameterClass()
-	 */
-	public Class<?> getParameterClass() 
-	{
-		return List.class;
 	}
 }

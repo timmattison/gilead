@@ -1,3 +1,4 @@
+
 package net.sf.gilead.core;
 
 import java.io.FileNotFoundException;
@@ -64,7 +65,7 @@ public class NonRegressionTest extends TestCase
 		
 		Preference p1 = new Preference(); 
 		p1.setUser(utente); 
-		p1.setValue(6); 
+		p1.setIntValue(6); 
 		preferences.add(p1); 
 		
 	//	Merge and save user
@@ -153,29 +154,22 @@ public class NonRegressionTest extends TestCase
 		BaseDictionary baseDictionary = new BaseDictionary();
 		baseDictionary.setName("testDictionary");
 		save(baseDictionary);
-		
-		SomeDictionary dictionary = new SomeDictionary();
-		dictionary.setKey(new SomeDictionary.PrimaryKey(baseDictionary.getId(), 1));
-		dictionary.setBaseDictionary(baseDictionary);
-		
-		SomeDictionary childDictionary = new SomeDictionary();
-		dictionary.addChild(childDictionary);
-		save(dictionary);
-		
+
 	//	Clone dictionary
 	//
-		//BaseDictionary cloneDictionary = (BaseDictionary) beanManager.clone(baseDictionary);
-		SomeDictionary cloneDictionary = (SomeDictionary) beanManager.clone(dictionary);
+		BaseDictionary cloneDictionary = (BaseDictionary) beanManager.clone(baseDictionary);
 		assertNotNull(cloneDictionary);
 		
-		SomeDictionary childDictionary2 = new SomeDictionary();
-		cloneDictionary.getChildren().clear();
-		cloneDictionary.addChild(childDictionary2);
+		SomeDictionary dictionary = new SomeDictionary(new SomeDictionary.PrimaryKey(1,1));
+		dictionary.setBaseDictionary(cloneDictionary);
+		
+		SomeDictionary childDictionary = new SomeDictionary(new SomeDictionary.PrimaryKey(1,2));
+		childDictionary.setBaseDictionary(cloneDictionary);
+		dictionary.addChild(childDictionary);
 		
 	//	Merge dictionary
 	//
-		// BaseDictionary mergedDictionary = (BaseDictionary) beanManager.merge(cloneDictionary);
-		SomeDictionary mergedDictionary = (SomeDictionary) beanManager.merge(cloneDictionary);
+		BaseDictionary mergedDictionary = (BaseDictionary) beanManager.merge(cloneDictionary);
 		assertNotNull(mergedDictionary);
 	}
 	
@@ -195,7 +189,7 @@ public class NonRegressionTest extends TestCase
 		// Preferences
 		Preference preference = new Preference();
 		preference.setUser(user);
-		preference.setValue(1);
+		preference.setIntValue(1);
 		user.getPreferences().add(preference);
 		
 		// Save preference

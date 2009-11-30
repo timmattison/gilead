@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import net.sf.gilead.pojo.gwt.IRequestParameter;
+import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
 import net.sf.gilead.pojo.gwt.basic.BooleanParameter;
 import net.sf.gilead.pojo.gwt.basic.ByteParameter;
 import net.sf.gilead.pojo.gwt.basic.CharacterParameter;
@@ -75,7 +75,7 @@ public class GwtSerializer
 	 * Converts a serializable type to GWT supported encapsulation.
 	 * @throws SerializationException if the serializable argument is not supported by GWT JRE. 
 	 */
-	public IRequestParameter convertToGwt(Serializable serializable) 
+	public IGwtSerializableParameter convertToGwt(Serializable serializable) 
 									 	  throws SerializationException
 	{
 	//	Precondition checking
@@ -117,7 +117,7 @@ public class GwtSerializer
 	 * @param serialized
 	 * @return
 	 */
-	public Serializable convertFromGwt(IRequestParameter parameter) 
+	public Serializable convertFromGwt(IGwtSerializableParameter parameter) 
 						throws SerializationException
 	{
 		if (_log.isDebugEnabled())
@@ -161,7 +161,7 @@ public class GwtSerializer
 	/**
 	 * Convert the argument object to GWT serialzable IRequestParameter
 	 */
-	protected IRequestParameter convertBasicToGwt(Serializable object) 
+	protected IGwtSerializableParameter convertBasicToGwt(Serializable object) 
 								throws SerializationException
 	{
 	//	Precondition checking
@@ -173,9 +173,9 @@ public class GwtSerializer
 		 
 	//	Check basic parameters (most current first) 
 	//
-		if (object instanceof IRequestParameter)
+		if (object instanceof IGwtSerializableParameter)
 		{
-			return (IRequestParameter) object;
+			return (IGwtSerializableParameter) object;
 		}
 		if (object instanceof Integer)
 		{
@@ -228,7 +228,7 @@ public class GwtSerializer
 	 * @param parameter
 	 * @return
 	 */
-	protected Serializable convertBasicFromGwt(IRequestParameter parameter)
+	protected Serializable convertBasicFromGwt(IGwtSerializableParameter parameter)
 	{
 	//	Just use the underlying value
 	//
@@ -239,7 +239,7 @@ public class GwtSerializer
 	 * Convert the argument list to GWT serializable IRequestParameter
 	 */
 	@SuppressWarnings("unchecked")
-	protected IRequestParameter convertListToGwt(Serializable object) 
+	protected IGwtSerializableParameter convertListToGwt(Serializable object) 
 								throws SerializationException
 	{
 	//	Precondition checking
@@ -253,14 +253,14 @@ public class GwtSerializer
 		
 	//	Create underlying list
 	//
-		List<IRequestParameter> serializableCollection = null;
+		List<IGwtSerializableParameter> serializableCollection = null;
 		if (object instanceof ArrayList)
 		{	
-			serializableCollection = new ArrayList<IRequestParameter>(objectList.size());
+			serializableCollection = new ArrayList<IGwtSerializableParameter>(objectList.size());
 		}
 		else if (object instanceof LinkedList)
 		{
-			serializableCollection = new LinkedList<IRequestParameter>();
+			serializableCollection = new LinkedList<IGwtSerializableParameter>();
 		}
 	//	else : unsupported GWT list
 	//
@@ -284,12 +284,12 @@ public class GwtSerializer
 	 * @throws SerializationException 
 	 */
 	@SuppressWarnings("unchecked")
-	protected Serializable convertListFromGwt(IRequestParameter object) 
+	protected Serializable convertListFromGwt(IGwtSerializableParameter object) 
 											throws SerializationException
 	{
 	//	Precondition checking
 	//
-		Collection<IRequestParameter> objectList = (Collection<IRequestParameter>) object.getValue();
+		Collection<IGwtSerializableParameter> objectList = (Collection<IGwtSerializableParameter>) object.getValue();
 		if ((objectList == null) ||
 			(objectList.isEmpty()))
 		{
@@ -316,7 +316,7 @@ public class GwtSerializer
 		
 	//	Copy list contents
 	//
-		for (IRequestParameter item : objectList)
+		for (IGwtSerializableParameter item : objectList)
 		{
 			serializableCollection.add(convertFromGwt(item));
 		}
@@ -328,7 +328,7 @@ public class GwtSerializer
 	 * Convert the argument set to GWT serializable IRequestParameter
 	 */
 	@SuppressWarnings("unchecked")
-	protected IRequestParameter convertSetToGwt(Serializable object) 
+	protected IGwtSerializableParameter convertSetToGwt(Serializable object) 
 								throws SerializationException
 	{
 	//	Precondition checking
@@ -342,18 +342,18 @@ public class GwtSerializer
 		
 	//	Create underlying list
 	//
-		Set<IRequestParameter> serializableCollection = null;
+		Set<IGwtSerializableParameter> serializableCollection = null;
 		if (object instanceof HashSet)
 		{	
-			serializableCollection = new HashSet<IRequestParameter>(objectList.size());
+			serializableCollection = new HashSet<IGwtSerializableParameter>(objectList.size());
 		}
 		else if (object instanceof LinkedHashSet)
 		{	
-			serializableCollection = new LinkedHashSet<IRequestParameter>(objectList.size());
+			serializableCollection = new LinkedHashSet<IGwtSerializableParameter>(objectList.size());
 		}
 		else if (object instanceof TreeSet)
 		{
-			serializableCollection = new TreeSet<IRequestParameter>();
+			serializableCollection = new TreeSet<IGwtSerializableParameter>();
 		}
 	//	else : unsupported GWT set
 	//
@@ -376,12 +376,12 @@ public class GwtSerializer
 	 * Convert the argument set to GWT serializable IRequestParameter
 	 */
 	@SuppressWarnings("unchecked")
-	protected Serializable convertSetFromGwt(IRequestParameter object) 
+	protected Serializable convertSetFromGwt(IGwtSerializableParameter object) 
 								throws SerializationException
 	{
 	//	Precondition checking
 	//
-		Collection<IRequestParameter> objectList = (Collection<IRequestParameter>) object.getValue();
+		Collection<IGwtSerializableParameter> objectList = (Collection<IGwtSerializableParameter>) object.getValue();
 		if ((objectList == null) ||
 			(objectList.isEmpty()))
 		{
@@ -412,7 +412,7 @@ public class GwtSerializer
 		
 	//	Copy list contents
 	//
-		for (IRequestParameter item : objectList)
+		for (IGwtSerializableParameter item : objectList)
 		{
 			serializableCollection.add(convertFromGwt(item));
 		}
@@ -424,7 +424,7 @@ public class GwtSerializer
 	 * Convert the argument map to GWT serializable IRequestParameter
 	 */
 	@SuppressWarnings("unchecked")
-	protected IRequestParameter convertMapToGwt(Serializable object) 
+	protected IGwtSerializableParameter convertMapToGwt(Serializable object) 
 								throws SerializationException
 	{
 	//	Precondition checking
@@ -438,18 +438,18 @@ public class GwtSerializer
 		
 	//	Create underlying list
 	//
-		Map<IRequestParameter, IRequestParameter> serializableCollection = null;
+		Map<IGwtSerializableParameter, IGwtSerializableParameter> serializableCollection = null;
 		if (object instanceof HashMap)
 		{	
-			serializableCollection = new HashMap<IRequestParameter, IRequestParameter>(objectMap.size());
+			serializableCollection = new HashMap<IGwtSerializableParameter, IGwtSerializableParameter>(objectMap.size());
 		}
 		else if (object instanceof LinkedHashMap)
 		{	
-			serializableCollection = new LinkedHashMap<IRequestParameter,IRequestParameter>(objectMap.size());
+			serializableCollection = new LinkedHashMap<IGwtSerializableParameter,IGwtSerializableParameter>(objectMap.size());
 		}
 		else if (object instanceof TreeMap)
 		{
-			serializableCollection = new TreeMap<IRequestParameter, IRequestParameter>();
+			serializableCollection = new TreeMap<IGwtSerializableParameter, IGwtSerializableParameter>();
 		}
 	//	else : unsupported GWT map
 	//
@@ -473,12 +473,12 @@ public class GwtSerializer
 	 * Convert the argument map from GWT serializable IRequestParameter
 	 */
 	@SuppressWarnings("unchecked")
-	protected Serializable convertMapFromGwt(IRequestParameter object) 
+	protected Serializable convertMapFromGwt(IGwtSerializableParameter object) 
 								throws SerializationException
 	{
 	//	Precondition checking
 	//
-		Map<IRequestParameter, IRequestParameter> objectMap = (Map<IRequestParameter, IRequestParameter>) object.getValue();
+		Map<IGwtSerializableParameter, IGwtSerializableParameter> objectMap = (Map<IGwtSerializableParameter, IGwtSerializableParameter>) object.getValue();
 		if ((objectMap == null) ||
 			(objectMap.isEmpty()))
 		{
@@ -509,7 +509,7 @@ public class GwtSerializer
 		
 	//	Copy map contents
 	//
-		for (Map.Entry<IRequestParameter, IRequestParameter> item : objectMap.entrySet())
+		for (Map.Entry<IGwtSerializableParameter, IGwtSerializableParameter> item : objectMap.entrySet())
 		{
 			serializableCollection.put(convertFromGwt(item.getKey()),
 									   convertFromGwt(item.getValue()));
