@@ -48,6 +48,37 @@ public class IntrospectionHelper
 	}
 	
 	/**
+	 * Recursively find declared field with the argument name
+	 */
+	public static Field getRecursiveDeclaredField(Class<?> clazz, String fieldName)
+	{
+	//	Recursive get superclass declared fields
+	//
+		while(clazz != null)
+		{
+			try
+			{
+				return clazz.getDeclaredField(fieldName);
+			} 
+			catch (NoSuchFieldException e) 
+			{
+			//	Search in superclass
+			//
+				clazz = clazz.getSuperclass();
+			}
+			catch (SecurityException e)
+			{
+				throw new RuntimeException (e.getMessage(), e);
+			} 
+			
+		}
+	
+	//	not found
+	//
+		return null;
+	}
+	
+	/**
 	 * Recursively find declared method with the argument name
 	 * Important notice : does not check parameters types since it is used for searching 
 	 * getter and setter !

@@ -44,6 +44,7 @@ import net.sf.gilead.exception.InvocationException;
 import net.sf.gilead.exception.NotAssignableException;
 import net.sf.gilead.exception.NotPersistentObjectException;
 import net.sf.gilead.exception.TransientObjectException;
+import net.sf.gilead.util.CollectionHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -809,7 +810,7 @@ public class PersistentBeanManager
 					pojoClass = sourceClass;
 				}
 			}
-			
+						
 			if ((_persistenceUtil.isEnhanced(pojoClass) == true) ||
 				(_persistenceUtil.isPersistentClass(pojoClass) == true) ||
 				(_persistenceUtil.isPersistentCollection(pojoClass) == true))
@@ -884,6 +885,12 @@ public class PersistentBeanManager
 				if (propertyValue == null)
 				{
 					continue;
+				}
+				
+				// Unmodifiable collection handling
+				if (CollectionHelper.isUnmodifiableCollection(propertyValue))
+				{
+					propertyValue = CollectionHelper.getUnmodifiableCollection((Collection<?>) propertyValue);
 				}
 				
 				// Get real property class

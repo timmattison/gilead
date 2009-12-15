@@ -4,6 +4,7 @@
 package net.sf.gilead.core.beanlib.merge;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import net.sf.beanlib.hibernate3.Hibernate3CollectionReplicator;
 import net.sf.beanlib.spi.BeanTransformerSpi;
 import net.sf.beanlib.spi.replicator.CollectionReplicatorSpi;
 import net.sf.gilead.core.IPersistenceUtil;
+import net.sf.gilead.util.CollectionHelper;
 
 /**
  * Encapsulation of the collection replicator
@@ -120,5 +122,23 @@ public class MergeCollectionReplicator extends Hibernate3CollectionReplicator {
 		{
 			return collection;
 		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.beanlib.hibernate3.Hibernate3CollectionReplicator#createToCollection(java.util.Collection)
+	 */
+	@SuppressWarnings("unchecked")
+	protected <T> Collection<T> createToCollection(Collection<T> from)
+			throws InstantiationException, IllegalAccessException,
+			SecurityException, NoSuchMethodException, InvocationTargetException 
+	{
+	//	Unmodifiable collection handling
+	//
+		if (CollectionHelper.isUnmodifiableCollection(from))
+		{
+			from = (Collection<T>) CollectionHelper.getUnmodifiableCollection(from);
+		}
+		return super.createToCollection(from);
 	}
 }

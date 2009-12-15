@@ -3,6 +3,7 @@
  */
 package net.sf.gilead.core.wrapper;
 
+import java.util.Collections;
 import java.util.List;
 
 import net.sf.gilead.test.domain.interfaces.IMessage;
@@ -68,7 +69,8 @@ public class WrappingClass
 	 */
 	public List<IMessage> getMessageList()
 	{
-		return _messageList;
+		// test unmodifiable set
+		return Collections.unmodifiableList(_messageList);
 	}
 
 	/**
