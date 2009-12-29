@@ -2,7 +2,7 @@
 
 	<!-- Inherit the core Web Toolkit stuff.                  -->
 	<inherits name='com.google.gwt.user.User'/>
-	<inherits name='net.sf.gilead.Adapter4Gwt'/>
+	<inherits name='net.sf.gilead.Gilead4Gwt'/>
 	<inherits name='net.sf.gilead.gwt.Loading' /> 
 
 	<!-- Source path -->

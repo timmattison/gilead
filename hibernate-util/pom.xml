@@ -7,13 +7,13 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>${parent.groupId}</groupId>
-	<artifactId>hibernate-util</artifactId>
-	<name>hibernate-util</name>
+	<artifactId>gilead-hibernate</artifactId>
+	<name>gilead-hibernate</name>
 	<version>1.3.0-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>${parent.groupId}</groupId>
-			<artifactId>adapter-core</artifactId>
+			<artifactId>gilead-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>

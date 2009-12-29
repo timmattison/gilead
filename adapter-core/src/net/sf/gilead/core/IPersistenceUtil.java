@@ -38,6 +38,11 @@ public interface IPersistenceUtil
 	 */
 	public abstract Object load(Serializable id, Class<?> persistentClass);
 	
+	/**
+	 * Flush pending modifications if needed
+	 */
+	public void flushIfNeeded();
+	
 	//-------------------------------------------------------------------------
 	//
 	// ID management

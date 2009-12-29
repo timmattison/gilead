@@ -220,6 +220,10 @@ public class PersistentBeanManager
 		{
 			throw new RuntimeException("No Persistence Util set !");
 		}
+		
+	//	Flush any pending modifications before clone
+	//
+		_persistenceUtil.flushIfNeeded();
 	
 	//	Collection handling
 	//

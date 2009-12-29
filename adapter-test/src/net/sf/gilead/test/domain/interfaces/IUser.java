@@ -37,6 +37,8 @@ public interface IUser
 	
 	public Set<IMessage> getMessageList();
 	
+	public void setMessageList(Set<IMessage> messageList);
+	
 	public void addMessage(IMessage message);
 	
 	public void removeMessage(IMessage message);

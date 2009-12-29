@@ -31,10 +31,12 @@ import net.sf.gilead.test.domain.misc.Configuration;
 import net.sf.gilead.test.domain.misc.PagingList;
 import net.sf.gilead.test.domain.misc.Style;
 
+import org.hibernate.FlushMode;
 import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 /**
  * Test case clone and merge server operations
@@ -434,6 +436,57 @@ public abstract class CloneTest extends TestCase
 	//
 		messageDAO.saveMessage(mergeMessage);
 	}
+	
+	/**
+	 * Test clone and merge of an unsaved user
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	public void testCloneAndMergeUnsavedUser() throws InstantiationException, IllegalAccessException
+	{
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		IUser junitUser = userDAO.loadUserByLogin(TestHelper.JUNIT_LOGIN);
+		
+	//	Create a new user and save it
+	//
+		Session session = HibernateContext.getSessionFactory().getCurrentSession();
+		session.setFlushMode(FlushMode.MANUAL);
+		Transaction tx = session.beginTransaction();
+		
+		IUser user = createNewUser();
+		user.setLogin("newTest");
+		user.setFirstName("Unsaved");
+		user.setLastName("value");
+		user.setAddress(junitUser.getAddress());
+		
+		IMessage message = createNewMessage(user);
+		message.addKeyword("test", 4);
+		user.addMessage(message);
+		
+	//	Clone user
+	//
+		session.saveOrUpdate(user);
+		IUser cloneUser = (IUser) _beanManager.clone(user);
+		
+		tx.commit();
+	//	Test cloned user
+	//
+		assertNotNull(cloneUser);
+//		assertNotNull(cloneUser.getMessageList());
+		
+	//	Merge user
+	//
+		IUser mergeUser = (IUser) _beanManager.merge(cloneUser);
+		
+	//	Test merged message
+	//
+		assertNotNull(mergeUser);
+//		assertNotNull(mergeUser.getMessageList());
+	}
+	
 	
 	/**
 	 * Test clone of a loaded user list
@@ -1769,6 +1822,27 @@ public abstract class CloneTest extends TestCase
 	}
 	
 	/**
+	 * Create a new message
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	protected IMessage createNewMessage(IUser user) throws InstantiationException, IllegalAccessException
+	{
+	//	Create message
+	//
+		IMessage result = (IMessage) _domainMessageClass.newInstance();
+		result.setDate(new Date());
+		result.setMessage("test message");
+		
+	//	Change author
+	//
+		changeAuthorForDomain(result, user);
+			
+		return result;
+	}
+	
+	
+	/**
 	 * Create a new user
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
@@ -1778,6 +1852,20 @@ public abstract class CloneTest extends TestCase
 	//	Create user
 	//
 		IUser result = (IUser) _cloneUserClass.newInstance();
+			
+		return result;
+	}
+	
+	/**
+	 * Create a new user
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	protected IUser createNewUser() throws InstantiationException, IllegalAccessException
+	{
+	//	Create user
+	//
+		IUser result = (IUser) _domainUserClass.newInstance();
 			
 		return result;
 	}

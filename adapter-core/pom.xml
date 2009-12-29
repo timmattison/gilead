@@ -8,9 +8,9 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>${parent.groupId}</groupId>
-	<artifactId>adapter-core</artifactId>
+	<artifactId>gilead-core</artifactId>
 	<packaging>jar</packaging>
-	<name>adapter-core</name>
+	<name>gilead-core</name>
 	<version>1.3.0-SNAPSHOT</version>
 	<dependencies>
 		<dependency>

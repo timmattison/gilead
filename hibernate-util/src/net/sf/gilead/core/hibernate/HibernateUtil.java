@@ -22,10 +22,9 @@ import net.sf.gilead.exception.TransientObjectException;
 import net.sf.gilead.pojo.base.IUserType;
 import net.sf.gilead.util.IntrospectionHelper;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -48,6 +47,8 @@ import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.type.AbstractComponentType;
 import org.hibernate.type.CollectionType;
 import org.hibernate.type.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Persistent helper for Hibernate implementation
@@ -122,7 +123,7 @@ public class HibernateUtil implements IPersistenceUtil
 	/**
 	 * The current opened session
 	 */
-	private ThreadLocal<Session> _session;
+	private ThreadLocal<HibernateSession> _session;
 	
 	//----
 	// Properties
@@ -178,7 +179,7 @@ public class HibernateUtil implements IPersistenceUtil
 	public HibernateUtil(SessionFactory sessionFactory)
 	{
 		setSessionFactory(sessionFactory);
-		_session = new ThreadLocal<Session>();
+		_session = new ThreadLocal<HibernateSession>();
 		_persistenceMap = new HashMap<Class<?>, Boolean>();
 		_unehancementMap = new HashMap<Class<?>, Class<?>>();
 		
@@ -411,13 +412,29 @@ public class HibernateUtil implements IPersistenceUtil
 			throw new NullPointerException("No Hibernate Session Factory defined !");
 		}
 		
-	//	Open a new session
+	//	Open a the existing session
 	//
-		Session session = _sessionFactory.openSession();
+		Session session = null;
+		boolean created = false;
+		try
+		{
+			session = _sessionFactory.getCurrentSession();
+			if (session.isConnected() == false)
+			{
+				session = _sessionFactory.openSession();
+				created = true;
+			}
+		}
+		catch (HibernateException ex)
+		{
+			_log.debug("No current session, opening a new one", ex);
+			session = _sessionFactory.openSession();
+			created = true;
+		}
 		
 	//	Store the session in ThreadLocal
 	//
-		_session.set(session);
+		_session.set(new HibernateSession(session, created));
 	}
 	
 	/* (non-Javadoc)
@@ -425,10 +442,14 @@ public class HibernateUtil implements IPersistenceUtil
 	 */
 	public void closeCurrentSession()
 	{
-		Session session = _session.get();
-		if (session != null)
+		HibernateSession hSession = _session.get();
+		if (hSession != null)
 		{
-			session.close();
+			// Only close session that we created
+			if (hSession.created == true)
+			{
+				hSession.session.close();
+			}
 			_session.remove();
 		}
 	}
@@ -764,6 +785,19 @@ public class HibernateUtil implements IPersistenceUtil
 	public boolean isInitialized(Object proxy)
 	{
 		return Hibernate.isInitialized(proxy);
+	}
+	
+	/**
+	 * Flush pending modifications if needed
+	 */
+	public void flushIfNeeded()
+	{
+		Session session = getCurrentSession();
+		if (session != null)
+		{
+			_log.debug("Flushing session !");
+			session.flush();
+		}
 	}
 	
 	/*
@@ -1524,12 +1558,44 @@ public class HibernateUtil implements IPersistenceUtil
 	 */
 	private Session getSession()
 	{
-		Session session = _session.get();
-		if (session == null)
+		HibernateSession hSession = _session.get();
+		if (hSession == null)
 		{
 			openSession();
-			session = _session.get();
+			hSession = _session.get();
 		}
+		return hSession.session;
+	}
+	
+	/**
+	 * Return the already opened session (returns null if none is opened)
+	 */
+	private Session getCurrentSession()
+	{
+	//	Precondition checking
+	//
+		if (_sessionFactory == null)
+		{
+			throw new NullPointerException("No Hibernate Session Factory defined !");
+		}
+		
+	//	Open the existing session
+	//
+		Session session = null;
+		try
+		{
+			session = _sessionFactory.getCurrentSession();
+			if (session.isConnected() == false)
+			{
+				return null;
+			}
+		}
+		catch (HibernateException ex)
+		{
+			_log.debug("Exception during getCurrentSession", ex);
+			return null;
+		}
+		
 		return session;
 	}
 	
@@ -1612,4 +1678,16 @@ class NewItem
 {
 	public Object object;
 	public int index;
+}
+
+class HibernateSession
+{
+	public Session session;
+	public boolean created;
+	
+	public HibernateSession(Session session, boolean created)
+	{
+		this.session = session;
+		this.created = created;
+	}
 }

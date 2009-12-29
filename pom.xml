@@ -91,17 +91,17 @@
 		<dependencies>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>hibernate-util</artifactId>
+				<artifactId>gilead-hibernate</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>adapter-core</artifactId>
+				<artifactId>gilead-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>adapter4gwt</artifactId>
+				<artifactId>gilead4gwt</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
