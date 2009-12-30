@@ -7,8 +7,11 @@ import javax.persistence.EntityManagerFactory;
 
 import net.sf.gilead.core.hibernate.HibernateUtil;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManagerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxy;
 
 /**
@@ -18,6 +21,22 @@ import org.springframework.aop.framework.AopProxy;
  */
 public class HibernateSpringUtil extends HibernateUtil
 {
+	//----
+	// Attributes
+	//----
+	/**
+	 * Log channel
+	 */
+	private static Logger _log = LoggerFactory.getLogger(HibernateSpringUtil.class);
+	
+	/**
+	 * Spring wrapper for session factory (needed to get current session)
+	 */
+	private SessionFactory _springSessionFactory;
+	
+	//----
+	// Setters
+	//----
 	/**
 	 * Set entity manager factory from JBoss
 	 * @param entityManagerFactory
@@ -48,9 +67,12 @@ public class HibernateSpringUtil extends HibernateUtil
 		}	 
 	}
 	
-	@Override
+	/**
+	 * Sets the session factory
+	 */
 	public void setSessionFactory(SessionFactory sessionFactory)
 	{
+		_springSessionFactory = sessionFactory;
 	//	Manage injected SessionFactory
 	//
 		if (sessionFactory instanceof AopProxy)
@@ -58,7 +80,6 @@ public class HibernateSpringUtil extends HibernateUtil
 		//	Need to call 'getProxy' method
 		//
 			sessionFactory = (SessionFactory) ((AopProxy) sessionFactory).getProxy();
-		
 		}
 		
 		// Call base class
@@ -96,5 +117,43 @@ public class HibernateSpringUtil extends HibernateUtil
 		setEntityManagerFactory(entityManagerFactory);
 	}
 	
-	
+	//-------------------------------------------------------------------------
+	//
+	// Overridden method
+	//
+	//-------------------------------------------------------------------------
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.core.hibernate.HibernateUtil#getCurrentSession()
+	 */
+	protected Session getCurrentSession()
+	{
+		if (_springSessionFactory != null)
+		{
+			try
+			{
+				Session session = _springSessionFactory.getCurrentSession();
+				if ((session != null) &&
+					(session.isConnected()))
+				{
+					// return only active session
+					return session;
+				}
+				else
+				{
+					return null;
+				}
+			}
+			catch(Exception ex)
+			{
+				_log.debug("Exception during getCurrentSession", ex);
+				return null;
+			}
+		}
+		else
+		{
+			_log.warn("No Spring session factory found !");
+			return super.getCurrentSession();
+		}
+	}
 }
