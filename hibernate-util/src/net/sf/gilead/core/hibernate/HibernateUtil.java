@@ -25,6 +25,7 @@ import net.sf.gilead.util.IntrospectionHelper;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -1129,7 +1130,7 @@ public class HibernateUtil implements IPersistenceUtil
 				
 				if (isPersistentPojo(item))
 				{
-					id.setEntityName(getEntityName(item.getClass(), item));
+					id.setEntityName(getEntityName(getPersistentClass(item), item));
 					id.setId(getId(item));
 				}
 				else
@@ -1380,16 +1381,34 @@ public class HibernateUtil implements IPersistenceUtil
 					{
 						for (NewItem deletedItem : deletedItemList)
 						{
-							((List)collection).add(deletedItem.index, deletedItem.object);
-							deletedList.add(deletedItem.object);
+							try
+							{
+								((List)collection).add(deletedItem.index, deletedItem.object);
+								deletedList.add(deletedItem.object);
+							}
+							catch (ObjectNotFoundException ex)
+							{
+							//	The object has probably already been deleted
+							//
+								_log.warn("Entity has been deleted", ex);
+							}
 						}
 					}
 					else
 					{
 						for (NewItem deletedItem : deletedItemList)
 						{
-							((Collection)collection).add(deletedItem.object);
-							deletedList.add(deletedItem.object);
+							try
+							{
+								((Collection)collection).add(deletedItem.object);
+								deletedList.add(deletedItem.object);
+							}
+							catch(ObjectNotFoundException ex)
+							{
+							//	The object has probably already been deleted
+							//
+								_log.warn("Entity has been deleted", ex);		
+							}
 						}
 					}
 				}
@@ -1570,7 +1589,7 @@ public class HibernateUtil implements IPersistenceUtil
 	/**
 	 * Return the already opened session (returns null if none is opened)
 	 */
-	private Session getCurrentSession()
+	protected Session getCurrentSession()
 	{
 	//	Precondition checking
 	//
