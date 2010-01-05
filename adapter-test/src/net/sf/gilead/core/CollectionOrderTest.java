@@ -41,7 +41,7 @@ public class CollectionOrderTest extends TestCase
 		assertNotNull(clonePage);
 		assertNotNull(clonePage.getPhotoList());
 		
-	//	Change order
+	//	Change order (clea
 	//
 		Photo photo1 = clonePage.getPhotoList().get(0);
 		Photo photo2 = clonePage.getPhotoList().get(1);

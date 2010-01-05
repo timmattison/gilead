@@ -118,4 +118,29 @@ public class SerializableId implements Serializable
 			return id.equals(((SerializableId)other).id);
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString()
+	{
+		StringBuilder result = new StringBuilder();
+		result.append("[");
+		result.append(entityName);
+		result.append("/");
+		if (id != null)
+		{
+			result.append("ID:");
+			result.append(id);
+		}
+		else
+		{
+			result.append("hashcode:");
+			result.append(hashCode);
+		}
+		result.append("]");
+		
+		return result.toString();
+	}
 }

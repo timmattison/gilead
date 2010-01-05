@@ -1,6 +1,7 @@
 package net.sf.gilead.core;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -102,6 +103,13 @@ public interface IPersistenceUtil
 	public abstract boolean isPersistentCollection(Class<?> collectionClass);
 	
 	/**
+	 * Indicates if the argument map is persistent or not
+	 * @param collectionClass the collection class
+	 * @return
+	 */
+	public abstract boolean isPersistentMap(Class<?> collectionClass);
+	
+	/**
 	 * Indicates it the argument is initialized not
 	 * @param proxy the instance to check
 	 * @return 
@@ -135,7 +143,7 @@ public interface IPersistenceUtil
 	 * @param persistentCollection the persistent collection
 	 * @return a Map with mininmum informations needed to re-create the persistent info
 	 */
-	public abstract Map<String,Serializable> serializePersistentCollection(Object persistentCollection);
+	public abstract Map<String,Serializable> serializePersistentCollection(Collection<?> persistentCollection);
 	
 	/**
 	 * Create a persistent collection from serialized informations
@@ -144,9 +152,27 @@ public interface IPersistenceUtil
 	 * @param underlyingCollection the filled underlying collection
 	 * @return the created persistent collection
 	 */
-	public abstract Object createPersistentCollection(Object parent, 
-													  Map<String,Serializable> proxyInformations,
-													  Object underlyingCollection);
+	public abstract Collection<?> createPersistentCollection(Object parent, 
+													  		 Map<String,Serializable> proxyInformations,
+													  		 Collection<?> underlyingCollection);
+	
+	/**
+	 * Serialize a persistent map
+	 * @param persistentMap the persistent map
+	 * @return a Map with mininmum informations needed to re-create the persistent info
+	 */
+	public abstract Map<String,Serializable> serializePersistentMap(Map<?,?> persistentMap);
+	
+	/**
+	 * Create a persistent map from serialized informations
+	 * @param parent the parent bean of the collection
+	 * @param serialized form of the persistent collection informations
+	 * @param underlyingMap the filled underlying map
+	 * @return the created persistent collection
+	 */
+	public abstract Map<?,?> createPersistentMap(Object parent, 
+												 Map<String,Serializable> proxyInformations,
+												 Map<?,?> underlyingMap);
 	
 	//-------------------------------------------------------------------------
 	//

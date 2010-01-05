@@ -18,6 +18,7 @@ package net.sf.gilead.core.beanlib.clone;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Map;
 
 import net.sf.beanlib.spi.DetailedPropertyFilter;
@@ -147,6 +148,9 @@ public class ClonePropertyFilter implements DetailedPropertyFilter
 			
 			boolean isPersistentCollection = 
 				_persistenceUtil.isPersistentCollection(fromValue.getClass());
+			boolean isPersistentMap= 
+				_persistenceUtil.isPersistentMap(fromValue.getClass());
+			
 			
 		//	Lazy handling
 		//
@@ -162,9 +166,13 @@ public class ClonePropertyFilter implements DetailedPropertyFilter
 			//	Get proxy informations
 			//
 				Map<String, Serializable> proxyInformations;
-				if (isPersistentCollection)
+				if (isPersistentMap)
 				{
-					proxyInformations = _persistenceUtil.serializePersistentCollection(fromValue);
+					proxyInformations = _persistenceUtil.serializePersistentMap((Map)fromValue);
+				}
+				else if (isPersistentCollection)
+				{
+					proxyInformations = _persistenceUtil.serializePersistentCollection((Collection)fromValue);
 				}
 				else
 				{
@@ -182,16 +190,27 @@ public class ClonePropertyFilter implements DetailedPropertyFilter
 				
 				return false;
 			}
-			else if (isPersistentCollection)
+			else if (isPersistentMap)
+			{
+			//	Persistent map handling
+			//
+				Map<String, Serializable> proxyInformations = 
+					_persistenceUtil.serializePersistentMap((Map)fromValue);
+
+				_proxyStore.storeProxyInformations(toBean, fromBean,
+												   propertyName, proxyInformations);
+			}else if (isPersistentCollection)
 			{
 			//	Persistent collection handling
 			//
 				Map<String, Serializable> proxyInformations = 
-					_persistenceUtil.serializePersistentCollection(fromValue);
+					_persistenceUtil.serializePersistentCollection((Collection)fromValue);
 
 				_proxyStore.storeProxyInformations(toBean, fromBean,
 												   propertyName, proxyInformations);
 			}
+			
+			
 		
 			return true;
 		}

@@ -167,8 +167,11 @@ public class LazyKiller
 		{
 			return null;
 		}
-			
-		_log.info("Detaching " + hibernatePojo.toString());
+		
+		if (_log.isDebugEnabled())
+		{
+			_log.debug("Detaching " + hibernatePojo.toString());
+		}
 		
 	// 	Search for Proxy
 	//
@@ -201,7 +204,7 @@ public class LazyKiller
 			
 		if (_log.isDebugEnabled())
 		{
-			_log.info("Detaching " + hibernatePojo.toString());
+			_log.debug("Detaching " + hibernatePojo.toString());
 		}
 		
 	//	 Clone with beanLib

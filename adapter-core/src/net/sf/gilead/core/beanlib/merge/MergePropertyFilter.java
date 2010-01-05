@@ -158,8 +158,8 @@ public class MergePropertyFilter implements DetailedPropertyFilter
 			Object cloneValue = readPropertyValue(cloneBean, readerMethod.getName());
 			
 			Class<?> valueClass = readerMethod.getReturnType();
-			boolean isCollection = (Collection.class.isAssignableFrom(valueClass) ||
-								    Map.class.isAssignableFrom(valueClass));
+			boolean isCollection = Collection.class.isAssignableFrom(valueClass);
+			boolean isMap = Map.class.isAssignableFrom(valueClass);
 	
 			// Null value : can be a proxy
 			if ((isNullValue(cloneValue)) &&
@@ -174,6 +174,15 @@ public class MergePropertyFilter implements DetailedPropertyFilter
 					Object persistentCollection = _persistenceUtil.createPersistentCollection(persistentBean, proxyInformations, null);
 					writePropertyValue(persistentBean, persistentCollection, 
 									   setterMethod.getName(), setterMethod.getParameterTypes());
+				}
+				else if (isMap)
+				{
+				//	Set map proxy
+				//
+					Object persistentMap = _persistenceUtil.createPersistentMap(persistentBean, proxyInformations, null);
+					writePropertyValue(persistentBean, persistentMap, 
+									   setterMethod.getName(), setterMethod.getParameterTypes());
+					
 				}
 				else
 				{
