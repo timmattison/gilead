@@ -115,8 +115,14 @@ public class MergePropertyFilter implements DetailedPropertyFilter
 								  Object persistentBean, 
 								  Method setterMethod)
 	{
+	//	Always reset proxy information on stack
+	//
+		BeanlibThreadLocal.setProxyInformations(null);
+		
 		try
 		{
+		//	Precondition checking
+		//
 			if ((CloneAndMergeConstants.PROXY_INFORMATIONS.equals(propertyName) == true) ||
 				(CloneAndMergeConstants.INITIALIZATION_MAP.equals(propertyName) == true))
 			{
