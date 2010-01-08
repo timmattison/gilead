@@ -1,3 +1,36 @@
+Release 1.3.0 (01/2010)
+-----------------------
+Bug fixed :
+    - Fix collection ordering error on merge operation
+    - Unmodifiable collection handling
+    - Flush session before clone (leading to "Unknown collection role : null" error)
+    - Fix arrays of persistent objects detection in PersistentBeanManager
+    - Handling error is persistent collection size throws LazyInitialisationException
+    - Fix merge collection duplicate elements
+    - Clone of collection without empty constructor
+    - NPE on Serializable ID
+    - Fix Java5 compilation issue (@Override on interface implementation methods)
+    - Persistent POJO inside exception
+    - Fix embeddable entities persistent collection modification detection.
+    - Primitive type checking for merge operation (was causing ClassCastException)
+    - Nested collection handling for holdPersistentObject (fix from Paul Wills)
+    - Minor fix on MergePropertyFilter
+
+Improvements : 
+    - Remote Loading Service for GWT and Flex
+    - Remote Request Service for GWT and Flex
+    - Lazy loading checking on client side
+    - @LimitedAccess transport annotation for application control on fields
+    - ConfigurationHelper to simplify Gilead configuration 
+    - Migration from Jackarta commons-logging to SLF4J
+    - Rename module to reflect that it is relevant to gilead
+    - NoProxyStore : no need for LightEntity inheritance, no http session storage, use for clone only operation
+    - Remove proxy information serialization if not needed (performance improvement)
+    - Improved proxy information serialization for GWT (both in size and performance)
+    
+Other : 
+    - Use beanlib-5.0.2beta
+
 Release 1.2.3 (05/2009)
 -----------------------
 Bug fixed :

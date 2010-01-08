@@ -198,6 +198,7 @@ public class PersistentBeanManager
 		finally
 		{
 			_proxyStore.cleanUp();
+			_lazyKiller.reset();
 		}
 	}
 	
