@@ -6,6 +6,7 @@
 	<!-- Additional source path -->
 	<source path='pojo/base'/>
 	<source path='pojo/gwt'/>
+	<source path='pojo/java5/legacy'/>
 	<source path='annotations'/>
 	<source path='gwt/client'/>
 	
