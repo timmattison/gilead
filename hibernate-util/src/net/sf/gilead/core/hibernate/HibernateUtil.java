@@ -1498,6 +1498,11 @@ public class HibernateUtil implements IPersistenceUtil
 			{
 				collectionMap.put(getId(item), item);
 			}
+			catch(NotPersistentObjectException ex)
+			{
+				// not hibernate entity : use hashcode instead
+				collectionMap.put(item.hashCode(), item);
+			}
 			catch(TransientObjectException ex)
 			{
 				// transient entity : use hashcode instead
