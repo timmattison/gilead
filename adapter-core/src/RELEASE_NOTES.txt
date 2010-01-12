@@ -22,7 +22,7 @@ Improvements :
     - Lazy loading checking on client side
     - @LimitedAccess transport annotation for application control on fields
     - ConfigurationHelper to simplify Gilead configuration 
-    - Migration from Jackarta commons-logging to SLF4J
+    - Migration from Jakarta commons-logging to SLF4J
     - Rename module to reflect that it is relevant to gilead
     - NoProxyStore : no need for LightEntity inheritance, no http session storage, use for clone only operation
     - Remove proxy information serialization if not needed (performance improvement)
