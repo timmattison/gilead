@@ -2,13 +2,13 @@
 	<parent>
 		<artifactId>gilead</artifactId>
 		<groupId>net.sf.gilead</groupId>
-		<version>1.3.0-SNAPSHOT</version>
+		<version>1.3.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>${parent.groupId}</groupId>
 	<artifactId>gilead-actionscript</artifactId>
 	<name>gilead-actionscript</name>
-	<version>1.3.0-SNAPSHOT</version>
+	<version>1.3.1-SNAPSHOT</version>
 </project>
 

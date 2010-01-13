@@ -9,15 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.serialization.GwtSerializer;
 import net.sf.gilead.gwt.PersistentRemoteService;
 import net.sf.gilead.gwt.client.RequestService;
 import net.sf.gilead.pojo.gwt.IGwtSerializableParameter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.sf.gilead.services.BaseRequestService;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 
@@ -38,15 +35,10 @@ public class RequestServiceImpl<T extends IGwtSerializableParameter> extends Per
 	private static final long serialVersionUID = 814725549964949202L;
 
 	/**
-	 * Logger channel
+	 * The associated base service.
+	 * The whole business logic is here !
 	 */
-	private static Logger _log = LoggerFactory.getLogger(RequestServiceImpl.class);
-	
-	/**
-	 * The associated bean manager.
-	 * Default value is defined by the unique instance of the singleton.
-	 */
-	private PersistentBeanManager beanManager = PersistentBeanManager.getInstance();
+	private BaseRequestService baseService;
 	
 	//----
 	// Properties
@@ -56,7 +48,7 @@ public class RequestServiceImpl<T extends IGwtSerializableParameter> extends Per
 	 */
 	public PersistentBeanManager getBeanManager()
 	{
-		return beanManager;
+		return baseService.getBeanManager();
 	}
 
 	/**
@@ -64,7 +56,20 @@ public class RequestServiceImpl<T extends IGwtSerializableParameter> extends Per
 	 */
 	public void setBeanManager(PersistentBeanManager beanManager)
 	{
-		this.beanManager = beanManager;
+		baseService.setBeanManager(beanManager);
+	}
+	
+	//-------------------------------------------------------------------------
+	//
+	// Constructor
+	//
+	//-------------------------------------------------------------------------
+	/**
+	 * Constructor
+	 */
+	public RequestServiceImpl()
+	{
+		baseService = new BaseRequestService();
 	}
 	
 	//-------------------------------------------------------------------------
@@ -79,32 +84,7 @@ public class RequestServiceImpl<T extends IGwtSerializableParameter> extends Per
 	public List<T> executeRequest(String query,
 								  				  List<IGwtSerializableParameter> parameters)
 								  				  throws SerializationException
-	{
-	//	Precondition checking
-	//
-		if (query == null)
-		{
-			throw new RuntimeException("Missing query !");
-		}
-		
-		if (_log.isDebugEnabled())
-		{
-			_log.debug("Executing request " + query);
-		}
-		
-		if (beanManager == null)
-		{
-			throw new NullPointerException("Bean manager not set !");
-		}
-		
-	//	Get Persistence util
-	//
-		IPersistenceUtil persistenceUtil = beanManager.getPersistenceUtil();
-		if (persistenceUtil == null)
-		{
-			throw new NullPointerException("Persistence util not set on beanManager field !");
-		}
-		
+	{	
 	//	Convert parameters if needed
 	//
 		List<Object> queryParameters = null;
@@ -121,7 +101,7 @@ public class RequestServiceImpl<T extends IGwtSerializableParameter> extends Per
 	//	Execute query
 	// 	Note : double case is mandatory due to Java 6 compiler issue 6548436
 	//
-		List<Serializable> result = (List<Serializable>)(Object) persistenceUtil.executeQuery(query, queryParameters);
+		List<Serializable> result = baseService.executeRequest(query, queryParameters);
 		if (result == null)
 		{
 			return null;
@@ -145,31 +125,6 @@ public class RequestServiceImpl<T extends IGwtSerializableParameter> extends Per
 				  				  Map<String, IGwtSerializableParameter> parameters)
 				  				  throws SerializationException
 	{
-	//	Precondition checking
-	//
-		if (query == null)
-		{
-			throw new RuntimeException("Missing query !");
-		}
-		
-		if (_log.isDebugEnabled())
-		{
-			_log.debug("Executing request " + query);
-		}
-		
-		if (beanManager == null)
-		{
-			throw new NullPointerException("Bean manager not set !");
-		}
-		
-	//	Get Persistence util
-	//
-		IPersistenceUtil persistenceUtil = beanManager.getPersistenceUtil();
-		if (persistenceUtil == null)
-		{
-			throw new NullPointerException("Persistence util not set on beanManager field !");
-		}
-		
 	//	Convert parameters if needed
 	//
 		Map<String,Object> queryParameters = null;
@@ -186,7 +141,7 @@ public class RequestServiceImpl<T extends IGwtSerializableParameter> extends Per
 	//	Execute query
 	//	Note : double case is mandatory due to Java 6 compiler issue 6548436
 	//
-		List<Serializable> result = (List<Serializable>)(Object) persistenceUtil.executeQuery(query, queryParameters);
+		List<Serializable> result = (List<Serializable>)(Object) baseService.executeRequest(query, queryParameters);
 		if (result == null)
 		{
 			return null;
