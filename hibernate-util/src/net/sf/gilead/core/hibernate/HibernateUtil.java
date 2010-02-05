@@ -19,6 +19,7 @@ import net.sf.gilead.core.serialization.SerializableId;
 import net.sf.gilead.exception.ComponentTypeException;
 import net.sf.gilead.exception.NotPersistentObjectException;
 import net.sf.gilead.exception.TransientObjectException;
+import net.sf.gilead.pojo.base.ILightEntity;
 import net.sf.gilead.pojo.base.IUserType;
 import net.sf.gilead.util.IntrospectionHelper;
 
@@ -593,7 +594,7 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		String className = (String) proxyInformations.get(CLASS_NAME);
 
-		Session session = getSession();
+		SessionImplementor session = (SessionImplementor) getSession();
 		PersistentCollection collection = null;
 		if (PersistentMap.class.getName().equals(className))
 		{
@@ -601,11 +602,11 @@ public class HibernateUtil implements IPersistenceUtil
 		//
 			if (originalMap== null)
 			{
-				collection = new PersistentMap((SessionImplementor) session);
+				collection = new PersistentMap(session);
 			}
 			else
 			{
-				collection = new PersistentMap((SessionImplementor) session,
+				collection = new PersistentMap(session,
 						 				 	   underlyingMap);
 			}
 		}
@@ -615,11 +616,11 @@ public class HibernateUtil implements IPersistenceUtil
 		//
 			if (originalMap== null)
 			{
-				collection = new PersistentSortedMap((SessionImplementor) session);
+				collection = new PersistentSortedMap(session);
 			}
 			else
 			{
-				collection = new PersistentSortedMap((SessionImplementor) session,
+				collection = new PersistentSortedMap(session,
 						 				 	   		 (SortedMap<?, ?>) underlyingMap);
 			}
 		}
@@ -631,12 +632,13 @@ public class HibernateUtil implements IPersistenceUtil
 	//	Fill with serialized parameters
 	//
 		String role = (String) proxyInformations.get(ROLE);
+		CollectionPersister collectionPersister = _sessionFactory.getCollectionPersister(role);
+		
 		Serializable snapshot = null;
 		if (originalMap  != null)
 		{
 		//	Create snapshot
 		//
-			CollectionPersister collectionPersister = _sessionFactory.getCollectionPersister(role);
 			snapshot = collection.getSnapshot(collectionPersister);
 		}
 		
@@ -665,6 +667,17 @@ public class HibernateUtil implements IPersistenceUtil
 			collection.dirty();
 		}
 		
+	//	Associated the collection to the persistence context
+	//
+		if (isInitialized(proxyInformations) == true)
+		{
+			session.getPersistenceContext().addInitializedDetachedCollection(collectionPersister, collection);
+		}
+		else
+		{
+			session.getPersistenceContext().addUninitializedDetachedCollection(collectionPersister, collection);			
+		}
+		
 		return (Map<?,?>)collection;
 	}
 	
@@ -686,7 +699,7 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		String className = (String) proxyInformations.get(CLASS_NAME);
 
-		Session session = getSession();
+		SessionImplementor session = (SessionImplementor) getSession();
 		PersistentCollection collection = null;
 		if (PersistentBag.class.getName().equals(className))
 		{
@@ -694,11 +707,11 @@ public class HibernateUtil implements IPersistenceUtil
 		//
 			if (originalCollection == null)
 			{
-				collection = new PersistentBag((SessionImplementor) session);
+				collection = new PersistentBag(session);
 			}
 			else
 			{
-				collection =  new PersistentBag((SessionImplementor) session,
+				collection =  new PersistentBag(session,
 										 		(Collection<?>) originalCollection);
 			}
 		}
@@ -708,11 +721,11 @@ public class HibernateUtil implements IPersistenceUtil
 		//
 			if (originalCollection == null)
 			{
-				collection = new PersistentList((SessionImplementor) session);
+				collection = new PersistentList(session);
 			}
 			else
 			{
-				collection = new PersistentList((SessionImplementor) session,
+				collection = new PersistentList(session,
 										  		(List<?>) originalCollection);
 			}
 		}
@@ -722,11 +735,11 @@ public class HibernateUtil implements IPersistenceUtil
 		//
 			if (originalCollection == null)
 			{
-				collection = new PersistentSet((SessionImplementor) session);
+				collection = new PersistentSet(session);
 			}
 			else
 			{
-				collection = new PersistentSet((SessionImplementor) session,
+				collection = new PersistentSet(session,
 						 				 	   (Set<?>) originalCollection);
 			}
 		}
@@ -736,11 +749,11 @@ public class HibernateUtil implements IPersistenceUtil
 		//
 			if (originalCollection == null)
 			{
-				collection = new PersistentSortedSet((SessionImplementor) session);
+				collection = new PersistentSortedSet(session);
 			}
 			else
 			{
-				collection = new PersistentSortedSet((SessionImplementor) session,
+				collection = new PersistentSortedSet(session,
 						 				 	   		 (SortedSet<?>) originalCollection);
 			}
 		}
@@ -752,12 +765,14 @@ public class HibernateUtil implements IPersistenceUtil
 	//	Fill with serialized parameters
 	//
 		String role = (String) proxyInformations.get(ROLE);
+		CollectionPersister collectionPersister = _sessionFactory.getCollectionPersister(role);
+		
 		Serializable snapshot = null;
 		if (originalCollection != null)
 		{
 		//	Create snapshot
 		//
-			CollectionPersister collectionPersister = _sessionFactory.getCollectionPersister(role);
+			
 			snapshot = collection.getSnapshot(collectionPersister);
 		}
 		
@@ -788,6 +803,18 @@ public class HibernateUtil implements IPersistenceUtil
 			
 			collection.dirty();
 		}
+		
+	//	Associated the collection to the persistence context
+	//
+		if (isInitialized(proxyInformations) == true)
+		{
+			session.getPersistenceContext().addInitializedDetachedCollection(collectionPersister, collection);
+		}
+		else
+		{
+			session.getPersistenceContext().addUninitializedDetachedCollection(collectionPersister, collection);			
+		}
+		
 		return (Collection<?>) collection;
 	}
 
@@ -1626,6 +1653,28 @@ public class HibernateUtil implements IPersistenceUtil
 		}
 		
 		return entityNames;
+	}
+	
+	/**
+	 * Does the proxy info denotes a initialized entity ?
+	 * @param proxyInfo
+	 * @return
+	 */
+	private boolean isInitialized(Map<String, Serializable> proxyInfo)
+	{
+		if (proxyInfo != null)
+		{
+			Serializable initialized = proxyInfo.get(ILightEntity.INITIALISED);
+			if (initialized != null)
+			{
+				return ((Boolean) initialized).booleanValue(); 
+			}
+		}
+		
+	//	The property has no proxy info or it does not
+	//	contains 'initialized' field
+	//
+		return true;
 	}
 }
 
