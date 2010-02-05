@@ -28,6 +28,7 @@
     	<!-- Needed for GWT -->
         <copy includeemptydirs="false" todir="${build.dir}">
             <fileset dir="${source.dir}" includes="**/pojo/"/>
+        	<fileset dir="${source.dir}" includes="**/proxy/xml/*.xml"/>
         </copy>
     </target>
     
