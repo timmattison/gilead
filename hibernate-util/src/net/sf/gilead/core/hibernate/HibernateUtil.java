@@ -37,8 +37,8 @@ import org.hibernate.collection.PersistentMap;
 import org.hibernate.collection.PersistentSet;
 import org.hibernate.collection.PersistentSortedMap;
 import org.hibernate.collection.PersistentSortedSet;
+import org.hibernate.engine.SessionImplementor;
 import org.hibernate.impl.SessionFactoryImpl;
-import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.persister.entity.EntityPersister;
@@ -601,11 +601,11 @@ public class HibernateUtil implements IPersistenceUtil
 		//
 			if (originalMap== null)
 			{
-				collection = new PersistentMap((SessionImpl) session);
+				collection = new PersistentMap((SessionImplementor) session);
 			}
 			else
 			{
-				collection = new PersistentMap((SessionImpl) session,
+				collection = new PersistentMap((SessionImplementor) session,
 						 				 	   underlyingMap);
 			}
 		}
@@ -615,11 +615,11 @@ public class HibernateUtil implements IPersistenceUtil
 		//
 			if (originalMap== null)
 			{
-				collection = new PersistentSortedMap((SessionImpl) session);
+				collection = new PersistentSortedMap((SessionImplementor) session);
 			}
 			else
 			{
-				collection = new PersistentSortedMap((SessionImpl) session,
+				collection = new PersistentSortedMap((SessionImplementor) session,
 						 				 	   		 (SortedMap<?, ?>) underlyingMap);
 			}
 		}
@@ -694,11 +694,11 @@ public class HibernateUtil implements IPersistenceUtil
 		//
 			if (originalCollection == null)
 			{
-				collection = new PersistentBag((SessionImpl) session);
+				collection = new PersistentBag((SessionImplementor) session);
 			}
 			else
 			{
-				collection =  new PersistentBag((SessionImpl) session,
+				collection =  new PersistentBag((SessionImplementor) session,
 										 		(Collection<?>) originalCollection);
 			}
 		}
@@ -708,11 +708,11 @@ public class HibernateUtil implements IPersistenceUtil
 		//
 			if (originalCollection == null)
 			{
-				collection = new PersistentList((SessionImpl) session);
+				collection = new PersistentList((SessionImplementor) session);
 			}
 			else
 			{
-				collection = new PersistentList((SessionImpl) session,
+				collection = new PersistentList((SessionImplementor) session,
 										  		(List<?>) originalCollection);
 			}
 		}
@@ -722,11 +722,11 @@ public class HibernateUtil implements IPersistenceUtil
 		//
 			if (originalCollection == null)
 			{
-				collection = new PersistentSet((SessionImpl) session);
+				collection = new PersistentSet((SessionImplementor) session);
 			}
 			else
 			{
-				collection = new PersistentSet((SessionImpl) session,
+				collection = new PersistentSet((SessionImplementor) session,
 						 				 	   (Set<?>) originalCollection);
 			}
 		}
@@ -736,11 +736,11 @@ public class HibernateUtil implements IPersistenceUtil
 		//
 			if (originalCollection == null)
 			{
-				collection = new PersistentSortedSet((SessionImpl) session);
+				collection = new PersistentSortedSet((SessionImplementor) session);
 			}
 			else
 			{
-				collection = new PersistentSortedSet((SessionImpl) session,
+				collection = new PersistentSortedSet((SessionImplementor) session,
 						 				 	   		 (SortedSet<?>) originalCollection);
 			}
 		}
@@ -1601,7 +1601,7 @@ public class HibernateUtil implements IPersistenceUtil
 		if (pojo != null)
 		{
 			// Get entity name
-			return ((SessionImpl)getSession()).bestGuessEntityName(pojo);
+			return ((SessionImplementor)getSession()).bestGuessEntityName(pojo);
 		}
 		else
 		{
