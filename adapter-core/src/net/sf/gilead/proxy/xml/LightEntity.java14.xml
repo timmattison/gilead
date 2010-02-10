@@ -92,5 +92,12 @@
     			{ _initializationMap.put(property, Boolean.valueOf(initialized)); }
     		</code>
     	</method>
+    	
+    	<!-- getValue -->
+    	<method visibility="public" returnType="Object" name="getValue">
+    		<code>
+				{ return this; }
+			</code>
+		</method>
     </methods>
 </additionalCode>
