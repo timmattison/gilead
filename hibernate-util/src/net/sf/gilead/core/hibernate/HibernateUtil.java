@@ -1252,12 +1252,16 @@ public class HibernateUtil implements IPersistenceUtil
 	{
 		if (pojo instanceof HibernateProxy)
 		{
-			return ((HibernateProxy)pojo).getHibernateLazyInitializer().getPersistentClass();
+			HibernateProxy proxy = (HibernateProxy)pojo;
+			if (proxy.getHibernateLazyInitializer() != null)
+			{
+				return proxy.getHibernateLazyInitializer().getPersistentClass();
+			}
 		}
-		else
-		{
-			return pojo.getClass();
-		}
+
+	//	Just return the class
+	//
+		return pojo.getClass();
 	}
 	
 	/**
