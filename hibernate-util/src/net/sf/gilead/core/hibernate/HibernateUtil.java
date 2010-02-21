@@ -879,7 +879,7 @@ public class HibernateUtil implements IPersistenceUtil
 		StringBuilder queryString = new StringBuilder();
 		queryString.append("SELECT item FROM ");
 		queryString.append(parentClass.getSimpleName());
-		queryString.append(" item JOIN FETCH item.");
+		queryString.append(" item LEFT OUTER JOIN FETCH item.");
 		queryString.append(propertyName);
 		queryString.append(" WHERE item.id = :id");
 		if (_log.isDebugEnabled())
@@ -1583,7 +1583,10 @@ public class HibernateUtil implements IPersistenceUtil
 		}
 		catch (HibernateException ex)
 		{
-			_log.debug("Exception during getCurrentSession", ex);
+			if (_log.isTraceEnabled())
+			{
+				_log.trace("Exception during getCurrentSession", ex);
+			}
 			return null;
 		}
 		
