@@ -3,6 +3,8 @@ package net.sf.gilead.core;
 
 import java.io.FileNotFoundException;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -11,8 +13,10 @@ import net.sf.gilead.core.store.stateful.InMemoryProxyStore;
 import net.sf.gilead.test.HibernateContext;
 import net.sf.gilead.test.domain.misc.BaseDictionary;
 import net.sf.gilead.test.domain.misc.Client;
+import net.sf.gilead.test.domain.misc.Event;
 import net.sf.gilead.test.domain.misc.Page;
 import net.sf.gilead.test.domain.misc.PersistentException;
+import net.sf.gilead.test.domain.misc.Person;
 import net.sf.gilead.test.domain.misc.Photo;
 import net.sf.gilead.test.domain.misc.Preference;
 import net.sf.gilead.test.domain.misc.Project;
@@ -171,6 +175,34 @@ public class NonRegressionTest extends TestCase
 	//
 		BaseDictionary mergedDictionary = (BaseDictionary) beanManager.merge(cloneDictionary);
 		assertNotNull(mergedDictionary);
+	}
+	
+	/**
+	 * Test clone an entity with sorted set
+	 */
+	public void testCloneSortedSet()
+	{
+	//	Init bean manager
+	//
+		PersistentBeanManager beanManager = TestHelper.initGwtStatelessBeanManager();
+		
+	//	Create test Event
+	//
+		Event event = new Event();
+		event.setName("test");
+		event.setDate(new Date());
+		
+		Person person = new Person();
+		save(person);
+		person.setParent(event);
+		event.getAttendees().add(person);
+		
+		// save it
+		save(event);
+		
+	//	Clone the event
+	//
+		beanManager.clone(event);
 	}
 	
 	//-------------------------------------------------------------------------

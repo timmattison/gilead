@@ -36,5 +36,7 @@
         <mapping resource="gwt/Message.hbm.xml"/>
         <mapping resource="gwt/Group.hbm.xml"/>
         <mapping resource="gwt/Country.hbm.xml"/>
+        
+        <mapping resource="misc/Event.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

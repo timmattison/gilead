@@ -188,4 +188,35 @@ public abstract class PerformanceTest extends TestCase
 			assertNotNull(mergeUserList);
 		}
 	}
+	
+	/**
+	 * Test clone of a list of user and associated messages
+	 */
+	public void testLongRunningPerformanceOnClone()
+	{
+	//	Disable beanlib CGLIB check
+	//
+		UnEnhancer.setDefaultCheckCGLib(false);
+		
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Load users
+	//
+		List<IUser> userList = userDAO.loadAllUserAndMessages();
+
+	//	Clone user
+	//
+		for (int index = 0; index < 10 ; index ++)
+		{
+			long start = System.currentTimeMillis();
+			List<IUser> cloneUserList = (List<IUser>) _beanManager.clone(userList);
+			long end = System.currentTimeMillis();
+			assertNotNull(cloneUserList);
+			
+			_log.info(getClass().getSimpleName() + " / [CGLIB check disabled]Clone user list took " + (end - start) + " ms.");
+		}
+	}
 }
