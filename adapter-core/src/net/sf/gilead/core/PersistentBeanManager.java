@@ -380,7 +380,10 @@ public class PersistentBeanManager
 			//	Do not clone not persistent classes, since they do not necessary
 			//	implement Java Bean specification.
 			//
-				_log.info("Third party instance, not cloned : " + pojo.toString());
+				if (_log.isDebugEnabled())
+				{
+					_log.debug("Not persistent instance, clone is not needed : " + pojo.toString());
+				}
 				return pojo;
 			}
 			
@@ -492,12 +495,18 @@ public class PersistentBeanManager
 				//	Do not merge not persistent instance, since they do not necessary
 				//	implement the Java bean specification
 				//
-					_log.info("Third party object, not merged : " + clonePojo);
+					if (_log.isDebugEnabled())
+					{
+						_log.debug("Not persistent object, merge is not needed : " + clonePojo);
+					}
 					return clonePojo;
 				}
 				else
 				{
-					_log.info("Wrapping object : " + clonePojo);
+					if (_log.isDebugEnabled())
+					{
+						_log.debug("Merging wrapper object : " + clonePojo);
+					}
 				}
 			}
 			
@@ -825,6 +834,7 @@ public class PersistentBeanManager
 			
 			if (pojo instanceof Collection) 
 			{
+				@SuppressWarnings("unchecked")
 			    Collection<Object> pojoCollection = (Collection) pojo;
 			    for (Object item : pojoCollection)
 			    {
