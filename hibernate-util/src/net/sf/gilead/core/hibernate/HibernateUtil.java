@@ -1,6 +1,7 @@
 package net.sf.gilead.core.hibernate;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1502,7 +1503,20 @@ public class HibernateUtil implements IPersistenceUtil
 			//
 				try
 				{
-					entity = (T) Class.forName(sid.getEntityName()).newInstance();
+					Class<T> clazz = (Class<T>)Class.forName(sid.getEntityName());
+					if (Number.class.isAssignableFrom(clazz))
+					{
+					//	Special case for numbers (no empty constructor defined)
+					//
+						Constructor<T> ctor =  clazz.getConstructor(new Class[]{String.class});
+						entity = ctor.newInstance(Integer.toString(sid.getHashCode()));
+					}
+					else
+					{
+					//	Basic case
+					//
+						entity = (T) clazz.newInstance();
+					}
 				}
 				catch(Exception ex)
 				{
