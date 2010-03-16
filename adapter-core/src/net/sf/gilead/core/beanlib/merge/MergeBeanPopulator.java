@@ -8,6 +8,7 @@ import net.sf.beanlib.spi.DetailedPropertyFilter;
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.beanlib.IClassMapper;
 import net.sf.gilead.core.beanlib.finder.FastPrivateReaderMethodFinder;
+import net.sf.gilead.core.beanlib.finder.FastPrivateSetterMethodCollector;
 import net.sf.gilead.core.beanlib.transformer.CustomTransformersFactory;
 import net.sf.gilead.core.store.IProxyStore;
 
@@ -64,7 +65,7 @@ public class MergeBeanPopulator
 		
 	//	Merge based on protected and private setters
 	//
-		replicator.initSetterMethodCollector(new PrivateSetterMethodCollector());
+		replicator.initSetterMethodCollector(new FastPrivateSetterMethodCollector());
 		replicator.initReaderMethodFinder(new FastPrivateReaderMethodFinder());
 		
 		return replicator;

@@ -7,61 +7,30 @@ package net.sf.gilead.pojo.actionscript
 		 * The internal proxy informations
 		 * (a map of <String, Map<String, Serializable>>)
 		 */
-		private var _proxyInformations:Object;
+		public var proxyInformations:Object;
 		
 		/**
 	 	 * Map of persistence initialisation state.
 	 	 * (Map<String,Boolean>
 	 	 */
-		private var _initializationMap:Object;
+		public var initializationMap:Object;
 		
 		/**
 		 * Constructor of Lazy Pojo abstract class.
 		 **/
 		public function LightEntity()
 		{
-			_proxyInformations = new Object();
-			_initializationMap = new Object();
+			proxyInformations = new Object();
+			initializationMap = new Object();
 		}
 		
-		/**
-		 * Getter for proxy informations
-		 */
-		public function get proxyInformations():Object
-		{
-			return _proxyInformations;
-		}
-		
-		/**
-		 * Setter for proxy informations
-		 */
-		public function set proxyInformations(value:Object):void
-		{
-			_proxyInformations = value;
-		}
-		
-		/**
-		 * Getter for initialization map
-		 */
-		public function get initializationMap():Object
-		{
-			return _initializationMap;
-		}
-		
-		/**
-		 * Setter for initialization map
-		 */
-		public function set initializationMap(value:Object):void
-		{
-			_initializationMap = value;
-		}
 		
 		/**
 		 * Indicates if the property was initialized on server side
 		 */ 
 		public function isInitialized(property:String):Boolean
 		{
-			return _initializationMap[property];
+			return initializationMap[property];
 		}
 		
 		/**
@@ -69,7 +38,7 @@ package net.sf.gilead.pojo.actionscript
 		 */ 
 		public function setInitialized(property:String):void
 		{
-			_initializationMap[property] = true;
+			initializationMap[property] = true;
 		}
 		
 		/**
@@ -79,16 +48,16 @@ package net.sf.gilead.pojo.actionscript
 		{
 			var result:String;
 			result = "[proxyInformations : ";
-			result += _proxyInformations + " (";
-			for(var key:String in _proxyInformations)
+			result += proxyInformations + " (";
+			for(var key:String in proxyInformations)
 			{
-				result += key + ":" + _proxyInformations[key] + ","; 
+				result += key + ":" + proxyInformations[key] + ","; 
 			}
 			result += ")], [initializationMap : "; 
-			result += _initializationMap + " (";
-			for(var key2:String in _initializationMap)
+			result += initializationMap + " (";
+			for(var key2:String in initializationMap)
 			{
-				result += key2 + ":" + _initializationMap[key2] + ","; 
+				result += key2 + ":" + initializationMap[key2] + ","; 
 			}
 			
 			result += ")]";

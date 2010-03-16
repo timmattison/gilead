@@ -4,8 +4,6 @@ package net.sf.gilead.core;
 import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
 
 import junit.framework.TestCase;
 import net.sf.gilead.core.store.stateful.AbstractStatefulProxyStore;
@@ -40,10 +38,10 @@ public class NonRegressionTest extends TestCase
 	//
 	//-------------------------------------------------------------------------
 	/**
-	 * Test preference replacement
+	 * Test order set preservation
 	 * @throws FileNotFoundException 
 	 */
-	public void testChildReplacement() throws FileNotFoundException
+	public void testOrderedSet() throws FileNotFoundException
 	{
 	//	Init bean manager
 	//
@@ -54,23 +52,24 @@ public class NonRegressionTest extends TestCase
 		Utente utente = createTestUtente();
 		utente = loadUser(utente.getId());
 		
+		// test order
+		int index = 1;
+		for (Preference pref : utente.getPreferences())
+		{
+			assertEquals(index++, pref.getIntValue());
+		}
+		
 	//	Clone utente
 	//
 		utente = (Utente) beanManager.clone(utente);
 		
-	//	Update preferences
+	//	Test preferences order on cloned bean
 	//
-		List<Preference> preferences = utente.getPreferences(); 
-		for(Preference p:preferences)
-		{ 
-			p.setUser(null);  
-		} 
-		preferences.clear(); 
-		
-		Preference p1 = new Preference(); 
-		p1.setUser(utente); 
-		p1.setIntValue(6); 
-		preferences.add(p1); 
+		index = 1;
+		for (Preference pref : utente.getPreferences())
+		{
+			assertEquals(index++, pref.getIntValue());
+		}
 		
 	//	Merge and save user
 	//
@@ -81,7 +80,7 @@ public class NonRegressionTest extends TestCase
 	//
 		Utente loaded = loadUser(utente.getId());
 		assertNotNull(loaded.getPreferences());
-		assertEquals(1, loaded.getPreferences().size());
+		assertEquals(utente.getPreferences().size(), loaded.getPreferences().size());
 	}
 	
 	/**
@@ -219,12 +218,15 @@ public class NonRegressionTest extends TestCase
 		Utente user = new Utente();
 		
 		// Preferences
-		Preference preference = new Preference();
-		preference.setUser(user);
-		preference.setIntValue(1);
-		user.getPreferences().add(preference);
+		for (int index = 1; index <= 4; index++)
+		{
+			Preference preference = new Preference();
+			preference.setUser(user);
+			preference.setIntValue(index);
+			user.getPreferences().add(preference);
+		}
 		
-		// Save preference
+		// Save user and preferences
 		save(user);
 		
 		return user;

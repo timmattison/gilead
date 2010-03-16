@@ -79,7 +79,7 @@ public class LoadingServiceImpl<T extends ILightEntity> extends PersistentRemote
 	 */
 	public <K extends ILightEntity> K loadEntityAssociation(T parent, String propertyName)
 	{
-		return baseService.loadEntityAssociation(parent, propertyName);
+		return (K) baseService.loadEntityAssociation(parent, propertyName);
 	}
 
 	/*

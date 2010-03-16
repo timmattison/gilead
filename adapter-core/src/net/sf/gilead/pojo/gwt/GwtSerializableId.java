@@ -25,9 +25,9 @@ public class GwtSerializableId implements IGwtSerializableParameter
 	protected IGwtSerializableParameter id;
 	
 	/**
-	 * Hash code for non persistent and transient values
+	 * Hash code or value for non persistent and transient values
 	 */
-	protected Integer hashCode;
+	protected String hashCode;
 	
 	/**
 	 * The associated entity name
@@ -54,14 +54,14 @@ public class GwtSerializableId implements IGwtSerializableParameter
 	/**
 	 * @return the hashCode
 	 */
-	public Integer getHashCode() {
+	public String getHashCode() {
 		return hashCode;
 	}
 
 	/**
 	 * @param hashCode the hashCode to set
 	 */
-	public void setHashCode(Integer hashCode) {
+	public void setHashCode(String hashCode) {
 		this.hashCode = hashCode;
 	}
 

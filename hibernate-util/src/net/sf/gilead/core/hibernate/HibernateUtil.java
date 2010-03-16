@@ -1184,17 +1184,15 @@ public class HibernateUtil implements IPersistenceUtil
 			Object item = iterator.next();
 			if (item != null)
 			{
-				SerializableId id = new SerializableId();
+				SerializableId id;
 				
 				if (isPersistentPojo(item))
 				{
-					id.setEntityName(getEntityName(getPersistentClass(item), item));
-					id.setId(getId(item));
+					id = serializePersistentEntity(item);
 				}
 				else
 				{
-					id.setEntityName(item.getClass().getName());
-					id.setHashCode(item.hashCode());
+					id = serializeNotPersistentEntity(item);
 				}
 				
 				idList.add(id);
@@ -1209,6 +1207,47 @@ public class HibernateUtil implements IPersistenceUtil
 		{
 			return idList;
 		}
+	}
+	
+	/**
+	 * Serialize a persistent entity to a SerializableId
+	 * @param item
+	 * @return the generated SerializableId
+	 */
+	private SerializableId serializePersistentEntity(Object item)
+	{
+		SerializableId result = new SerializableId();
+		result.setEntityName(getEntityName(getPersistentClass(item), item));
+		result.setId(getId(item));
+		
+		return result;
+	}
+	
+	/**
+	 * Serialize a not persistent entity to a SerializableId
+	 * @param item
+	 * @return the generated SerializableId
+	 */
+	private SerializableId serializeNotPersistentEntity(Object item)
+	{
+		SerializableId result = new SerializableId();
+		Class<?> itemClass = item.getClass();
+		
+		result.setEntityName(itemClass.getName());
+		
+		// Special String and Number handling
+		if (itemClass.isAssignableFrom(Number.class) ||
+			itemClass.equals(String.class))
+		{
+			result.setHashCode(item.toString());
+		}
+		else
+		{
+			// No idea of what it is...
+			result.setHashCode(Integer.toString(item.hashCode()));
+		}
+		
+		return result;
 	}
 	
 	
@@ -1484,7 +1523,7 @@ public class HibernateUtil implements IPersistenceUtil
 			//
 				try
 				{
-					entity = (T) getSession().load(sid.getEntityName(), sid.getId());
+					entity = createPersistentEntity(sid);
 				}
 				catch(ObjectNotFoundException ex)
 				{
@@ -1501,31 +1540,53 @@ public class HibernateUtil implements IPersistenceUtil
 			{
 			//	deleted item
 			//
-				try
-				{
-					Class<T> clazz = (Class<T>)Class.forName(sid.getEntityName());
-					if (Number.class.isAssignableFrom(clazz))
-					{
-					//	Special case for numbers (no empty constructor defined)
-					//
-						Constructor<T> ctor =  clazz.getConstructor(new Class[]{String.class});
-						entity = ctor.newInstance(Integer.toString(sid.getHashCode()));
-					}
-					else
-					{
-					//	Basic case
-					//
-						entity = (T) clazz.newInstance();
-					}
-				}
-				catch(Exception ex)
-				{
-					throw new RuntimeException(ex);
-				}
+				entity = createNotPersistentEntity(sid);
 			}
 		}
 		
 		return entity;
+	}
+	
+	/**
+	 * Create an entity back from its serializable id
+	 */
+	@SuppressWarnings("unchecked")
+	private<T> T createPersistentEntity(SerializableId sid)
+	{
+		return (T) getSession().load(sid.getEntityName(), sid.getId());
+	}
+	
+	/**
+	 * Create a not persistent entity (if possible !) back from its serializable id
+	 */
+	@SuppressWarnings("unchecked")
+	private<T> T createNotPersistentEntity(SerializableId sid)
+	{
+		try
+		{
+			Class<T> clazz = (Class<T>)Class.forName(sid.getEntityName());
+			if (Number.class.isAssignableFrom(clazz))
+			{
+			//	Special case for numbers (no empty constructor defined)
+			//
+				Constructor<T> ctor =  clazz.getConstructor(new Class[]{String.class});
+				return ctor.newInstance(sid.getHashCode());
+			}
+			else if (clazz.equals(String.class))
+			{
+				return (T) sid.getHashCode();
+			}
+			else
+			{
+			//	Basic case : do not know what to do
+			//
+				return (T) clazz.newInstance();
+			}
+		}
+		catch(Exception ex)
+		{
+			throw new RuntimeException(ex);
+		}
 	}
 	
 	/**

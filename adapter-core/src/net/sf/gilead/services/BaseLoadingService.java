@@ -217,7 +217,12 @@ public class BaseLoadingService<T extends ILightEntity>
 		// Load entity and assocation
 		//
 		Object entity = persistenceUtil.loadAssociation(parent.getClass(), id,
-				propertyName);
+														propertyName);
+		if (entity == null)
+		{
+			_log.warn("Cannot load entity " + parent.getClass() + "[" + id + "] with property " + propertyName);
+			return null;
+		}
 
 		// Get getter for the property
 		//

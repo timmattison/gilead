@@ -24,8 +24,9 @@ public class SerializableId implements Serializable
 	
 	/**
 	 * Hash code for non persistent and transient values
+	 * Contains values for Number and String non persistent items
 	 */
-	protected Integer hashCode;
+	protected String hashCode;
 	
 	/**
 	 * The associated entity name
@@ -52,14 +53,14 @@ public class SerializableId implements Serializable
 	/**
 	 * @return the hashCode
 	 */
-	public Integer getHashCode() {
+	public String getHashCode() {
 		return hashCode;
 	}
 
 	/**
 	 * @param hashCode the hashCode to set
 	 */
-	public void setHashCode(Integer hashCode) {
+	public void setHashCode(String hashCode) {
 		this.hashCode = hashCode;
 	}
 

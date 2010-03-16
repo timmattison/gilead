@@ -1,18 +1,19 @@
 package net.sf.gilead.test.domain.misc;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OrderBy;
+
+import net.sf.gilead.pojo.java5.LightEntity;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
-
-import net.sf.gilead.pojo.java5.LightEntity;
 
 @Entity 
 public class Utente extends LightEntity implements Serializable { 
@@ -27,8 +28,9 @@ public class Utente extends LightEntity implements Serializable {
 	private Integer id;
 	
 	@CollectionOfElements(fetch=FetchType.LAZY) 
-	@Cascade({org.hibernate.annotations.CascadeType.ALL,org.hibernate.annotations.CascadeType.DELETE_ORPHAN}) 
-	private List<Preference> preferences = new ArrayList<Preference>();
+	@Cascade({org.hibernate.annotations.CascadeType.ALL,org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+	@OrderBy("intValue ASC")
+	private Set<Preference> preferences = new LinkedHashSet<Preference>();
 
 	/**
 	 * @return the id
@@ -47,14 +49,14 @@ public class Utente extends LightEntity implements Serializable {
 	/**
 	 * @return the preferences
 	 */
-	public List<Preference> getPreferences() {
+	public Set<Preference> getPreferences() {
 		return preferences;
 	}
 
 	/**
 	 * @param preferences the preferences to set
 	 */
-	public void setPreferences(List<Preference> preferences) {
+	public void setPreferences(Set<Preference> preferences) {
 		this.preferences = preferences;
 	} 
 	
