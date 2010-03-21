@@ -1239,12 +1239,16 @@ public class HibernateUtil implements IPersistenceUtil
 		if (itemClass.isAssignableFrom(Number.class) ||
 			itemClass.equals(String.class))
 		{
-			result.setHashCode(item.toString());
+			result.setValue(item.toString());
+		}
+		if (itemClass.isEnum())
+		{
+			result.setValue(((Enum) item).name());
 		}
 		else
 		{
 			// No idea of what it is...
-			result.setHashCode(Integer.toString(item.hashCode()));
+			result.setValue(Integer.toString(item.hashCode()));
 		}
 		
 		return result;
@@ -1506,7 +1510,6 @@ public class HibernateUtil implements IPersistenceUtil
 	 * @param sid
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	private <T> T createOriginalEntity(SerializableId sid, 
 									   Map<Serializable, T> collectionMap)
 	{
@@ -1523,7 +1526,7 @@ public class HibernateUtil implements IPersistenceUtil
 			//
 				try
 				{
-					entity = createPersistentEntity(sid);
+					entity = (T) createPersistentEntity(sid);
 				}
 				catch(ObjectNotFoundException ex)
 				{
@@ -1535,12 +1538,12 @@ public class HibernateUtil implements IPersistenceUtil
 		}
 		else // if (sid.getHashCode() != null)
 		{
-			entity = collectionMap.get(sid.getHashCode());
+			entity = collectionMap.get(sid.getValue());
 			if (entity == null)
 			{
 			//	deleted item
 			//
-				entity = createNotPersistentEntity(sid);
+				entity = (T) createNotPersistentEntity(sid);
 			}
 		}
 		
@@ -1550,37 +1553,50 @@ public class HibernateUtil implements IPersistenceUtil
 	/**
 	 * Create an entity back from its serializable id
 	 */
-	@SuppressWarnings("unchecked")
-	private<T> T createPersistentEntity(SerializableId sid)
+	private Object createPersistentEntity(SerializableId sid)
 	{
-		return (T) getSession().load(sid.getEntityName(), sid.getId());
+		return getSession().load(sid.getEntityName(), sid.getId());
 	}
 	
 	/**
 	 * Create a not persistent entity (if possible !) back from its serializable id
 	 */
-	@SuppressWarnings("unchecked")
-	private<T> T createNotPersistentEntity(SerializableId sid)
+	private Object createNotPersistentEntity(SerializableId sid)
 	{
 		try
 		{
-			Class<T> clazz = (Class<T>)Class.forName(sid.getEntityName());
+			Class<?> clazz = Class.forName(sid.getEntityName());
 			if (Number.class.isAssignableFrom(clazz))
 			{
 			//	Special case for numbers (no empty constructor defined)
 			//
-				Constructor<T> ctor =  clazz.getConstructor(new Class[]{String.class});
-				return ctor.newInstance(sid.getHashCode());
+				Constructor<?> ctor =  clazz.getConstructor(new Class[]{String.class});
+				return ctor.newInstance(sid.getValue());
 			}
 			else if (clazz.equals(String.class))
 			{
-				return (T) sid.getHashCode();
+				return sid.getValue();
+			}
+			else if (clazz.isEnum())
+			{
+				Method valuesMethod = clazz.getMethod("values", new Class[0]);
+				Object[] values = (Object[]) valuesMethod.invoke(null);
+				for (Object enumValue : values) 
+				{
+					if (((Enum) enumValue).name().equals(sid.getValue()))
+					{
+						return enumValue;
+					}
+				}
+				
+				// not found !
+				throw new RuntimeException("Unexpected value for an enum SerializableId: " + sid.getValue());
 			}
 			else
 			{
 			//	Basic case : do not know what to do
 			//
-				return (T) clazz.newInstance();
+				return clazz.newInstance();
 			}
 		}
 		catch(Exception ex)
