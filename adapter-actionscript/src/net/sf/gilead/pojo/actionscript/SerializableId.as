@@ -4,7 +4,7 @@ package net.sf.gilead.pojo.actionscript
 	public class SerializableId
 	{
 		public var id:Object;
-		public var hashCode:String;
+		public var value:String;
 		public var entityName:String;
 		
 		public function SerializableId()
