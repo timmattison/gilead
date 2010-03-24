@@ -2,6 +2,7 @@ package net.sf.gilead.core.hibernate;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -692,131 +693,169 @@ public class HibernateUtil implements IPersistenceUtil
 											 		Map<String, Serializable> proxyInformations,
 											 		Collection<?> underlyingCollection)
 	{
-	//	Re-create original collection
-	//
-		Collection<?> originalCollection = createOriginalCollection(proxyInformations, underlyingCollection);
-		
-	//	Create Persistent collection for the class name
-	//
-		String className = (String) proxyInformations.get(CLASS_NAME);
-
-		SessionImplementor session = (SessionImplementor) getSession();
-		PersistentCollection collection = null;
-		if (PersistentBag.class.getName().equals(className))
+		try
 		{
-		//	Persistent bag creation
+		//	Re-create original collection
 		//
-			if (originalCollection == null)
-			{
-				collection = new PersistentBag(session);
-			}
-			else
-			{
-				collection =  new PersistentBag(session,
-										 		(Collection<?>) originalCollection);
-			}
-		}
-		else if (PersistentList.class.getName().equals(className))
-		{
-		//	Persistent list creation
-		//
-			if (originalCollection == null)
-			{
-				collection = new PersistentList(session);
-			}
-			else
-			{
-				collection = new PersistentList(session,
-										  		(List<?>) originalCollection);
-			}
-		}
-		else if (PersistentSet.class.getName().equals(className))
-		{
-		//	Persistent set creation
-		//
-			if (originalCollection == null)
-			{
-				collection = new PersistentSet(session);
-			}
-			else
-			{
-				collection = new PersistentSet(session,
-						 				 	   (Set<?>) originalCollection);
-			}
-		}
-		else if (PersistentSortedSet.class.getName().equals(className))
-		{
-		//	Persistent sorted set creation
-		//
-			if (originalCollection == null)
-			{
-				collection = new PersistentSortedSet(session);
-			}
-			else
-			{
-				collection = new PersistentSortedSet(session,
-						 				 	   		 (SortedSet<?>) originalCollection);
-			}
-		}
-		else
-		{
-			throw new RuntimeException("Unknown persistent collection class name : " + className);
-		}
-		
-	//	Fill with serialized parameters
-	//
-		String role = (String) proxyInformations.get(ROLE);
-		CollectionPersister collectionPersister = _sessionFactory.getCollectionPersister(role);
-		
-		Serializable snapshot = null;
-		if (originalCollection != null)
-		{
-		//	Create snapshot
-		//
+			Collection<?> originalCollection = createOriginalCollection(proxyInformations, underlyingCollection);
 			
-			snapshot = collection.getSnapshot(collectionPersister);
-		}
-		
-		collection.setSnapshot(proxyInformations.get(KEY), 
-							   role, snapshot);
-		
-	//	Owner
-	//
-		collection.setOwner(parent);
-		
-	//	Update persistent collection
-	//
-		if (areDifferent(originalCollection, underlyingCollection))
-		{
-			if (originalCollection != null)
+		//	Create Persistent collection for the class name
+		//
+			String className = (String) proxyInformations.get(CLASS_NAME);
+	
+			SessionImplementor session = (SessionImplementor) getSession();
+			PersistentCollection collection = null;
+			if (PersistentBag.class.getName().equals(className))
 			{
-				((Collection)collection).removeAll(originalCollection);
-			}
-			
-			
-			if (underlyingCollection != null)
-			{
-				for (Object item : underlyingCollection)
+			//	Persistent bag creation
+			//
+				if (originalCollection == null)
 				{
-					((Collection)collection).add(item);
+					collection = new PersistentBag(session);
+				}
+				else
+				{
+					collection =  new PersistentBag(session,
+											 		(Collection<?>) originalCollection);
 				}
 			}
+			else if (PersistentList.class.getName().equals(className))
+			{
+			//	Persistent list creation
+			//
+				if (originalCollection == null)
+				{
+					collection = new PersistentList(session);
+				}
+				else
+				{
+					collection = new PersistentList(session,
+											  		(List<?>) originalCollection);
+				}
+			}
+			else if (PersistentSet.class.getName().equals(className))
+			{
+			//	Persistent set creation
+			//
+				if (originalCollection == null)
+				{
+					collection = new PersistentSet(session);
+				}
+				else
+				{
+					collection = new PersistentSet(session,
+							 				 	   (Set<?>) originalCollection);
+				}
+			}
+			else if (PersistentSortedSet.class.getName().equals(className))
+			{
+			//	Persistent sorted set creation
+			//
+				if (originalCollection == null)
+				{
+					collection = new PersistentSortedSet(session);
+				}
+				else
+				{
+					collection = new PersistentSortedSet(session,
+							 				 	   		 (SortedSet<?>) originalCollection);
+				}
+			}
+			else
+			{
+				throw new RuntimeException("Unknown persistent collection class name : " + className);
+			}
 			
-			collection.dirty();
+		//	Fill with serialized parameters
+		//
+			String role = (String) proxyInformations.get(ROLE);
+			CollectionPersister collectionPersister = _sessionFactory.getCollectionPersister(role);
+			
+			Serializable snapshot = null;
+			if (originalCollection != null)
+			{
+			//	Create snapshot
+			//
+				
+				snapshot = collection.getSnapshot(collectionPersister);
+			}
+			
+			collection.setSnapshot(proxyInformations.get(KEY), 
+								   role, snapshot);
+			
+		//	Owner
+		//
+			collection.setOwner(parent);
+			
+		//	Update persistent collection
+		//
+			if (areDifferent(originalCollection, underlyingCollection))
+			{
+				if (originalCollection != null)
+				{
+					((Collection)collection).removeAll(originalCollection);
+				}
+				
+				
+				if (underlyingCollection != null)
+				{
+					for (Object item : underlyingCollection)
+					{
+						((Collection)collection).add(item);
+					}
+				}
+				
+				collection.dirty();
+			}
+			
+		//	Associated the collection to the persistence context
+		//
+			if (isInitialized(proxyInformations) == true)
+			{
+				session.getPersistenceContext().addInitializedDetachedCollection(collectionPersister, collection);
+			}
+			else
+			{
+				session.getPersistenceContext().addUninitializedDetachedCollection(collectionPersister, collection);			
+			}
+			
+			return (Collection<?>) collection;
+		}
+		catch (UnableToCreateEntityException ex)
+		{
+		//	unable to re-create persistent collection (embeddable items) : load it
+		//
+			_log.warn("Unable to re-create persistent collection of not persistent items, loading it...");
+			
+			String role = proxyInformations.get(ROLE).toString();
+			role = role.substring(role.lastIndexOf(".")+1);
+			
+			Collection<?> collection = loadPersistentCollection(parent, role);
+			collection.clear();
+			collection.addAll((Collection)underlyingCollection);
+			
+			return collection;
 		}
 		
-	//	Associated the collection to the persistence context
-	//
-		if (isInitialized(proxyInformations) == true)
-		{
-			session.getPersistenceContext().addInitializedDetachedCollection(collectionPersister, collection);
-		}
-		else
-		{
-			session.getPersistenceContext().addUninitializedDetachedCollection(collectionPersister, collection);			
+	}
+	
+	private Collection<?> loadPersistentCollection(Object entity, String collectionName)
+	{
+		Object loaded = loadAssociation(entity.getClass(), getId(entity), collectionName);
+
+		// Get getter for the property
+		//
+		Object association = null;
+		try {
+			Method reader = IntrospectionHelper.getReaderMethodForProperty(
+					entity.getClass(), collectionName);
+			association = reader.invoke(loaded, (Object[]) null);
+		} catch (Exception ex) {
+			throw new RuntimeException(
+					"Error during lazy loading invocation !", ex);
 		}
 		
-		return (Collection<?>) collection;
+		return (Collection<?>) association;
 	}
 
 	/*
@@ -826,6 +865,36 @@ public class HibernateUtil implements IPersistenceUtil
 	public boolean isPersistentCollection(Class<?> collectionClass)
 	{
 		return (PersistentCollection.class.isAssignableFrom(collectionClass));
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.gilead.core.IPersistenceUtil#getUnderlyingCollection(java.util.Collection)
+	 */
+	public Collection<?> getUnderlyingCollection(Collection<?> persistentCollection)
+	{
+		if (persistentCollection instanceof PersistentSet)
+		{
+		//	Get the 'set' attribute
+		//
+			try 
+			{
+				Field setField = PersistentSet.class.getDeclaredField("set");
+				setField.setAccessible(true);
+				return (Collection<?>) setField.get(persistentCollection);
+			}
+			catch (Exception e) 
+			{
+				// Should not happen
+				throw new RuntimeException(e);
+			}
+			
+		}
+		else
+		{
+			// Not implemented
+			return null;
+		}
 	}
 	
 	/*
@@ -1248,7 +1317,7 @@ public class HibernateUtil implements IPersistenceUtil
 		else
 		{
 			// No idea of what it is...
-			result.setValue(Integer.toString(item.hashCode()));
+			// result.setValue(Integer.toString(item.hashCode()));
 		}
 		
 		return result;
@@ -1342,6 +1411,10 @@ public class HibernateUtil implements IPersistenceUtil
 			}
 			return original;
 			
+		}
+		catch(UnableToCreateEntityException e)
+		{
+			throw e;
 		}
 		catch(Exception ex)
 		{
@@ -1563,6 +1636,11 @@ public class HibernateUtil implements IPersistenceUtil
 	 */
 	private Object createNotPersistentEntity(SerializableId sid)
 	{
+		if (sid.getValue() == null)
+		{
+			// Did not k nwo how to serialize it...
+			throw new UnableToCreateEntityException();
+		}
 		try
 		{
 			Class<?> clazz = Class.forName(sid.getEntityName());
@@ -1594,9 +1672,8 @@ public class HibernateUtil implements IPersistenceUtil
 			}
 			else
 			{
-			//	Basic case : do not know what to do
-			//
-				return clazz.newInstance();
+				// should not happen
+				throw new RuntimeException("Unexpected not persistent entity type : " + sid.getEntityName());
 			}
 		}
 		catch(Exception ex)

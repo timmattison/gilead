@@ -49,8 +49,12 @@ public class CloneBeanReplicator extends HibernateBeanReplicator
     {
         Hibernate3BeanTransformer transformer = new Hibernate3BeanTransformer();
         
+        // Custom collection replicator
         transformer.initCollectionReplicatableFactory(
                 CloneCollectionReplicator.factory);
+        
+        // Set associated PersistenceUtil
+        ((CloneCollectionReplicator) transformer.getCollectionReplicatable()).setPersistenceUtil(persistenceUtil);
 
         transformer.initMapReplicatableFactory(
                 Hibernate3MapReplicator.getFactory());

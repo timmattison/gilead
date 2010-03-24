@@ -48,4 +48,39 @@ public class Preference extends LightEntity implements Serializable {
 	public void setIntValue(int value) {
 		this.intValue = value;
 	} 
+	
+	@Override
+	public String toString() {
+		return "Preference " + intValue;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + intValue;
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Preference other = (Preference) obj;
+		if (intValue != other.intValue)
+			return false;
+		return true;
+	}
+	
+	
 } 

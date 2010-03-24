@@ -140,7 +140,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 			SerializableId serializableId = (SerializableId) object;
 			GwtSerializableId gwtSerializableId = new GwtSerializableId();
 			gwtSerializableId.setEntityName(serializableId.getEntityName());
-			gwtSerializableId.setHashCode(serializableId.getHashCode());
+			gwtSerializableId.setStringValue(serializableId.getValue());
 			
 			if (serializableId.getId() != null)
 			{
@@ -185,7 +185,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 			GwtSerializableId gwtSerializableId = (GwtSerializableId) parameter;
 			SerializableId serializableId = new SerializableId();
 			serializableId.setEntityName(gwtSerializableId.getEntityName());
-			serializableId.setHashCode(gwtSerializableId.getHashCode());
+			serializableId.setValue(gwtSerializableId.getStringValue());
 			if (gwtSerializableId.getId() != null)
 			{
 				serializableId.setId(convertBasicFromGwt(gwtSerializableId.getId()));

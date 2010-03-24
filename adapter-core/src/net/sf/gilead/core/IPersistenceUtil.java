@@ -103,6 +103,13 @@ public interface IPersistenceUtil
 	public abstract boolean isPersistentCollection(Class<?> collectionClass);
 	
 	/**
+	 * Returns the underlying (real) collection for the persistent collection
+	 * @param persistentCollection the persistent collection
+	 * @return
+	 */
+	public Collection<?> getUnderlyingCollection(Collection<?> persistentCollection);
+	
+	/**
 	 * Indicates if the argument map is persistent or not
 	 * @param collectionClass the collection class
 	 * @return

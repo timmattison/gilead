@@ -23,10 +23,11 @@ public class SerializableId implements Serializable
 	protected Serializable id;
 	
 	/**
-	 * Hash code for non persistent and transient values
+	 * Workaround for non persistent and transient values
 	 * Contains values for Number and String non persistent items
+	 * Contains hashcode for other
 	 */
-	protected String hashCode;
+	protected String value;
 	
 	/**
 	 * The associated entity name
@@ -51,17 +52,17 @@ public class SerializableId implements Serializable
 	}
 
 	/**
-	 * @return the hashCode
+	 * @return the value
 	 */
-	public String getHashCode() {
-		return hashCode;
+	public String getValue() {
+		return value;
 	}
 
 	/**
-	 * @param hashCode the hashCode to set
+	 * @param value the value to set
 	 */
-	public void setHashCode(String hashCode) {
-		this.hashCode = hashCode;
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 	/**
@@ -105,13 +106,13 @@ public class SerializableId implements Serializable
 		// Check id or hashcode
 		if (id == null)
 		{
-			if (hashCode != null)
+			if (value != null)
 			{
-				return hashCode.equals(((SerializableId)other).hashCode);
+				return value.equals(((SerializableId)other).value);
 			}
 			else
 			{
-				return ((SerializableId)other).hashCode == null;
+				return ((SerializableId)other).value == null;
 			}
 		}
 		else 
@@ -138,7 +139,7 @@ public class SerializableId implements Serializable
 		else
 		{
 			result.append("hashcode:");
-			result.append(hashCode);
+			result.append(value);
 		}
 		result.append("]");
 		

@@ -71,9 +71,23 @@ public class NonRegressionTest extends TestCase
 			assertEquals(index++, pref.getIntValue());
 		}
 		
+		// Add a new preference
+		Preference newPreference = new Preference();
+		newPreference.setIntValue(utente.getPreferences().size()+1);
+		newPreference.setUser(utente);
+		utente.getPreferences().add(newPreference);
+
+		// Remove first element
+		utente.getPreferences().remove(utente.getPreferences().iterator().next());
+		
 	//	Merge and save user
 	//
 		utente = (Utente) beanManager.merge(utente);
+		index = 2;
+		for (Preference pref : utente.getPreferences())
+		{
+			assertEquals(index++, pref.getIntValue());
+		}
 		save(utente);
 		
 	//	Reload it
@@ -81,6 +95,12 @@ public class NonRegressionTest extends TestCase
 		Utente loaded = loadUser(utente.getId());
 		assertNotNull(loaded.getPreferences());
 		assertEquals(utente.getPreferences().size(), loaded.getPreferences().size());
+		
+		index = 2;
+		for (Preference pref : loaded.getPreferences())
+		{
+			assertEquals(index++, pref.getIntValue());
+		}
 	}
 	
 	/**
