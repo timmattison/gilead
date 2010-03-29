@@ -120,4 +120,12 @@ public @interface OneToMany {
      * the relationship is unidirectional.
      */
     String mappedBy() default "";
+    
+    /**
+     * (Optional) Whether to apply the remove operation to entities that have
+     * been removed from the relationship and to cascade the remove operation to
+     * those entities.
+     * @since Java Persistence 2.0
+     */
+    boolean orphanRemoval() default false;
 }
