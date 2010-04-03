@@ -76,6 +76,11 @@ public class HibernateUtil implements IPersistenceUtil
 	private static final String CLASS_NAME="class";
 	
 	/**
+	 * Underlying collection class name
+	 */
+	private static final String UNDERLYING_COLLECTION="underlying";
+	
+	/**
 	 * Persistent collection role
 	 */
 	private static final String ROLE="role";
@@ -524,6 +529,11 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		AbstractPersistentCollection collection = (AbstractPersistentCollection) persistentCollection;
 		result.put(CLASS_NAME, collection.getClass().getName());
+		Collection<?> underlying = getUnderlyingCollection(persistentCollection);
+		if (underlying != null)
+		{
+			result.put(UNDERLYING_COLLECTION, underlying.getClass().getName());
+		}
 		result.put(ROLE, collection.getRole());
 		result.put(KEY, collection.getKey());
 		
@@ -609,7 +619,7 @@ public class HibernateUtil implements IPersistenceUtil
 			else
 			{
 				collection = new PersistentMap(session,
-						 				 	   underlyingMap);
+						 				 	   originalMap);
 			}
 		}
 		else if (PersistentSortedMap.class.getName().equals(className))
@@ -623,7 +633,7 @@ public class HibernateUtil implements IPersistenceUtil
 			else
 			{
 				collection = new PersistentSortedMap(session,
-						 				 	   		 (SortedMap<?, ?>) underlyingMap);
+						 				 	   		 (SortedMap<?, ?>) originalMap);
 			}
 		}
 		else
@@ -888,11 +898,27 @@ public class HibernateUtil implements IPersistenceUtil
 				// Should not happen
 				throw new RuntimeException(e);
 			}
-			
 		}
+		else if (persistentCollection instanceof PersistentList)
+		{
+			//	Get the 'set' attribute
+			//
+				try 
+				{
+					Field setField = PersistentList.class.getDeclaredField("list");
+					setField.setAccessible(true);
+					return (Collection<?>) setField.get(persistentCollection);
+				}
+				catch (Exception e) 
+				{
+					// Should not happen
+					throw new RuntimeException(e);
+				}
+			} 
 		else
 		{
 			// Not implemented
+			_log.warn("Unimplemented collection type :" + persistentCollection.getClass());
 			return null;
 		}
 	}
@@ -1305,8 +1331,8 @@ public class HibernateUtil implements IPersistenceUtil
 		result.setEntityName(itemClass.getName());
 		
 		// Special String and Number handling
-		if (itemClass.isAssignableFrom(Number.class) ||
-			itemClass.equals(String.class))
+		if (Number.class.isAssignableFrom(itemClass) ||
+			String.class.equals(itemClass))
 		{
 			result.setValue(item.toString());
 		}
@@ -1385,15 +1411,31 @@ public class HibernateUtil implements IPersistenceUtil
 	private <T> Collection<T> createOriginalCollection(Map<String, Serializable> proxyInformations,
 										  		   	   Collection<T> collection)
 	{
-		if (collection == null)
-		{
-			return null;
-		}
-		
 		try
 		{
-			Collection<T> original = (Collection<T>) collection.getClass().newInstance();
+		//	Create base collection
+		//
+			Class<?> collectionClass;
+			if (collection == null)
+			{
+			//	collection have been nullified on client side
+			//
+				String collectionClassName = (String) proxyInformations.get(UNDERLYING_COLLECTION);
+				if (collectionClassName == null)
+				{
+					// There collection was empty when serialized
+					return null;
+				}
+				collectionClass = Thread.currentThread().getContextClassLoader().loadClass(collectionClassName);
+			}
+			else
+			{
+				collectionClass = collection.getClass();
+			}
+			Collection<T> original = (Collection<T>) collectionClass.newInstance();
 			
+		//	Fill original collection
+		//
 			ArrayList<SerializableId> idList = (ArrayList<SerializableId>) proxyInformations.get(ID_LIST);
 			if (idList != null)
 			{
@@ -1407,10 +1449,9 @@ public class HibernateUtil implements IPersistenceUtil
 				{
 					original.add(createOriginalEntity(sid, collectionMap));
 				}
-				
 			}
-			return original;
 			
+			return original;
 		}
 		catch(UnableToCreateEntityException e)
 		{
@@ -1566,7 +1607,7 @@ public class HibernateUtil implements IPersistenceUtil
 			// Compare values
 			Object value1 = map1.get(key);
 			Object value2 = map2.get(key);
-			if (value1 != value2)
+			if (value1.equals(value2) == false)
 			{
 				return true;
 			}
@@ -1691,21 +1732,24 @@ public class HibernateUtil implements IPersistenceUtil
 	private <T> Map<Serializable, T> createCollectionMap(Collection<T> collection)
 	{
 		Map<Serializable, T> collectionMap = new HashMap<Serializable, T>();
-		for (T item : collection)
+		if (collection != null)
 		{
-			try
+			for (T item : collection)
 			{
-				collectionMap.put(getId(item), item);
-			}
-			catch(NotPersistentObjectException ex)
-			{
-				// not hibernate entity : use hashcode instead
-				collectionMap.put(item.hashCode(), item);
-			}
-			catch(TransientObjectException ex)
-			{
-				// transient entity : use hashcode instead
-				collectionMap.put(item.hashCode(), item);
+				try
+				{
+					collectionMap.put(getId(item), item);
+				}
+				catch(NotPersistentObjectException ex)
+				{
+					// not hibernate entity : use hashcode instead
+					collectionMap.put(item.hashCode(), item);
+				}
+				catch(TransientObjectException ex)
+				{
+					// transient entity : use hashcode instead
+					collectionMap.put(item.hashCode(), item);
+				}
 			}
 		}
 		

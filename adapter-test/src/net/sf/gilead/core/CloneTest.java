@@ -1365,7 +1365,48 @@ public abstract class CloneTest extends TestCase
 	}
 	
 	/**
-	 * Test delete collection on client side
+	 * Test nullify collection on client side
+	 */
+	public void testNullifyCollectionAfterClone()
+	{  
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Load user
+	//
+		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.EMPLOYEE_LOGIN);
+		assertNotNull(user);
+		assertNotNull(user.getMessageList());
+		assertFalse(user.getMessageList().isEmpty());
+		
+	//	Clone user
+	//
+		IUser cloneUser = (IUser) _beanManager.clone(user); 
+		 
+		// delete all messages
+		cloneUser.setMessageList(null); 
+		 
+	//	Merge user
+	//
+		IUser mergeUser = (IUser) _beanManager.merge(cloneUser); 
+		assertNotNull(mergeUser);
+		assertTrue(mergeUser.getMessageList() == null || mergeUser.getMessageList().isEmpty());
+		 
+	//	Save merged user
+	//
+		userDAO.saveUser(mergeUser);
+		
+	//	Reload user to count messages
+	//
+		user = userDAO.searchUserAndMessagesByLogin(TestHelper.EMPLOYEE_LOGIN);
+		assertNotNull(user);
+		assertTrue(user.getMessageList() == null || user.getMessageList().isEmpty());
+	}
+	
+	/**
+	 * Test create collection on client side
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */

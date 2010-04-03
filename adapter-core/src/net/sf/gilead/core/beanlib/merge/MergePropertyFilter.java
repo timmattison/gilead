@@ -167,51 +167,60 @@ public class MergePropertyFilter implements DetailedPropertyFilter
 			boolean isCollection = Collection.class.isAssignableFrom(valueClass);
 			boolean isMap = Map.class.isAssignableFrom(valueClass);
 	
-			// Null value : can be a proxy
-			if ((isNullValue(cloneValue)) &&
-				(isInitialized(proxyInformations) == false))
+			if (isCollection)
 			{
-			//	Unitialized property merge
-			//
-				if (isCollection)
+				if (isNullValue(cloneValue))
 				{
+				//	The value is now null : proxy is needed
+				//
 				//	Set collection proxy
 				//
 					Object persistentCollection = _persistenceUtil.createPersistentCollection(persistentBean, proxyInformations, null);
 					writePropertyValue(persistentBean, persistentCollection, 
-									   setterMethod.getName(), setterMethod.getParameterTypes());
+									   setterMethod.getName(), setterMethod.getParameterTypes());	
+					// 
+					return false;
 				}
-				else if (isMap)
+				else
+				{
+				//	Store proxy info for the copy operation
+				//
+					BeanlibThreadLocal.setProxyInformations(proxyInformations);
+				}
+			}
+			else if (isMap)
+			{
+				if (isNullValue(cloneValue))
 				{
 				//	Set map proxy
 				//
 					Object persistentMap = _persistenceUtil.createPersistentMap(persistentBean, proxyInformations, null);
 					writePropertyValue(persistentBean, persistentMap, 
 									   setterMethod.getName(), setterMethod.getParameterTypes());
-					
+					return false;
 				}
 				else
 				{
-				//	Set an entity proxy
+				//	Store proxy info for the copy operation
 				//
-					Object proxy = _persistenceUtil.createEntityProxy(proxyInformations);
-					if (proxy != null)
-					{
-						writePropertyValue(persistentBean, proxy,
-										   setterMethod.getName(), 
-										   setterMethod.getParameterTypes());
-					}
+					BeanlibThreadLocal.setProxyInformations(proxyInformations);
+				}	
+			}
+			else if (isNullValue(cloneValue) && isInitialized(proxyInformations) == false)
+			{
+			//	Set an entity proxy
+			//
+				Object proxy = _persistenceUtil.createEntityProxy(proxyInformations);
+				if (proxy != null)
+				{
+					writePropertyValue(persistentBean, proxy,
+									   setterMethod.getName(), 
+									   setterMethod.getParameterTypes());
 				}
 				
 			//	Skip beanlib in-depth population
 			//
 				return false;
-			}
-			else if (isCollection)
-			{
-			//	Replace by persistent collection
-			//
-				BeanlibThreadLocal.setProxyInformations(proxyInformations);
 			}
 			
 			return true;
