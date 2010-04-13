@@ -901,7 +901,7 @@ public class HibernateUtil implements IPersistenceUtil
 		}
 		else if (persistentCollection instanceof PersistentList)
 		{
-			//	Get the 'set' attribute
+			//	Get the 'list' attribute
 			//
 				try 
 				{
@@ -914,7 +914,23 @@ public class HibernateUtil implements IPersistenceUtil
 					// Should not happen
 					throw new RuntimeException(e);
 				}
-			} 
+		} 
+		else if (persistentCollection instanceof PersistentBag)
+		{
+			//	Get the 'bag' attribute
+			//
+				try 
+				{
+					Field setField = PersistentBag.class.getDeclaredField("bag");
+					setField.setAccessible(true);
+					return (Collection<?>) setField.get(persistentCollection);
+				}
+				catch (Exception e) 
+				{
+					// Should not happen
+					throw new RuntimeException(e);
+				}
+		} 
 		else
 		{
 			// Not implemented
