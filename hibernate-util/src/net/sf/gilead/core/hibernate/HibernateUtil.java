@@ -1496,8 +1496,18 @@ public class HibernateUtil implements IPersistenceUtil
 				
 			//	Create maps(ID -> entity)
 			//
-				Map<Serializable, K> keyMap = createCollectionMap(map.keySet());
-				Map<Serializable, V> valueMap = createCollectionMap(map.values());
+				Map<Serializable, K> keyMap = null;
+				Map<Serializable, V> valueMap = null;
+				if (map != null)
+				{
+					keyMap = createCollectionMap(map.keySet());
+					valueMap = createCollectionMap(map.values());
+				}
+				else
+				{
+					keyMap = new HashMap<Serializable, K>();
+					valueMap = new HashMap<Serializable, V>();
+				}
 				
 			//	Fill snapshot map
 			//

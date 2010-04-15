@@ -1,3 +1,24 @@
+Release 1.3.1 (04/2010)
+-----------------------
+Bug fixed : 
+    - Fix for nullified collection on client side
+    - Fix some map merge issues
+    - Fix for LinkedHashSet support 
+    - Improve support for collection of Embeddable items
+    - Fix CollectionOfElements for basic types and enums (thanks sullymandias)
+    - Exclude JBoss unnecessary Maven dependencies
+    - Remote service : LoadAssociation fix (error if the association collection is null or empty)
+    - getPersistentClass NPE fix (HibernateLazyIntializer is sometimes null...)
+    - Dynamic proxy : missing getValue method in xml files
+    - Dynamic proxy : Added the template files to JAR
+    - Fix SessionImpl proxy handling (thanks to Gregor !)
+    - Fix Action Script classes 
+    
+Improvements:
+    - Support for JPA2 annotations
+    - Change level of some disturbing log messages
+    - Add the merged collections to the PersistentContext (better support for reattachment)
+    
 Release 1.3.0 (01/2010)
 -----------------------
 Bug fixed :
