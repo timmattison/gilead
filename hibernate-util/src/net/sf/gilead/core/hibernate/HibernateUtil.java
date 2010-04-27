@@ -881,9 +881,19 @@ public class HibernateUtil implements IPersistenceUtil
 	 * (non-Javadoc)
 	 * @see net.sf.gilead.core.IPersistenceUtil#getUnderlyingCollection(java.util.Collection)
 	 */
-	public Collection<?> getUnderlyingCollection(Collection<?> persistentCollection)
+	public Collection<?> getUnderlyingCollection(Collection<?> collection)
 	{
-		if (persistentCollection instanceof PersistentSet)
+	//	Precondition checking
+	//
+		if ((collection == null) || 
+			(isPersistentCollection(collection.getClass()) == false))
+		{
+			return collection;
+		}
+		
+	//	Persistent collection handling
+	//
+		if (collection instanceof PersistentSet)
 		{
 		//	Get the 'set' attribute
 		//
@@ -891,7 +901,7 @@ public class HibernateUtil implements IPersistenceUtil
 			{
 				Field setField = PersistentSet.class.getDeclaredField("set");
 				setField.setAccessible(true);
-				return (Collection<?>) setField.get(persistentCollection);
+				return (Collection<?>) setField.get(collection);
 			}
 			catch (Exception e) 
 			{
@@ -899,7 +909,7 @@ public class HibernateUtil implements IPersistenceUtil
 				throw new RuntimeException(e);
 			}
 		}
-		else if (persistentCollection instanceof PersistentList)
+		else if (collection instanceof PersistentList)
 		{
 			//	Get the 'list' attribute
 			//
@@ -907,7 +917,7 @@ public class HibernateUtil implements IPersistenceUtil
 				{
 					Field setField = PersistentList.class.getDeclaredField("list");
 					setField.setAccessible(true);
-					return (Collection<?>) setField.get(persistentCollection);
+					return (Collection<?>) setField.get(collection);
 				}
 				catch (Exception e) 
 				{
@@ -915,7 +925,7 @@ public class HibernateUtil implements IPersistenceUtil
 					throw new RuntimeException(e);
 				}
 		} 
-		else if (persistentCollection instanceof PersistentBag)
+		else if (collection instanceof PersistentBag)
 		{
 			//	Get the 'bag' attribute
 			//
@@ -923,7 +933,7 @@ public class HibernateUtil implements IPersistenceUtil
 				{
 					Field setField = PersistentBag.class.getDeclaredField("bag");
 					setField.setAccessible(true);
-					return (Collection<?>) setField.get(persistentCollection);
+					return (Collection<?>) setField.get(collection);
 				}
 				catch (Exception e) 
 				{
@@ -934,7 +944,7 @@ public class HibernateUtil implements IPersistenceUtil
 		else
 		{
 			// Not implemented
-			_log.warn("Unimplemented collection type :" + persistentCollection.getClass());
+			_log.warn("Unimplemented collection type :" + collection.getClass());
 			return null;
 		}
 	}
