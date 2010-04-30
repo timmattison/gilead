@@ -123,7 +123,7 @@ public class LoadingService<T extends ILightEntity> implements IBeanManagerServi
 	 */
 	public T loadEntity(String className, IGwtSerializableParameter id)
 	{
-		return loadEntity(className, (Serializable)id.getValue());
+		return loadEntity(className, (Serializable)id.getUnderlyingValue());
 	}
 
 	//-------------------------------------------------------------------------

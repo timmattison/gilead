@@ -33,7 +33,7 @@ public class BooleanParameter implements IGwtSerializableParameter, Serializable
 	/**
 	 * Change value.
 	 */
-	public void setValue(Boolean value)
+	public void setUnderlyingValue(Boolean value)
 	{
 		this.value = value;
 	}
@@ -41,7 +41,7 @@ public class BooleanParameter implements IGwtSerializableParameter, Serializable
 	/**
 	 * @return the underlying value
 	 */
-	public Object getValue() 
+	public Object getUnderlyingValue() 
 	{
 		return this.value;
 	}

@@ -94,7 +94,7 @@ public class RequestServiceImpl<T extends IGwtSerializableParameter> extends Per
 			queryParameters = new ArrayList<Object>(parameters.size());
 			for (IGwtSerializableParameter parameter : parameters)
 			{
-				queryParameters.add(parameter.getValue());
+				queryParameters.add(parameter.getUnderlyingValue());
 			}
 		}
 		
@@ -134,7 +134,7 @@ public class RequestServiceImpl<T extends IGwtSerializableParameter> extends Per
 			queryParameters = new HashMap<String, Object>(parameters.size());
 			for (Map.Entry<String, IGwtSerializableParameter> parameter : parameters.entrySet())
 			{
-				queryParameters.put(parameter.getKey(), parameter.getValue().getValue());
+				queryParameters.put(parameter.getKey(), parameter.getValue().getUnderlyingValue());
 			}
 		}
 		

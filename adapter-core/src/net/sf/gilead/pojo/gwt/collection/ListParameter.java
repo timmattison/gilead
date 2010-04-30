@@ -34,7 +34,7 @@ public class ListParameter implements IGwtSerializableParameter, Serializable
 	/**
 	 * Change value.
 	 */
-	public void setValue(List<IGwtSerializableParameter> value)
+	public void setUnderlyingValue(List<IGwtSerializableParameter> value)
 	{
 		this.value = value;
 	}
@@ -42,7 +42,7 @@ public class ListParameter implements IGwtSerializableParameter, Serializable
 	/**
 	 * @return the underlying value
 	 */
-	public Object getValue() 
+	public Object getUnderlyingValue() 
 	{
 		return this.value;
 	}

@@ -33,7 +33,7 @@ public class LongParameter implements IGwtSerializableParameter, Serializable
 	/**
 	 * Change value.
 	 */
-	public void setValue(Long value)
+	public void setUnderlyingValue(Long value)
 	{
 		this.value = value;
 	}
@@ -41,7 +41,7 @@ public class LongParameter implements IGwtSerializableParameter, Serializable
 	/**
 	 * @return the underlying value
 	 */
-	public Object getValue() 
+	public Object getUnderlyingValue() 
 	{
 		return this.value;
 	}

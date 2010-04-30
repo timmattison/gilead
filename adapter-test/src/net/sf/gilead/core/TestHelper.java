@@ -376,7 +376,7 @@ public class TestHelper
 		// force init
 		PersistentBeanManager.getInstance().setPersistenceUtil(null);
 		
-		return ConfigurationHelper.initProxyBeanManager(
+		return GwtConfigurationHelper.initGwtProxyBeanManager(
 				new HibernateUtil(HibernateContext.getSessionFactory()));
 	}
 	

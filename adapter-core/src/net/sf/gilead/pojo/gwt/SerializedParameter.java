@@ -32,7 +32,7 @@ public class SerializedParameter implements IGwtSerializableParameter, Serializa
 	/**
 	 * Change value.
 	 */
-	public void setValue(String value)
+	public void setUnderlyingValue(String value)
 	{
 		this.value = value;
 	}
@@ -40,7 +40,7 @@ public class SerializedParameter implements IGwtSerializableParameter, Serializa
 	/**
 	 * @return the underlying value
 	 */
-	public Object getValue() 
+	public Object getUnderlyingValue() 
 	{
 		return this.value;
 	}

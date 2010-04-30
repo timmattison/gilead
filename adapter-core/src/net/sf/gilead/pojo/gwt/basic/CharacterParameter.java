@@ -33,7 +33,7 @@ public class CharacterParameter implements IGwtSerializableParameter, Serializab
 	/**
 	 * Change value.
 	 */
-	public void setValue(Character value)
+	public void setUnderlyingValue(Character value)
 	{
 		this.value = value;
 	}
@@ -41,7 +41,7 @@ public class CharacterParameter implements IGwtSerializableParameter, Serializab
 	/**
 	 * @return the underlying value
 	 */
-	public Object getValue() 
+	public Object getUnderlyingValue() 
 	{
 		return this.value;
 	}

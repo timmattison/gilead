@@ -34,15 +34,15 @@ public class MapParameter implements IGwtSerializableParameter, Serializable
 	/**
 	 * Change value.
 	 */
-	public void MapValue(Map<IGwtSerializableParameter, IGwtSerializableParameter> value)
+	public void setUnderlyingValue(Map<IGwtSerializableParameter, IGwtSerializableParameter> value)
 	{
 		this.value = value;
 	}
 	
 	/**
-	 * @return the underlying value
+	 * @return the undelying value
 	 */
-	public Object getValue() 
+	public Object getUnderlyingValue() 
 	{
 		return this.value;
 	}

@@ -89,7 +89,7 @@ public class ProxyInformationServiceImpl extends RemoteServiceServlet
 			throw new NullPointerException("Bean manager not set !");
 		}
 		
-		Serializable id = (Serializable) idParam.getValue();
+		Serializable id = (Serializable) idParam.getUnderlyingValue();
 		if (_log.isDebugEnabled())
 		{
 			_log.debug("Getting initialized state for " + className + "[" + id+ "]." + propertyName);
@@ -160,7 +160,7 @@ public class ProxyInformationServiceImpl extends RemoteServiceServlet
 			throw new NullPointerException("Bean manager not set !");
 		}
 		
-		Serializable id = (Serializable) idParam.getValue();
+		Serializable id = (Serializable) idParam.getUnderlyingValue();
 		if (_log.isDebugEnabled())
 		{
 			_log.debug("Changing initialized state to 'true' for " + className + "[" + id+ "]." + propertyName);

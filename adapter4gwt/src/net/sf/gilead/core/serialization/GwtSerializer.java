@@ -232,7 +232,7 @@ public class GwtSerializer
 	{
 	//	Just use the underlying value
 	//
-		return (Serializable) parameter.getValue();
+		return (Serializable) parameter.getUnderlyingValue();
 	}
 	
 	/**
@@ -289,7 +289,7 @@ public class GwtSerializer
 	{
 	//	Precondition checking
 	//
-		Collection<IGwtSerializableParameter> objectList = (Collection<IGwtSerializableParameter>) object.getValue();
+		Collection<IGwtSerializableParameter> objectList = (Collection<IGwtSerializableParameter>) object.getUnderlyingValue();
 		if ((objectList == null) ||
 			(objectList.isEmpty()))
 		{
@@ -381,7 +381,7 @@ public class GwtSerializer
 	{
 	//	Precondition checking
 	//
-		Collection<IGwtSerializableParameter> objectList = (Collection<IGwtSerializableParameter>) object.getValue();
+		Collection<IGwtSerializableParameter> objectList = (Collection<IGwtSerializableParameter>) object.getUnderlyingValue();
 		if ((objectList == null) ||
 			(objectList.isEmpty()))
 		{
@@ -478,7 +478,7 @@ public class GwtSerializer
 	{
 	//	Precondition checking
 	//
-		Map<IGwtSerializableParameter, IGwtSerializableParameter> objectMap = (Map<IGwtSerializableParameter, IGwtSerializableParameter>) object.getValue();
+		Map<IGwtSerializableParameter, IGwtSerializableParameter> objectMap = (Map<IGwtSerializableParameter, IGwtSerializableParameter>) object.getUnderlyingValue();
 		if ((objectMap == null) ||
 			(objectMap.isEmpty()))
 		{

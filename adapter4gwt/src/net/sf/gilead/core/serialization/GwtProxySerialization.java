@@ -176,7 +176,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	//
 		if (parameter instanceof SerializedParameter)
 		{
-			return _stringSerializer.unserialize(parameter.getValue());
+			return _stringSerializer.unserialize(parameter.getUnderlyingValue());
 		}
 		else if (parameter instanceof GwtSerializableId)
 		{
@@ -229,7 +229,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	{
 		if (parameter instanceof SerializedParameter)
 		{
-			return _stringSerializer.unserialize(parameter.getValue());
+			return _stringSerializer.unserialize(parameter.getUnderlyingValue());
 		}
 		else
 		{
@@ -267,7 +267,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	{
 		if (parameter instanceof SerializedParameter)
 		{
-			return _stringSerializer.unserialize(parameter.getValue());
+			return _stringSerializer.unserialize(parameter.getUnderlyingValue());
 		}
 		else
 		{
@@ -302,7 +302,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
 	{
 		if (parameter instanceof SerializedParameter)
 		{
-			return _stringSerializer.unserialize(parameter.getValue());
+			return _stringSerializer.unserialize(parameter.getUnderlyingValue());
 		}
 		else
 		{

@@ -114,6 +114,6 @@ public class LoadingServiceImpl<T extends ILightEntity> extends PersistentRemote
 	 */
 	public T loadEntity(String className, IGwtSerializableParameter id)
 	{
-		return baseService.loadEntity(className, (Serializable)id.getValue());
+		return baseService.loadEntity(className, (Serializable)id.getUnderlyingValue());
 	}
 }

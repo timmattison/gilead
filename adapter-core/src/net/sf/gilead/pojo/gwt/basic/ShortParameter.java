@@ -33,7 +33,7 @@ public class ShortParameter implements IGwtSerializableParameter, Serializable
 	/**
 	 * Change value.
 	 */
-	public void setValue(Short value)
+	public void setUnderlyingValue(Short value)
 	{
 		this.value = value;
 	}
@@ -41,7 +41,7 @@ public class ShortParameter implements IGwtSerializableParameter, Serializable
 	/**
 	 * @return the underlying value
 	 */
-	public Object getValue() 
+	public Object getUnderlyingValue() 
 	{
 		return this.value;
 	}

@@ -3,11 +3,8 @@
  */
 package net.sf.gilead.configuration;
 
-import java.io.FileNotFoundException;
-
 import net.sf.gilead.core.IPersistenceUtil;
 import net.sf.gilead.core.PersistentBeanManager;
-import net.sf.gilead.core.beanlib.mapper.ProxyClassMapper;
 import net.sf.gilead.core.serialization.JBossProxySerialization;
 import net.sf.gilead.core.store.NoProxyStore;
 import net.sf.gilead.core.store.stateful.HttpSessionProxyStore;
@@ -75,29 +72,6 @@ public class ConfigurationHelper
 			beanManager.setPersistenceUtil(persistenceUtil);
 			beanManager.setProxyStore(proxyStore);
 			beanManager.setClassMapper(null);
-		}
-		
-		return PersistentBeanManager.getInstance();
-	}
-	
-	/**
-	 * Init bean manager for dynamic proxy mode
-	 * @throws FileNotFoundException 
-	 */
-	public static PersistentBeanManager initProxyBeanManager(IPersistenceUtil persistenceUtil)
-	{
-		if (PersistentBeanManager.getInstance().getPersistenceUtil() == null)
-		{
-			PersistentBeanManager beanManager = PersistentBeanManager.getInstance(); //new PersistentBeanManager();
-			beanManager.setPersistenceUtil(persistenceUtil);
-			
-			StatelessProxyStore proxyStore = new StatelessProxyStore();
-			proxyStore.setProxySerializer(new JBossProxySerialization());
-			beanManager.setProxyStore(proxyStore);
-			
-			ProxyClassMapper classMapper = new ProxyClassMapper();
-			classMapper.setPersistenceUtil(persistenceUtil);
-			beanManager.setClassMapper(classMapper);
 		}
 		
 		return PersistentBeanManager.getInstance();

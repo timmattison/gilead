@@ -94,7 +94,7 @@
     	</method>
     	
     	<!-- getValue -->
-    	<method visibility="public" returnType="Object" name="getValue">
+    	<method visibility="public" returnType="Object" name="getUnderlyingValue">
     		<code>
 				{ return this; }
 			</code>

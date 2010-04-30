@@ -85,7 +85,7 @@ public class GwtSerializableId implements IGwtSerializableParameter
 	//
 	//-------------------------------------------------------------------------
 	
-	public Object getValue()
+	public Object getUnderlyingValue()
 	{
 		return null;
 	}

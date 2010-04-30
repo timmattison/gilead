@@ -17,5 +17,5 @@ public interface IGwtSerializableParameter extends Serializable
 	/**
 	 * @return the underlying value.
 	 */
-	public Object getValue();
+	public Object getUnderlyingValue();
 }

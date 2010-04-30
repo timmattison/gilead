@@ -9,7 +9,7 @@
     			   defaultValue="new java.util.HashMap()">
     		<collectionType>
     		<![CDATA[
-    			java.lang.String, java.lang.String
+    			java.lang.String, net.sf.gilead.pojo.gwt.IGwtSerializableParameter
     		]]>
     		</collectionType>
     	</attribute>
@@ -35,7 +35,7 @@
     			<parameter type="Object" name="proxyInformation" />
     		</parameters>
     		<code>
-    			{ _proxyInformations.put(property, (String) proxyInformation); }
+    			{ _proxyInformations.put(property, (net.sf.gilead.pojo.gwt.IGwtSerializableParameter) proxyInformation); }
     		</code>
     	</method>
     	
@@ -95,7 +95,7 @@
     	</method>
     	
     	<!-- getValue -->
-    	<method visibility="public" returnType="Object" name="getValue">
+    	<method visibility="public" returnType="Object" name="getUnderlyingValue">
     		<code>
 				{ return this; }
 			</code>

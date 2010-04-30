@@ -34,7 +34,7 @@ public class DateParameter implements IGwtSerializableParameter, Serializable
 	/**
 	 * Change value.
 	 */
-	public void setValue(Date value)
+	public void setUnderlyingValue(Date value)
 	{
 		this.value = value;
 	}
@@ -42,7 +42,7 @@ public class DateParameter implements IGwtSerializableParameter, Serializable
 	/**
 	 * @return the underlying value
 	 */
-	public Object getValue() 
+	public Object getUnderlyingValue() 
 	{
 		return this.value;
 	}
