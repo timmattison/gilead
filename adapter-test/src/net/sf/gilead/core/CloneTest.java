@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1401,6 +1402,49 @@ public abstract class CloneTest extends TestCase
 	//	Reload user to count messages
 	//
 		user = userDAO.searchUserAndMessagesByLogin(TestHelper.EMPLOYEE_LOGIN);
+		assertNotNull(user);
+		assertTrue(user.getMessageList() == null || user.getMessageList().isEmpty());
+	}
+	
+	
+	/**
+	 * Test delete collection on client side
+	 */
+	public void testNewEmptyCollectionAfterClone()
+	{  
+	//	Get UserDAO
+	//
+		IUserDAO userDAO = DAOFactory.getUserDAO();
+		assertNotNull(userDAO);
+		
+	//	Load user
+	//
+		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
+		assertNotNull(user);
+		assertNotNull(user.getMessageList());
+		assertFalse(user.getMessageList().isEmpty());
+		
+	//	Clone user
+	//
+		IUser cloneUser = (IUser) _beanManager.clone(user); 
+		 
+		// delete all messages
+		cloneUser.setMessageList(new HashSet<IMessage>()); 
+		 
+	//	Merge user
+	//
+		IUser mergeUser = (IUser) _beanManager.merge(cloneUser); 
+		assertNotNull(mergeUser);
+		assertNotNull(mergeUser.getMessageList());
+		assertTrue(mergeUser.getMessageList().isEmpty());
+		 
+	//	Save merged user
+	//
+		userDAO.saveUser(mergeUser);
+		
+	//	Reload user to count messages
+	//
+		user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
 		assertNotNull(user);
 		assertTrue(user.getMessageList() == null || user.getMessageList().isEmpty());
 	}
