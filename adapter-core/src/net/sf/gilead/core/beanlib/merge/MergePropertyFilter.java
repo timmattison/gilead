@@ -297,14 +297,14 @@ public class MergePropertyFilter implements DetailedPropertyFilter
 		{
 			return true;
 		}
-		else if (value instanceof Collection)
-		{
-			return ((Collection<?>) value).isEmpty();
-		}
-		else if (value instanceof Map)
-		{
-			return ((Map<?,?>)value).isEmpty();
-		}
+//		else if (value instanceof Collection)
+//		{
+//			return ((Collection<?>) value).isEmpty();
+//		}
+//		else if (value instanceof Map)
+//		{
+//			return ((Map<?,?>)value).isEmpty();
+//		}
 		
 		return false;
 	}
