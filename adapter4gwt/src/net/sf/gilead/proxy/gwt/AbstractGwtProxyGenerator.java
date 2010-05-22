@@ -96,8 +96,6 @@ public abstract class AbstractGwtProxyGenerator extends Generator
 //						   requestedClass.getClass().getName() +
 //						   " is already a lazy pojo : proxy not needed.", 
 //						   null);
-				System.out.println(requestedClass.getClass().getName() +
-						   " is already a lazy pojo : proxy not needed.");
 				return null;
 			}
 		    
@@ -105,7 +103,6 @@ public abstract class AbstractGwtProxyGenerator extends Generator
 		//
 			if (_additionalCode == null)
 			{
-				System.out.println("Reading additional code from " + _additionalCodePath);
 				_additionalCode = AdditionalCodeReader.readFromFile(_additionalCodePath);
 			}
 		    
@@ -121,8 +118,6 @@ public abstract class AbstractGwtProxyGenerator extends Generator
 //					   "Generating proxy " + qualifiedProxyClassName + 
 //					   " for class " + className, 
 //					   null);
-		    System.out.println("Generating proxy " + qualifiedProxyClassName + 
-					           " for class " + className);
 		    
 		//	Create source writer
 		//
@@ -135,7 +130,6 @@ public abstract class AbstractGwtProxyGenerator extends Generator
 			
 				// LOGGER is not compatible from GWT 1.4 to GWT 1.5 !
 //				logger.log(TreeLogger.INFO, "Proxy generation OK", null);
-				System.out.println("Proxy generation OK");
 			}
 			return qualifiedProxyClassName;
 		}
@@ -143,8 +137,6 @@ public abstract class AbstractGwtProxyGenerator extends Generator
 		{
 			// LOGGER is not compatible from GWT 1.4 to GWT 1.5 !
 //			logger.log(TreeLogger.ERROR, "Proxy generation error", ex);
-			System.err.println("Proxy generation error");
-			ex.printStackTrace();
 			
 			throw new UnableToCompleteException();
 		}
