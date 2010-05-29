@@ -895,7 +895,18 @@ public class PersistentBeanManager
 					continue;
 				}
 				readMethod.setAccessible(true);
-				Object propertyValue = readMethod.invoke(pojo, (Object[])null);
+				Object propertyValue = null;
+				
+				try
+				{
+					propertyValue = readMethod.invoke(pojo, (Object[])null);
+				}
+				catch(Exception ex)
+				{
+					// Do not stop on field invocation error...
+					_log.warn("Error invoking method" + readMethod, ex);
+					continue;
+				}
 				
 				if (propertyValue == null)
 				{
