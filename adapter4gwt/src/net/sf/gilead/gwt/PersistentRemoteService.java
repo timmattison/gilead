@@ -200,7 +200,7 @@ public abstract class PersistentRemoteService extends RemoteServiceServlet
 		catch (InvocationTargetException e)
 		{
 			// Clone exception if needed
-			Exception exception = (Exception) GileadRPCHelper.parseReturnValue(e.getCause(), _beanManager);
+			Throwable exception = (Throwable) GileadRPCHelper.parseReturnValue(e.getCause(), _beanManager);
 			
 			return RPC.encodeResponseForFailure(rpcRequest.getMethod(), 
 											    exception,
@@ -209,7 +209,7 @@ public abstract class PersistentRemoteService extends RemoteServiceServlet
 		catch (IncompatibleRemoteServiceException ex)
 		{
 			// Clone exception if needed
-			Exception exception = (Exception) GileadRPCHelper.parseReturnValue(ex, _beanManager);
+			Throwable exception = (Throwable) GileadRPCHelper.parseReturnValue(ex, _beanManager);
 			return RPC.encodeResponseForFailure(null, exception, rpcRequest.getSerializationPolicy());
 	    } 
 	}
