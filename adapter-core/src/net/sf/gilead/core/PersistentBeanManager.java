@@ -818,10 +818,13 @@ public class PersistentBeanManager
 			Class<?> pojoClass = pojo.getClass();
 			if (_classMapper != null)
 			{
-				Class<?> sourceClass = _classMapper.getSourceClass(pojoClass);
-				if (sourceClass != null)
+				if ((_classMapper.getSourceClass(pojoClass) != null) ||
+					(_classMapper.getTargetClass(pojoClass) != null))
 				{
-					pojoClass = sourceClass;
+				// 	The POJO must be translated from or to a mapped class
+				//	so clone or merge operation is needed
+				//
+					return true;
 				}
 			}
 						
