@@ -665,6 +665,7 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		if (areDifferent(originalMap, underlyingMap))
 		{
+
 			if (originalMap != null)
 			{
 				((Map)collection).clear();
@@ -673,7 +674,10 @@ public class HibernateUtil implements IPersistenceUtil
 			
 			if (underlyingMap != null)
 			{
-				((Map)collection).putAll(underlyingMap);
+				for (Map.Entry entry : underlyingMap.entrySet())
+				{
+					((Map)collection).put(entry.getKey(), entry.getValue());
+				}
 			}
 			
 			collection.dirty();
