@@ -1419,7 +1419,7 @@ public abstract class CloneTest extends TestCase
 		
 	//	Load user
 	//
-		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.JUNIT_LOGIN);
+		IUser user = userDAO.searchUserAndMessagesByLogin(TestHelper.GUEST_LOGIN);
 		assertNotNull(user);
 		assertNotNull(user.getMessageList());
 		assertFalse(user.getMessageList().isEmpty());
