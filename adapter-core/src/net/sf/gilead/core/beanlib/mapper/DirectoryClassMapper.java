@@ -140,7 +140,7 @@ public class DirectoryClassMapper implements IClassMapper
 			return null;
 		}
 		
-		String sourceClassName = sourceClass.getCanonicalName();
+		String sourceClassName = sourceClass.getName();
 		if (sourceClassName.startsWith(_rootDomainPackage) == false)
 		{
 		//	Not a souce Class<?>
