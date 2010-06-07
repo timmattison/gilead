@@ -1558,12 +1558,12 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		if (coll1 == null)
 		{
-			return (coll2 != null && !coll2.isEmpty());
+			return (coll2 != null);
 		}
 		
 		if (coll2 == null)
 		{
-			return !coll1.isEmpty();
+			return true;
 		}
 		
 	//	Size comparison
@@ -1619,12 +1619,12 @@ public class HibernateUtil implements IPersistenceUtil
 	//
 		if (map1 == null)
 		{
-			return (map2 != null && !map2.isEmpty());
+			return (map2 != null);
 		}
 		
 		if (map2 == null)
 		{
-			return !map1.isEmpty();
+			return true;
 		}
 		
 	//	Size comparison
