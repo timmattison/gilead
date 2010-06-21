@@ -200,7 +200,7 @@ public abstract class PersistentRemoteService extends RemoteServiceServlet
 		catch (InvocationTargetException e)
 		{
 			// Clone exception if needed
-			Throwable exception = (Throwable) GileadRPCHelper.parseReturnValue(e.getCause(), _beanManager);
+			Throwable exception = (Throwable) GileadRPCHelper.parseReturnValue(e, _beanManager);
 			
 			return RPC.encodeResponseForFailure(rpcRequest.getMethod(), 
 											    exception,
