@@ -660,6 +660,17 @@ public class HibernateUtil implements IPersistenceUtil
 	//	Owner
 	//
 		collection.setOwner(parent);
+	
+	//	Associate the collection to the persistence context
+	//
+		if (isInitialized(proxyInformations) == true)
+		{
+			session.getPersistenceContext().addInitializedDetachedCollection(collectionPersister, collection);
+		}
+		else
+		{
+			session.getPersistenceContext().addUninitializedDetachedCollection(collectionPersister, collection);			
+		}
 		
 	//	Update persistent collection
 	//
@@ -674,24 +685,10 @@ public class HibernateUtil implements IPersistenceUtil
 			
 			if (underlyingMap != null)
 			{
-				for (Map.Entry entry : underlyingMap.entrySet())
-				{
-					((Map)collection).put(entry.getKey(), entry.getValue());
-				}
+				((Map)collection).putAll(underlyingMap);
 			}
 			
-			collection.dirty();
-		}
-		
-	//	Associated the collection to the persistence context
-	//
-		if (isInitialized(proxyInformations) == true)
-		{
-			session.getPersistenceContext().addInitializedDetachedCollection(collectionPersister, collection);
-		}
-		else
-		{
-			session.getPersistenceContext().addUninitializedDetachedCollection(collectionPersister, collection);			
+			// collection.dirty();
 		}
 		
 		return (Map<?,?>)collection;
@@ -801,6 +798,18 @@ public class HibernateUtil implements IPersistenceUtil
 		//
 			collection.setOwner(parent);
 			
+		//	Associate the collection to the persistence context
+		//
+			if (isInitialized(proxyInformations) == true)
+			{
+				session.getPersistenceContext().addInitializedDetachedCollection(collectionPersister, collection);
+			}
+			else
+			{
+				session.getPersistenceContext().addUninitializedDetachedCollection(collectionPersister, collection);			
+			}
+			
+			
 		//	Update persistent collection
 		//
 			if (areDifferent(originalCollection, underlyingCollection))
@@ -819,20 +828,10 @@ public class HibernateUtil implements IPersistenceUtil
 					}
 				}
 				
-				collection.dirty();
+				// collection.dirty();
 			}
 			
-		//	Associated the collection to the persistence context
-		//
-			if (isInitialized(proxyInformations) == true)
-			{
-				session.getPersistenceContext().addInitializedDetachedCollection(collectionPersister, collection);
-			}
-			else
-			{
-				session.getPersistenceContext().addUninitializedDetachedCollection(collectionPersister, collection);			
-			}
-			
+		
 			return (Collection<?>) collection;
 		}
 		catch (UnableToCreateEntityException ex)
