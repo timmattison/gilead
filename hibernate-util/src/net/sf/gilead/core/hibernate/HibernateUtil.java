@@ -1804,7 +1804,7 @@ public class HibernateUtil implements IPersistenceUtil
 	private Session getSession()
 	{
 		HibernateSession hSession = _session.get();
-		if (hSession == null)
+		if (hSession == null || !hSession.session.isOpen())
 		{
 			openSession();
 			hSession = _session.get();
