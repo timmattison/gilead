@@ -50,6 +50,7 @@ import org.hibernate.tuple.IdentifierProperty;
 import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.type.AbstractComponentType;
 import org.hibernate.type.CollectionType;
+import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1230,7 +1231,7 @@ public class HibernateUtil implements IPersistenceUtil
 			
 			markClassAsPersistent(type.getReturnedClass(), true);
 			
-			Type[] subtypes = ((AbstractComponentType) type).getSubtypes();
+			Type[] subtypes = ((ComponentType) type).getSubtypes();
 			for (int index = 0; index < subtypes.length; index++)
 			{
 				computePersistentForType(subtypes[index]);
